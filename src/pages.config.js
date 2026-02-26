@@ -50,6 +50,9 @@
 import Home from './pages/Home';
 import Comunidade from './pages/Comunidade';
 import MinhasPropostas from './pages/MinhasPropostas';
+import Edital from './pages/Edital';
+import Acompanhamento from './pages/Acompanhamento';
+import ProjetoDetalhe from './pages/ProjetoDetalhe';
 import __Layout from './Layout.jsx';
 
 
@@ -57,6 +60,9 @@ export const PAGES = {
     "Home": Home,
     "Comunidade": Comunidade,
     "MinhasPropostas": MinhasPropostas,
+    "Edital": Edital,
+    "Acompanhamento": Acompanhamento,
+    "ProjetoDetalhe": ProjetoDetalhe,
 }
 
 export const pagesConfig = {
