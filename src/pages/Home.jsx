@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
-import { MapPin, ArrowLeft, ChevronRight } from "lucide-react";
+import { MapPin, ArrowLeft, ChevronRight, Sparkles, TrendingUp, Target } from "lucide-react";
 import BrazilMap from "../components/home/BrazilMap";
 import CategoryCards from "../components/home/CategoryCards";
 import EditalCard from "../components/home/EditalCard";
 import EditalDetailModal from "../components/home/EditalDetailModal";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { motion } from "framer-motion";
 
 const CATEGORY_LABELS = {
   inovacao_startups: "Inovação & Startups",
@@ -67,33 +68,111 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: "linear-gradient(180deg, #0f172a 0%, #1a1040 40%, #0f172a 100%)" }}>
-      <div className="max-w-5xl mx-auto px-6 py-10">
+    <div className="min-h-screen relative overflow-hidden" style={{ background: "linear-gradient(180deg, #0f172a 0%, #1a1040 40%, #0f172a 100%)" }}>
+      {/* Animated Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div 
+          className="absolute top-20 left-10 w-72 h-72 bg-indigo-600/10 rounded-full blur-3xl"
+          animate={{ x: [0, 100, 0], y: [0, 50, 0] }}
+          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div 
+          className="absolute bottom-20 right-10 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl"
+          animate={{ x: [0, -80, 0], y: [0, -60, 0] }}
+          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
+        />
+      </div>
+
+      <div className="relative max-w-5xl mx-auto px-6 py-10">
         {/* Hero */}
         {!showMap && !selectedState && (
-          <div className="mb-12">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-indigo-400 font-bold mb-3">Plataforma Munnin Crow</p>
-            <h1 className="text-4xl md:text-5xl font-black text-white leading-tight mb-6">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="mb-12"
+          >
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="text-[10px] uppercase tracking-[0.2em] text-indigo-400 font-bold mb-3 flex items-center gap-2"
+            >
+              <Sparkles className="w-3 h-3" /> Plataforma Munnin Crow
+            </motion.p>
+            
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-5xl md:text-6xl font-black text-white leading-tight mb-6"
+            >
               Encontre o edital<br />
-              <span className="text-indigo-400">certo para você.</span>
-            </h1>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">certo para você.</span>
+            </motion.h1>
+
+            {/* Stats */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="grid grid-cols-3 gap-4 mb-8"
+            >
+              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 text-center">
+                <div className="text-2xl font-bold text-indigo-400 mb-1">{editais.length}</div>
+                <div className="text-xs text-white/50">Editais Ativos</div>
+              </div>
+              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 text-center">
+                <div className="text-2xl font-bold text-purple-400 mb-1">27</div>
+                <div className="text-xs text-white/50">Estados</div>
+              </div>
+              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 text-center">
+                <div className="text-2xl font-bold text-green-400 mb-1">R$ 2B+</div>
+                <div className="text-xs text-white/50">Em Fomento</div>
+              </div>
+            </motion.div>
             
             {/* Quote */}
-            <div className="bg-gradient-to-r from-indigo-600/20 to-purple-600/20 backdrop-blur-sm border border-indigo-500/20 rounded-2xl p-6 mb-6">
-              <p className="text-white/90 text-lg italic leading-relaxed mb-2">"{randomQuote.text}"</p>
-              <p className="text-indigo-300 text-sm">— {randomQuote.author}</p>
-            </div>
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+              className="bg-gradient-to-r from-indigo-600/20 to-purple-600/20 backdrop-blur-sm border border-indigo-500/20 rounded-2xl p-6 mb-6 relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-3xl" />
+              <p className="text-white/90 text-lg italic leading-relaxed mb-2 relative z-10">"{randomQuote.text}"</p>
+              <p className="text-indigo-300 text-sm relative z-10">— {randomQuote.author}</p>
+            </motion.div>
 
             {/* Fact */}
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-5 mb-8">
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.6 }}
+              className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-5 mb-8 flex items-start gap-3"
+            >
+              <Target className="w-5 h-5 text-indigo-400 flex-shrink-0 mt-0.5" />
               <p className="text-white/70 text-sm leading-relaxed">{randomFact}</p>
-            </div>
+            </motion.div>
 
             {/* CTA */}
-            <Button onClick={() => setShowMap(true)} className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-6 text-lg rounded-xl shadow-lg shadow-indigo-600/30">
-              🚀 Vamos submeter uma proposta?
-            </Button>
-          </div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+            >
+              <Button 
+                onClick={() => setShowMap(true)} 
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-6 text-lg rounded-xl shadow-lg shadow-indigo-600/30 group relative overflow-hidden"
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  🚀 Vamos submeter uma proposta?
+                  <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </Button>
+            </motion.div>
+          </motion.div>
         )}
 
         {/* Header Condensed */}

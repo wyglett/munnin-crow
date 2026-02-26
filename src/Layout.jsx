@@ -62,9 +62,15 @@ export default function Layout({ children, currentPageName }) {
       <div className="px-5 py-5 border-b border-white/5">
         <Link to={createPageUrl("Home")} className="flex items-center justify-center" onClick={() => setMobileOpen(false)}>
           <div className="relative">
-            <div className="absolute -inset-2 bg-white/10 rounded-lg blur-xl" />
-            <div className="absolute -inset-1 border-2 border-white/60 rounded-lg" />
-            <img src={LOGO_URL} alt="Munnin Crow" className="relative h-12 w-auto object-contain drop-shadow-[0_0_12px_rgba(255,255,255,0.5)]" />
+            <div className="absolute -inset-2 bg-white/10 blur-xl" />
+            <img 
+              src={LOGO_URL} 
+              alt="Munnin Crow" 
+              className="relative h-12 w-auto object-contain" 
+              style={{
+                filter: 'drop-shadow(0 0 1px rgba(255,255,255,0.9)) drop-shadow(0 0 2px rgba(255,255,255,0.8)) drop-shadow(0 0 4px rgba(255,255,255,0.6)) drop-shadow(0 0 8px rgba(255,255,255,0.4))'
+              }}
+            />
           </div>
         </Link>
       </div>
@@ -173,7 +179,14 @@ export default function Layout({ children, currentPageName }) {
           </button>
           <div className="relative flex-1 flex justify-center">
             <div className="absolute -inset-1 bg-white/10 blur-md" />
-            <img src={LOGO_URL} alt="Munnin Crow" className="relative h-8 w-auto object-contain drop-shadow-[0_0_6px_rgba(255,255,255,0.3)]" />
+            <img 
+              src={LOGO_URL} 
+              alt="Munnin Crow" 
+              className="relative h-8 w-auto object-contain" 
+              style={{
+                filter: 'drop-shadow(0 0 1px rgba(255,255,255,0.9)) drop-shadow(0 0 2px rgba(255,255,255,0.8)) drop-shadow(0 0 4px rgba(255,255,255,0.6))'
+              }}
+            />
           </div>
         </header>
         <main className="flex-1 overflow-y-auto bg-slate-50">

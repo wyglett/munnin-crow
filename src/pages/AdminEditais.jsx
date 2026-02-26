@@ -59,15 +59,24 @@ export default function AdminEditais() {
 
   const importar = async () => {
     setImportando(true);
-    const r = await base44.integrations.Core.InvokeLLM({
-      prompt: "Acesse https://fapes.es.gov.br/Editais/Abertos e extraia TODOS os editais abertos. Para cada um: titulo, numero, descricao, data_encerramento (YYYY-MM-DD), url_fapes, area, categoria (inovacao_startups, apoio_pesquisa, empreendedorismo, bolsas_editais, outros_programas).",
-      add_context_from_internet: true,
-      response_json_schema: { type: "object", properties: { editais: { type: "array", items: { type: "object", properties: { titulo: { type: "string" }, numero: { type: "string" }, descricao: { type: "string" }, data_encerramento: { type: "string" }, url_fapes: { type: "string" }, area: { type: "string" }, categoria: { type: "string" } } } } } }
-    });
-    if (r.editais?.length) {
-      for (const e of r.editais) await base44.entities.Edital.create({ ...e, status: "aberto", estado: "ES", orgao: "FAPES" });
-      queryClient.invalidateQueries({ queryKey: ["editais"] });
+    const urls = [
+      { url: "https://fapes.es.gov.br/Editais/Abertos", estado: "ES", orgao: "FAPES" },
+      { url: "https://www.faperj.br/?id=28.5.7", estado: "RJ", orgao: "FAPERJ" },
+      { url: "https://fapesp.br/chamadas/", estado: "SP", orgao: "FAPESP" },
+      { url: "https://fapemig.br/oportunidades/chamadas-e-editais?status=aberta", estado: "MG", orgao: "FAPEMIG" }
+    ];
+    
+    for (const { url, estado, orgao } of urls) {
+      const r = await base44.integrations.Core.InvokeLLM({
+        prompt: `Acesse ${url} e extraia TODOS os editais/chamadas abertas. Para cada um: titulo, numero, descricao, data_encerramento (YYYY-MM-DD), url_fapes (link do edital), area, categoria (inovacao_startups, apoio_pesquisa, empreendedorismo, bolsas_editais, outros_programas). Retorne JSON válido.`,
+        add_context_from_internet: true,
+        response_json_schema: { type: "object", properties: { editais: { type: "array", items: { type: "object", properties: { titulo: { type: "string" }, numero: { type: "string" }, descricao: { type: "string" }, data_encerramento: { type: "string" }, url_fapes: { type: "string" }, area: { type: "string" }, categoria: { type: "string" } } } } } }
+      });
+      if (r.editais?.length) {
+        for (const e of r.editais) await base44.entities.Edital.create({ ...e, status: "aberto", estado, orgao });
+      }
     }
+    queryClient.invalidateQueries({ queryKey: ["editais"] });
     setImportando(false);
   };
 
