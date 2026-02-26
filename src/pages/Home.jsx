@@ -30,12 +30,28 @@ export default function Home() {
   const [selectedState, setSelectedState] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedEdital, setSelectedEdital] = useState(null);
+  const [showMap, setShowMap] = useState(false);
 
   const { data: editais = [] } = useQuery({
     queryKey: ["editais"],
     queryFn: () => base44.entities.Edital.list("-created_date", 200),
     initialData: [],
   });
+
+  const quotes = [
+    { text: "O sucesso é a soma de pequenos esforços repetidos dia após dia.", author: "Robert Collier" },
+    { text: "Não espere por oportunidades extraordinárias. Agarre ocasiões comuns e faça-as grandes.", author: "Orison Swett Marden" },
+    { text: "O empreendedor sempre busca mudanças, reage a elas e as explora como oportunidade.", author: "Peter Drucker" }
+  ];
+  
+  const facts = [
+    "Você sabia? A Magazine Luiza começou como uma pequena loja em Franca (SP) em 1957 e hoje é uma das maiores varejistas do Brasil.",
+    "Você sabia? O Nubank foi fundado em 2013 e hoje é o maior banco digital independente do mundo, com mais de 80 milhões de clientes.",
+    "Você sabia? A 99 nasceu no Brasil em 2012 e revolucionou o transporte urbano, sendo adquirida pela Didi em 2018."
+  ];
+
+  const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+  const randomFact = facts[Math.floor(Math.random() * facts.length)];
 
   const stateEditais = selectedState ? editais.filter(e => (e.estado || "ES") === selectedState) : editais;
   const categoryEditais = selectedCategory ? stateEditais.filter(e => e.categoria === selectedCategory) : stateEditais;
@@ -53,17 +69,46 @@ export default function Home() {
   return (
     <div className="min-h-screen" style={{ background: "linear-gradient(180deg, #0f172a 0%, #1a1040 40%, #0f172a 100%)" }}>
       <div className="max-w-5xl mx-auto px-6 py-10">
-        {/* Header */}
-        <div className="mb-10">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-indigo-400 font-bold mb-3">Plataforma Munnin Crow</p>
-          <h1 className="text-4xl md:text-5xl font-black text-white leading-tight">
-            Encontre o edital<br />
-            <span className="text-indigo-400">certo para você.</span>
-          </h1>
-          <p className="text-white/40 mt-4 max-w-xl text-lg">
-            Selecione seu estado, escolha a área de interesse e descubra oportunidades abertas de fomento.
-          </p>
-        </div>
+        {/* Hero */}
+        {!showMap && !selectedState && (
+          <div className="mb-12">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-indigo-400 font-bold mb-3">Plataforma Munnin Crow</p>
+            <h1 className="text-4xl md:text-5xl font-black text-white leading-tight mb-6">
+              Encontre o edital<br />
+              <span className="text-indigo-400">certo para você.</span>
+            </h1>
+            
+            {/* Quote */}
+            <div className="bg-gradient-to-r from-indigo-600/20 to-purple-600/20 backdrop-blur-sm border border-indigo-500/20 rounded-2xl p-6 mb-6">
+              <p className="text-white/90 text-lg italic leading-relaxed mb-2">"{randomQuote.text}"</p>
+              <p className="text-indigo-300 text-sm">— {randomQuote.author}</p>
+            </div>
+
+            {/* Fact */}
+            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-5 mb-8">
+              <p className="text-white/70 text-sm leading-relaxed">{randomFact}</p>
+            </div>
+
+            {/* CTA */}
+            <Button onClick={() => setShowMap(true)} className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-6 text-lg rounded-xl shadow-lg shadow-indigo-600/30">
+              🚀 Vamos submeter uma proposta?
+            </Button>
+          </div>
+        )}
+
+        {/* Header Condensed */}
+        {(showMap || selectedState) && (
+          <div className="mb-10">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-indigo-400 font-bold mb-3">Plataforma Munnin Crow</p>
+            <h1 className="text-4xl md:text-5xl font-black text-white leading-tight">
+              Encontre o edital<br />
+              <span className="text-indigo-400">certo para você.</span>
+            </h1>
+            <p className="text-white/40 mt-4 max-w-xl text-lg">
+              Selecione seu estado, escolha a área de interesse e descubra oportunidades abertas de fomento.
+            </p>
+          </div>
+        )}
 
         {/* Breadcrumb */}
         {selectedState && (
@@ -83,7 +128,7 @@ export default function Home() {
         )}
 
         {/* Step 1: Select State */}
-        {!selectedState && (
+        {(showMap || selectedState) && !selectedState && (
           <div>
             <h2 className="text-xl font-bold text-white mb-6">Selecione seu estado no mapa</h2>
             <BrazilMap selectedState={selectedState} onSelectState={handleSelectState} />

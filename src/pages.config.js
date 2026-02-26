@@ -58,6 +58,7 @@ import Orientacoes from './pages/Orientacoes';
 import Perfil from './pages/Perfil';
 import SobreNos from './pages/SobreNos';
 import AdminEditais from './pages/AdminEditais';
+import ConsultorDashboard from './pages/ConsultorDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -73,6 +74,7 @@ export const PAGES = {
     "Perfil": Perfil,
     "SobreNos": SobreNos,
     "AdminEditais": AdminEditais,
+    "ConsultorDashboard": ConsultorDashboard,
 }
 
 export const pagesConfig = {
