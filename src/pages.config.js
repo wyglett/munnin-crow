@@ -53,6 +53,11 @@ import MinhasPropostas from './pages/MinhasPropostas';
 import Edital from './pages/Edital';
 import Acompanhamento from './pages/Acompanhamento';
 import ProjetoDetalhe from './pages/ProjetoDetalhe';
+import TiraDuvidas from './pages/TiraDuvidas';
+import Orientacoes from './pages/Orientacoes';
+import Perfil from './pages/Perfil';
+import SobreNos from './pages/SobreNos';
+import AdminEditais from './pages/AdminEditais';
 import __Layout from './Layout.jsx';
 
 
@@ -63,6 +68,11 @@ export const PAGES = {
     "Edital": Edital,
     "Acompanhamento": Acompanhamento,
     "ProjetoDetalhe": ProjetoDetalhe,
+    "TiraDuvidas": TiraDuvidas,
+    "Orientacoes": Orientacoes,
+    "Perfil": Perfil,
+    "SobreNos": SobreNos,
+    "AdminEditais": AdminEditais,
 }
 
 export const pagesConfig = {
