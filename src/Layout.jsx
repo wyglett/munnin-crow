@@ -18,12 +18,14 @@ const NAV_MAIN = [
 export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [viewAsRole, setViewAsRole] = useState(null);
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
   }, []);
 
   const isAdmin = user?.role === "admin";
+  const effectiveRole = viewAsRole || user?.role;
 
   const renderNavItem = (item) => {
     const isActive = currentPageName === item.name;
@@ -49,23 +51,26 @@ export default function Layout({ children, currentPageName }) {
     <div className="flex flex-col h-full">
       {/* Logo */}
       <div className="px-5 py-5 border-b border-white/5">
-        <Link to={createPageUrl("Home")} className="flex items-center gap-3" onClick={() => setMobileOpen(false)}>
+        <Link to={createPageUrl("Home")} className="flex items-center justify-center" onClick={() => setMobileOpen(false)}>
           <div className="relative">
-            <div className="absolute -inset-1 bg-indigo-500/30 rounded-full blur-md" />
-            <img src={LOGO_URL} alt="Munnin Crow" className="relative w-9 h-9 rounded-full object-contain bg-white/10 p-0.5" />
-          </div>
-          <div>
-            <p className="text-white font-bold text-sm tracking-wider">MUNNIN CROW</p>
-            <p className="text-slate-500 text-[10px] tracking-wide">Plataforma de Editais</p>
+            <div className="absolute -inset-2 bg-white/10 rounded-lg blur-xl" />
+            <img src={LOGO_URL} alt="Munnin Crow" className="relative h-12 w-auto object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]" />
           </div>
         </Link>
       </div>
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+        {viewAsRole && (
+          <div className="mb-3 px-3 py-2 bg-amber-500/20 border border-amber-500/30 rounded-lg">
+            <p className="text-[10px] text-amber-300 font-bold mb-1">MODO VISUALIZAÇÃO</p>
+            <p className="text-xs text-amber-200">Vendo como: {viewAsRole === "empreendedor" ? "Empreendedor" : "Consultor"}</p>
+            <button onClick={() => setViewAsRole(null)} className="text-xs text-amber-100 underline hover:text-white mt-1">Voltar ao Admin</button>
+          </div>
+        )}
         <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.15em] px-4 pb-2">Principal</p>
         {NAV_MAIN.map(renderNavItem)}
-        {isAdmin && (
+        {isAdmin && !viewAsRole && (
           <>
             <div className="pt-4" />
             <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.15em] px-4 pb-2">Gestão</p>
@@ -76,6 +81,17 @@ export default function Layout({ children, currentPageName }) {
 
       {/* Bottom */}
       <div className="px-3 pb-3 space-y-1">
+        {isAdmin && !viewAsRole && (
+          <div className="mb-2 pb-2 border-b border-white/5">
+            <p className="text-[10px] text-slate-600 uppercase tracking-wider px-4 mb-2">Ver Como</p>
+            <button onClick={() => setViewAsRole("empreendedor")} className="w-full flex items-center gap-2 px-4 py-1.5 rounded text-xs text-slate-400 hover:text-white hover:bg-white/5 transition-all">
+              <User className="w-3 h-3" /> Empreendedor
+            </button>
+            <button onClick={() => setViewAsRole("consultor")} className="w-full flex items-center gap-2 px-4 py-1.5 rounded text-xs text-slate-400 hover:text-white hover:bg-white/5 transition-all">
+              <User className="w-3 h-3" /> Consultor
+            </button>
+          </div>
+        )}
         <Link
           to={createPageUrl("SobreNos")}
           onClick={() => setMobileOpen(false)}
@@ -138,11 +154,10 @@ export default function Layout({ children, currentPageName }) {
           <button onClick={() => setMobileOpen(true)} className="text-slate-400 hover:text-white p-1">
             <Menu className="w-5 h-5" />
           </button>
-          <div className="relative">
-            <div className="absolute -inset-0.5 bg-indigo-500/20 rounded-full blur-sm" />
-            <img src={LOGO_URL} alt="" className="relative w-6 h-6 rounded-full object-contain" />
+          <div className="relative flex-1 flex justify-center">
+            <div className="absolute -inset-1 bg-white/10 blur-md" />
+            <img src={LOGO_URL} alt="Munnin Crow" className="relative h-8 w-auto object-contain drop-shadow-[0_0_6px_rgba(255,255,255,0.3)]" />
           </div>
-          <span className="text-white font-bold text-sm tracking-wider">MUNNIN CROW</span>
         </header>
         <main className="flex-1 overflow-y-auto bg-slate-50">
           {children}

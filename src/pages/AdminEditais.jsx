@@ -21,7 +21,11 @@ export default function AdminEditais() {
   const [form, setForm] = useState({ titulo: "", numero: "", descricao: "", area: "", categoria: "outros_programas", valor_total: "", data_encerramento: "", url_fapes: "", status: "aberto", estado: "ES", orgao: "FAPES" });
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState("empreendedor");
+  const [inviting, setInviting] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   const queryClient = useQueryClient();
+
+  React.useEffect(() => { base44.auth.me().then(setCurrentUser).catch(() => {}); }, []);
 
   const { data: editais = [] } = useQuery({ queryKey: ["editais"], queryFn: () => base44.entities.Edital.list("-created_date", 200) });
   const { data: users = [] } = useQuery({ queryKey: ["users"], queryFn: () => base44.entities.User.list() });
@@ -125,30 +129,50 @@ export default function AdminEditais() {
                   </SelectContent>
                 </Select>
                 <Button onClick={async () => {
-                  if (!inviteEmail) return;
-                  await base44.users.inviteUser(inviteEmail, inviteRole === "admin" ? "admin" : "user");
+                  if (!inviteEmail || inviting) return;
+                  setInviting(true);
+                  await base44.users.inviteUser(inviteEmail, inviteRole);
                   setInviteEmail("");
-                }} className="bg-indigo-600 hover:bg-indigo-700"><UserPlus className="w-4 h-4 mr-2" /> Convidar</Button>
+                  setInviting(false);
+                }} disabled={inviting} className="bg-indigo-600 hover:bg-indigo-700">
+                  {inviting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Convidando...</> : <><UserPlus className="w-4 h-4 mr-2" /> Convidar</>}
+                </Button>
               </CardContent>
             </Card>
 
             <div className="space-y-2">
-              {users.map(u => (
-                <div key={u.id} className="p-4 bg-white rounded-lg border flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-gray-900">{u.full_name || u.email}</p>
-                    <p className="text-sm text-gray-500">{u.email}</p>
+              {users.map(u => {
+                const isCurrentUser = currentUser?.email === u.email;
+                const isCurrentUserAdmin = currentUser?.role === "admin";
+                const canChangeRole = isCurrentUserAdmin && !isCurrentUser;
+                return (
+                  <div key={u.id} className="p-4 bg-white rounded-lg border flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-gray-900">{u.full_name || u.email} {isCurrentUser && <span className="text-xs text-indigo-600">(Você)</span>}</p>
+                      <p className="text-sm text-gray-500">{u.email}</p>
+                    </div>
+                    <div className="relative">
+                      <Select 
+                        value={u.role || "empreendedor"} 
+                        onValueChange={(v) => updateRole.mutate({ id: u.id, role: v })}
+                        disabled={!canChangeRole || updateRole.isPending}
+                      >
+                        <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="empreendedor">Empreendedor</SelectItem>
+                          <SelectItem value="consultor">Consultor</SelectItem>
+                          <SelectItem value="admin">Admin</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {updateRole.isPending && updateRole.variables?.id === u.id && (
+                        <div className="absolute inset-0 bg-white/80 flex items-center justify-center rounded">
+                          <Loader2 className="w-4 h-4 animate-spin text-indigo-600" />
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <Select value={u.role || "empreendedor"} onValueChange={(v) => updateRole.mutate({ id: u.id, role: v })}>
-                    <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="empreendedor">Empreendedor</SelectItem>
-                      <SelectItem value="consultor">Consultor</SelectItem>
-                      <SelectItem value="admin">Admin</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </TabsContent>
         </Tabs>
