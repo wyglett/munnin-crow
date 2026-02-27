@@ -18,6 +18,7 @@ export default function Edital() {
   const [showForm, setShowForm] = useState(false);
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
+  const [creatingId, setCreatingId] = useState(null);
   const queryClient = useQueryClient();
 
   const { data: editais = [] } = useQuery({
@@ -26,19 +27,12 @@ export default function Edital() {
   });
   const edital = editais.find(e => e.id === id);
 
-  const { data: propostas = [] } = useQuery({
-    queryKey: ["propostas-edital", id],
-    queryFn: () => base44.entities.Proposta.filter({ edital_id: id }, "-created_date", 20),
-    enabled: !!id,
-  });
-
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Proposta.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["propostas-edital", id] });
-      setShowForm(false);
-      setTitulo("");
-      setDescricao("");
+    onSuccess: (newProposta) => {
+      queryClient.invalidateQueries({ queryKey: ["propostas"] });
+      // Redirecionar para a proposta criada
+      window.location.href = createPageUrl(`PropostaDetalhe?id=${newProposta.id}`);
     },
   });
 
@@ -49,6 +43,17 @@ export default function Edital() {
   );
 
   const diasRestantes = edital.data_encerramento ? moment(edital.data_encerramento).diff(moment(), "days") : null;
+
+  const handleCriarProposta = () => {
+    createMutation.mutate({
+      titulo,
+      descricao,
+      edital_id: id,
+      edital_titulo: edital.titulo,
+      edital_orgao: edital.orgao,
+      status: "rascunho"
+    });
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 p-6">
@@ -92,10 +97,22 @@ export default function Edital() {
               </div>
               {edital.url_fapes && (
                 <a href={edital.url_fapes} target="_blank" rel="noopener noreferrer">
-                  <Button variant="outline"><ExternalLink className="w-4 h-4 mr-2" /> Ver Edital Completo na FAPES</Button>
+                  <Button variant="outline"><ExternalLink className="w-4 h-4 mr-2" /> Ver Edital Completo na {edital.orgao || "FAPES"}</Button>
                 </a>
               )}
             </div>
+            {edital.documentos_modelo?.length > 0 && (
+              <div className="mt-4 pt-4 border-t">
+                <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Documentos Modelo</p>
+                <div className="space-y-1">
+                  {edital.documentos_modelo.map((doc, i) => (
+                    <a key={i} href={doc.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2.5 bg-indigo-50 rounded-lg text-indigo-700 text-sm hover:bg-indigo-100 transition-all">
+                      <FileText className="w-4 h-4" /> {doc.nome}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -106,10 +123,15 @@ export default function Edital() {
             {!showForm ? (
               <div className="text-center py-8">
                 <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500 mb-4">Crie uma proposta para este edital e utilize nossa IA para análise e sugestões</p>
-                <Button onClick={() => setShowForm(true)} className="bg-indigo-600 hover:bg-indigo-700">
-                  <Plus className="w-4 h-4 mr-2" /> Iniciar Nova Proposta
-                </Button>
+                <p className="text-gray-500 mb-6">Crie uma proposta para este edital e utilize nossa IA para análise e sugestões</p>
+                <div className="flex gap-3 justify-center">
+                  <Button onClick={() => setShowForm(true)} className="bg-indigo-600 hover:bg-indigo-700">
+                    <Plus className="w-4 h-4 mr-2" /> Proposta Rápida
+                  </Button>
+                  <Button onClick={() => setShowForm(true)} variant="outline">
+                    <FileText className="w-4 h-4 mr-2" /> Preencher Formulário Guiado IA
+                  </Button>
+                </div>
               </div>
             ) : (
               <div className="space-y-4">
@@ -124,7 +146,7 @@ export default function Edital() {
                 <div className="flex gap-3">
                   <Button variant="outline" onClick={() => setShowForm(false)}>Cancelar</Button>
                   <Button
-                    onClick={() => createMutation.mutate({ titulo, descricao, edital_id: id, edital_titulo: edital.titulo, status: "rascunho" })}
+                    onClick={handleCriarProposta}
                     disabled={!titulo || createMutation.isPending}
                     className="bg-indigo-600 hover:bg-indigo-700"
                   >

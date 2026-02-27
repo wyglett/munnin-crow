@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { FileText, Plus, ArrowLeft, Trash2, Loader2 } from "lucide-react";
+import { FileText, Plus, ArrowLeft, Trash2, Loader2, Pencil } from "lucide-react";
 
 const STATUS_MAP = {
   rascunho: { label: "Rascunho", color: "bg-gray-100 text-gray-700" },
@@ -60,18 +60,26 @@ export default function MinhasPropostas() {
             {propostas.map((p) => {
               const status = STATUS_MAP[p.status] || STATUS_MAP.rascunho;
               return (
-                <Card key={p.id} className="hover:shadow-md transition-shadow">
+                <Card key={p.id} className="hover:shadow-md transition-shadow border-l-4 border-l-indigo-200">
                   <CardContent className="p-5 flex items-center justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <h3 className="font-semibold text-gray-900 truncate">{p.titulo}</h3>
                         <Badge className={status.color}>{status.label}</Badge>
+                        {p.consultor_status === "em_apoio" && <Badge className="bg-purple-100 text-purple-700 text-xs">Com Consultor</Badge>}
                       </div>
-                      {p.edital_titulo && <p className="text-sm text-gray-500 mt-0.5">{p.edital_titulo}</p>}
+                      {p.edital_titulo && <p className="text-sm text-indigo-600 mt-0.5">Edital: {p.edital_titulo}</p>}
+                      {p.campos_formulario?.length > 0 && (
+                        <p className="text-xs text-gray-400 mt-0.5">
+                          {p.campos_formulario.filter(c => c.concluido).length}/{p.campos_formulario.length} campos concluídos
+                        </p>
+                      )}
                     </div>
                     <div className="flex gap-2 flex-shrink-0">
-                      <Link to={createPageUrl(`Edital?id=${p.edital_id}`)}>
-                        <Button size="sm" variant="outline">Ver</Button>
+                      <Link to={createPageUrl(`PropostaDetalhe?id=${p.id}`)}>
+                        <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700">
+                          <Pencil className="w-3.5 h-3.5 mr-1" /> Editar
+                        </Button>
                       </Link>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
@@ -82,15 +90,11 @@ export default function MinhasPropostas() {
                         <AlertDialogContent>
                           <AlertDialogHeader>
                             <AlertDialogTitle>Excluir proposta?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Esta ação não pode ser desfeita. A proposta "{p.titulo}" será removida permanentemente.
-                            </AlertDialogDescription>
+                            <AlertDialogDescription>Esta ação não pode ser desfeita. A proposta "{p.titulo}" será removida permanentemente.</AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => deleteMutation.mutate(p.id)} className="bg-red-600 hover:bg-red-700">
-                              Excluir
-                            </AlertDialogAction>
+                            <AlertDialogAction onClick={() => deleteMutation.mutate(p.id)} className="bg-red-600 hover:bg-red-700">Excluir</AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
