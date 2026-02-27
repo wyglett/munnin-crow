@@ -47,34 +47,34 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
-import Home from './pages/Home';
-import Comunidade from './pages/Comunidade';
-import MinhasPropostas from './pages/MinhasPropostas';
-import Edital from './pages/Edital';
 import Acompanhamento from './pages/Acompanhamento';
-import ProjetoDetalhe from './pages/ProjetoDetalhe';
-import TiraDuvidas from './pages/TiraDuvidas';
+import AdminEditais from './pages/AdminEditais';
+import Comunidade from './pages/Comunidade';
+import ConsultorDashboard from './pages/ConsultorDashboard';
+import Edital from './pages/Edital';
+import Home from './pages/Home';
+import MinhasPropostas from './pages/MinhasPropostas';
 import Orientacoes from './pages/Orientacoes';
 import Perfil from './pages/Perfil';
+import ProjetoDetalhe from './pages/ProjetoDetalhe';
 import SobreNos from './pages/SobreNos';
-import AdminEditais from './pages/AdminEditais';
-import ConsultorDashboard from './pages/ConsultorDashboard';
+import TiraDuvidas from './pages/TiraDuvidas';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Home": Home,
-    "Comunidade": Comunidade,
-    "MinhasPropostas": MinhasPropostas,
-    "Edital": Edital,
     "Acompanhamento": Acompanhamento,
-    "ProjetoDetalhe": ProjetoDetalhe,
-    "TiraDuvidas": TiraDuvidas,
+    "AdminEditais": AdminEditais,
+    "Comunidade": Comunidade,
+    "ConsultorDashboard": ConsultorDashboard,
+    "Edital": Edital,
+    "Home": Home,
+    "MinhasPropostas": MinhasPropostas,
     "Orientacoes": Orientacoes,
     "Perfil": Perfil,
+    "ProjetoDetalhe": ProjetoDetalhe,
     "SobreNos": SobreNos,
-    "AdminEditais": AdminEditais,
-    "ConsultorDashboard": ConsultorDashboard,
+    "TiraDuvidas": TiraDuvidas,
 }
 
 export const pagesConfig = {
