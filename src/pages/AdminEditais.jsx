@@ -10,14 +10,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Download, Loader2, Plus, Pencil, Trash2, FolderOpen, UserPlus, Users } from "lucide-react";
+import { Download, Loader2, Plus, Pencil, Trash2, FolderOpen, UserPlus, Users, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import EditalDocumentosAdmin from "../components/admin/EditalDocumentosAdmin";
 
 export default function AdminEditais() {
   const [importando, setImportando] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
   const [editando, setEditando] = useState(null);
+  const [docsEdital, setDocsEdital] = useState(null); // edital sendo configurado docs
   const [form, setForm] = useState({ titulo: "", numero: "", descricao: "", area: "", categoria: "outros_programas", valor_total: "", data_encerramento: "", url_fapes: "", status: "aberto", estado: "ES", orgao: "FAPES" });
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState("empreendedor");
@@ -116,6 +118,7 @@ export default function AdminEditais() {
                     </div>
                   </div>
                   <div className="flex gap-1">
+                    <Button size="sm" variant="ghost" onClick={() => setDocsEdital(e)} title="Documentos & IA"><BookOpen className="w-4 h-4 text-indigo-500" /></Button>
                     <Button size="sm" variant="ghost" onClick={() => openEdit(e)}><Pencil className="w-4 h-4" /></Button>
                     <Button size="sm" variant="ghost" className="text-red-500" onClick={() => deleteEdital.mutate(e.id)}><Trash2 className="w-4 h-4" /></Button>
                   </div>
@@ -186,6 +189,25 @@ export default function AdminEditais() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Documentos & IA Dialog */}
+      <Dialog open={!!docsEdital} onOpenChange={() => setDocsEdital(null)}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Documentos & IA — {docsEdital?.titulo}</DialogTitle>
+          </DialogHeader>
+          {docsEdital && (
+            <EditalDocumentosAdmin
+              edital={docsEdital}
+              onUpdate={async (data) => {
+                await base44.entities.Edital.update(docsEdital.id, data);
+                queryClient.invalidateQueries({ queryKey: ["editais"] });
+                setDocsEdital(prev => ({ ...prev, ...data }));
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Edital Form Dialog */}
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
