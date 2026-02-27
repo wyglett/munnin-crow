@@ -9,7 +9,8 @@ const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/pub
 const getNavItems = (role) => {
   if (role === "consultor") {
     return [
-      { name: "ConsultorDashboard", label: "Dashboard", icon: Activity },
+      { name: "ConsultorDashboard", label: "Tutorias", icon: MessageSquare },
+      { name: "Acompanhamento", label: "Acompanhamento", icon: Activity },
       { name: "Comunidade", label: "Comunidade", icon: MessageSquare },
       { name: "Orientacoes", label: "Minhas Orientações", icon: BookOpen },
     ];
