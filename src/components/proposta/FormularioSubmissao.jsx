@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { CheckCircle, Lock, Unlock, Sparkles, Loader2, MessageSquare, X, Send, ChevronDown, ChevronUp } from "lucide-react";
+import { CheckCircle, Lock, Unlock, Sparkles, Loader2, MessageSquare, X, Send, ChevronDown, ChevronUp, Download, FileText } from "lucide-react";
 
 export default function FormularioSubmissao({ proposta, edital, onSave }) {
   const [campos, setCampos] = useState(proposta.campos_formulario || []);
@@ -170,22 +170,58 @@ Oriente o empreendedor a construir uma resposta forte. Se tiver uma sugestão co
     setChatLoading(false);
   };
 
+  // Baixar respostas como TXT
+  const downloadRespostas = () => {
+    const linhas = [];
+    const secoes_ = [...new Set(campos.map(c => c.secao))];
+    linhas.push(`PROPOSTA: ${edital?.titulo || ""}`);
+    linhas.push(`Gerado em: ${new Date().toLocaleDateString("pt-BR")}`);
+    linhas.push("=".repeat(60));
+    secoes_.forEach(sec => {
+      linhas.push(`\n${sec.toUpperCase()}`);
+      linhas.push("-".repeat(40));
+      campos.filter(c => c.secao === sec).forEach(c => {
+        linhas.push(`\nPergunta: ${c.pergunta}`);
+        linhas.push(`Resposta: ${c.resposta || "(sem resposta)"}`);
+      });
+    });
+    const blob = new Blob([linhas.join("\n")], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `proposta_${(edital?.titulo || "").replace(/[^a-z0-9]/gi, "_").substring(0, 30)}.txt`;
+    a.click(); URL.revokeObjectURL(url);
+  };
+
   // Agrupar por seção
   const secoes = [...new Set(campos.map(c => c.secao))];
   const concluidos = campos.filter(c => c.concluido).length;
   const chatCampo = campos.find(c => c.id === chatCampoId);
+  const temPerguntasAnexo = !!perguntasDoEdital();
 
   if (campos.length === 0) {
     return (
       <div className="text-center py-12">
         <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-3" />
         <h3 className="font-semibold text-gray-700 mb-2">Formulário de Submissão</h3>
-        <p className="text-gray-500 text-sm mb-6 max-w-sm mx-auto">
-          A IA vai gerar um formulário estruturado baseado nos requisitos do edital para guiar sua proposta.
-        </p>
-        <Button onClick={gerarCampos} disabled={gerando} className="bg-indigo-600 hover:bg-indigo-700">
-          {gerando ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Gerando formulário...</> : <><Sparkles className="w-4 h-4 mr-2" />Gerar Formulário com IA</>}
-        </Button>
+        {temPerguntasAnexo ? (
+          <p className="text-gray-500 text-sm mb-2 max-w-sm mx-auto">
+            As perguntas foram extraídas dos anexos oficiais do edital cadastrados pelo administrador.
+          </p>
+        ) : (
+          <p className="text-gray-500 text-sm mb-2 max-w-sm mx-auto">
+            A IA vai gerar um formulário estruturado baseado nos requisitos do edital para guiar sua proposta.
+          </p>
+        )}
+        {temPerguntasAnexo && (
+          <div className="inline-flex items-center gap-2 mb-4 bg-green-50 border border-green-200 text-green-700 text-xs px-3 py-1.5 rounded-full">
+            <FileText className="w-3.5 h-3.5" /> Perguntas baseadas no anexo oficial do edital
+          </div>
+        )}
+        <div>
+          <Button onClick={gerarCampos} disabled={gerando} className="bg-indigo-600 hover:bg-indigo-700">
+            {gerando ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Carregando formulário...</> : <><Sparkles className="w-4 h-4 mr-2" />{temPerguntasAnexo ? "Carregar Formulário do Edital" : "Gerar Formulário com IA"}</>}
+          </Button>
+        </div>
       </div>
     );
   }
@@ -195,11 +231,14 @@ Oriente o empreendedor a construir uma resposta forte. Se tiver uma sugestão co
       {/* Form */}
       <div className={`flex-1 space-y-6 ${chatOpen ? "max-w-[60%]" : ""}`}>
         <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3 flex-wrap">
             <div className="text-sm text-gray-500">{concluidos}/{campos.length} campos concluídos</div>
             <div className="h-2 w-32 bg-gray-100 rounded-full overflow-hidden">
               <div className="h-full bg-indigo-600 rounded-full transition-all" style={{ width: `${campos.length ? (concluidos / campos.length) * 100 : 0}%` }} />
             </div>
+            <Button size="sm" variant="outline" onClick={downloadRespostas} className="h-7 text-xs ml-auto">
+              <Download className="w-3 h-3 mr-1" /> Baixar Respostas
+            </Button>
           </div>
         </div>
 
