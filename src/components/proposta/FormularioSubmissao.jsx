@@ -58,12 +58,13 @@ export default function FormularioSubmissao({ proposta, edital, onSave }) {
       return;
     }
 
-    // 2. Fallback: IA tenta extrair perguntas dos documentos do edital
+    // 2. Fallback: IA tenta extrair perguntas dos documentos do edital (apenas PDFs e imagens suportados)
+    const isSupportedFile = (url) => /\.(pdf|png|jpg|jpeg)(\?|$)/i.test(url);
     const fileUrls = [];
     edital.etapas?.forEach(etapa => {
-      etapa.documentos?.forEach(d => { if (d.url && (d.tipo === "perguntas_site" || d.tipo === "anexo_proposta")) fileUrls.push(d.url); });
+      etapa.documentos?.forEach(d => { if (d.url && isSupportedFile(d.url) && (d.tipo === "perguntas_site" || d.tipo === "anexo_proposta")) fileUrls.push(d.url); });
     });
-    edital.documentos_modelo?.forEach(d => { if (d.url) fileUrls.push(d.url); });
+    edital.documentos_modelo?.forEach(d => { if (d.url && isSupportedFile(d.url)) fileUrls.push(d.url); });
 
     if (fileUrls.length > 0) {
       const r = await base44.integrations.Core.InvokeLLM({

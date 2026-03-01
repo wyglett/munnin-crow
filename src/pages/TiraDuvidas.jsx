@@ -43,14 +43,13 @@ export default function TiraDuvidas() {
 
     const edital = selectedEdital !== "geral" ? editais.find(e => e.id === selectedEdital) : null;
 
-    // Coletar URLs dos documentos do edital (todas as etapas)
+    // Coletar URLs dos documentos do edital (apenas PDF e imagens — formatos suportados pelo InvokeLLM)
+    const isSupportedFile = (url) => /\.(pdf|png|jpg|jpeg)(\?|$)/i.test(url);
     const fileUrls = [];
     if (edital) {
-      // Documentos antigos (documentos_modelo)
-      edital.documentos_modelo?.forEach(d => { if (d.url) fileUrls.push(d.url); });
-      // Documentos por etapa
+      edital.documentos_modelo?.forEach(d => { if (d.url && isSupportedFile(d.url)) fileUrls.push(d.url); });
       edital.etapas?.forEach(etapa => {
-        etapa.documentos?.forEach(d => { if (d.url) fileUrls.push(d.url); });
+        etapa.documentos?.forEach(d => { if (d.url && isSupportedFile(d.url)) fileUrls.push(d.url); });
       });
     }
 
