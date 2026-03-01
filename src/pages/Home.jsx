@@ -116,19 +116,20 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="grid grid-cols-3 gap-4 mb-8"
+              className="grid grid-cols-4 gap-3 mb-8"
             >
-              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 text-center">
-                <div className="text-2xl font-bold text-indigo-400 mb-1">{editais.length}</div>
-                <div className="text-xs text-white/50">Editais Ativos</div>
+              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-3 text-center">
+                <div className="text-xl font-bold text-indigo-400 mb-0.5">{editais.length}</div>
+                <div className="text-[10px] text-white/50">Editais Ativos</div>
               </div>
-              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 text-center">
-                <div className="text-2xl font-bold text-purple-400 mb-1">27</div>
-                <div className="text-xs text-white/50">Estados</div>
+              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-3 text-center">
+                <div className="text-xl font-bold text-purple-400 mb-0.5">27</div>
+                <div className="text-[10px] text-white/50">Estados</div>
               </div>
-              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 text-center">
-                <div className="text-2xl font-bold text-green-400 mb-1">R$ 2B+</div>
-                <div className="text-xs text-white/50">Em Fomento</div>
+              <div className="col-span-2 bg-gradient-to-r from-green-600/20 to-emerald-600/20 backdrop-blur-sm border border-green-500/30 rounded-xl p-4 text-center">
+                <div className="text-3xl font-black text-green-400 mb-0.5">R$ 2B+</div>
+                <div className="text-xs text-green-300/70 font-medium">em Fomento Disponível</div>
+                <div className="text-[10px] text-white/30 mt-1">Oportunidades abertas de financiamento público</div>
               </div>
             </motion.div>
             

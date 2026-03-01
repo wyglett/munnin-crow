@@ -75,16 +75,21 @@ export default function EditalDocumentosAdmin({ edital, onUpdate }) {
     save(novas, null);
   };
 
-  const extrairPerguntas = async (etapaId) => {
+  // extrairTipo: "perguntas_site" → campos do site de submissão | "anexo_proposta" → seções descritivas do anexo
+  const extrairPerguntas = async (etapaId, extrairTipo) => {
     const etapa = etapas.find(e => e.id === etapaId);
-    const docSite = etapa?.documentos?.find(d => d.tipo === "perguntas_site");
-    const docAnexo = etapa?.documentos?.find(d => d.tipo === "anexo_proposta");
-    const doc = docSite || docAnexo;
+    const doc = etapa?.documentos?.find(d => d.tipo === extrairTipo);
     if (!doc) return;
 
-    setExtraindo(etapaId);
+    const chave = `${etapaId}-${extrairTipo}`;
+    setExtraindo(chave);
+
+    const promptPorTipo = extrairTipo === "anexo_proposta"
+      ? `Analise o Anexo da Proposta "${doc.nome}" do edital "${edital.titulo}" (etapa: ${etapa.nome}). Este é o documento que o empreendedor preenche e envia. Extraia todas as seções e campos descritivos que precisam ser preenchidos (título do projeto, descrição, objetivos, justificativa, metodologia, orçamento, equipe, cronograma, etc.). Organize por seções. Retorne JSON com "perguntas": array de { id (número como string), secao, pergunta, tipo_resposta (texto_longo/texto_curto/numero/data) }.`
+      : `Analise o documento de Perguntas do Site "${doc.nome}" do edital "${edital.titulo}" (etapa: ${etapa.nome}). Este é o formulário do site de submissão (ex: Sigfapes, plataforma do órgão) com perguntas cadastrais e de projeto. Extraia todas as perguntas/campos que o empreendedor precisa preencher no site. Organize por seções. Retorne JSON com "perguntas": array de { id (número como string), secao, pergunta, tipo_resposta (texto_longo/texto_curto/numero/data) }.`;
+
     const r = await base44.integrations.Core.InvokeLLM({
-      prompt: `Analise o documento "${doc.nome}" do edital "${edital.titulo}" (etapa: ${etapa.nome}). Extraia todas as perguntas/campos que o empreendedor precisa responder para submissão. Organize por seções. Retorne JSON com "perguntas": array de { id (número como string), secao, pergunta, tipo_resposta (texto_longo/texto_curto/numero/data) }.`,
+      prompt: promptPorTipo,
       file_urls: [doc.url],
       response_json_schema: {
         type: "object",
@@ -101,7 +106,9 @@ export default function EditalDocumentosAdmin({ edital, onUpdate }) {
     });
 
     if (r.perguntas?.length) {
-      const novas = etapas.map(e => e.id === etapaId ? { ...e, perguntas_formulario: r.perguntas } : e);
+      // Cada tipo armazena em chave separada: perguntas_formulario (anexo) e perguntas_site_formulario (site)
+      const campoDestino = extrairTipo === "anexo_proposta" ? "perguntas_formulario" : "perguntas_site_formulario";
+      const novas = etapas.map(e => e.id === etapaId ? { ...e, [campoDestino]: r.perguntas } : e);
       setEtapas(novas);
       await save(novas, null);
     }
@@ -202,12 +209,18 @@ export default function EditalDocumentosAdmin({ edital, onUpdate }) {
                                   )}
                                 </div>
                                 <div className="flex gap-1 flex-shrink-0">
-                                  {doc && tipo === "perguntas_site" && (
-                                    <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => extrairPerguntas(etapa.id)} disabled={extraindo === etapa.id}>
-                                      {extraindo === etapa.id ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Sparkles className="w-3 h-3 mr-1" />}
-                                      Extrair Perguntas
-                                    </Button>
-                                  )}
+                                 {doc && (tipo === "perguntas_site" || tipo === "anexo_proposta") && (
+                                   <Button
+                                     size="sm"
+                                     variant="outline"
+                                     className="h-7 text-xs"
+                                     onClick={() => extrairPerguntas(etapa.id, tipo)}
+                                     disabled={extraindo === `${etapa.id}-${tipo}`}
+                                   >
+                                     {extraindo === `${etapa.id}-${tipo}` ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Sparkles className="w-3 h-3 mr-1" />}
+                                     {tipo === "anexo_proposta" ? "Extrair Seções" : "Extrair Perguntas"}
+                                   </Button>
+                                 )}
                                   {doc && <Button size="icon" variant="ghost" className="h-7 w-7 text-red-400" onClick={() => removeDoc(etapa.id, doc.id)}><Trash2 className="w-3 h-3" /></Button>}
                                   <Label htmlFor={`up-${etapa.id}-${tipo}`} className="cursor-pointer">
                                     <div className={`flex items-center gap-1 text-xs px-2 py-1 rounded border ${doc ? "border-gray-300 text-gray-600" : "border-indigo-300 text-indigo-600 bg-indigo-50"} hover:bg-indigo-50 transition-all`}>
@@ -224,19 +237,42 @@ export default function EditalDocumentosAdmin({ edital, onUpdate }) {
                       </div>
                     </div>
 
-                    {/* Perguntas extraídas */}
+                    {/* Seções extraídas do Anexo da Proposta */}
                     {etapa.perguntas_formulario?.length > 0 && (
                       <div>
                         <p className="text-xs font-semibold text-gray-600 uppercase mb-2">
-                          Perguntas do Formulário ({etapa.perguntas_formulario.length})
-                          <Badge className="ml-2 bg-green-100 text-green-700 text-xs">Extraídas</Badge>
+                          Seções do Anexo da Proposta ({etapa.perguntas_formulario.length})
+                          <Badge className="ml-2 bg-purple-100 text-purple-700 text-xs">Formulário descritivo</Badge>
                         </p>
-                        <div className="space-y-1 max-h-48 overflow-y-auto">
+                        <div className="space-y-1 max-h-36 overflow-y-auto">
                           {etapa.perguntas_formulario.map((p, i) => (
-                            <div key={p.id} className="flex items-start gap-2 p-2 bg-gray-50 rounded text-xs">
+                            <div key={p.id} className="flex items-start gap-2 p-2 bg-purple-50 rounded text-xs">
                               <span className="text-gray-400 w-4 flex-shrink-0">{i + 1}.</span>
                               <div className="flex-1">
-                                <span className="text-indigo-600 font-medium">{p.secao}</span>
+                                <span className="text-purple-600 font-medium">{p.secao}</span>
+                                <span className="text-gray-500 mx-1">›</span>
+                                <span className="text-gray-800">{p.pergunta}</span>
+                              </div>
+                              <Badge className="bg-gray-100 text-gray-500 text-[10px]">{p.tipo_resposta}</Badge>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Perguntas extraídas do Site de Submissão */}
+                    {etapa.perguntas_site_formulario?.length > 0 && (
+                      <div>
+                        <p className="text-xs font-semibold text-gray-600 uppercase mb-2">
+                          Perguntas do Site de Submissão ({etapa.perguntas_site_formulario.length})
+                          <Badge className="ml-2 bg-orange-100 text-orange-700 text-xs">Formulário do site</Badge>
+                        </p>
+                        <div className="space-y-1 max-h-36 overflow-y-auto">
+                          {etapa.perguntas_site_formulario.map((p, i) => (
+                            <div key={p.id} className="flex items-start gap-2 p-2 bg-orange-50 rounded text-xs">
+                              <span className="text-gray-400 w-4 flex-shrink-0">{i + 1}.</span>
+                              <div className="flex-1">
+                                <span className="text-orange-600 font-medium">{p.secao}</span>
                                 <span className="text-gray-500 mx-1">›</span>
                                 <span className="text-gray-800">{p.pergunta}</span>
                               </div>
