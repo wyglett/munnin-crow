@@ -42,22 +42,51 @@ export default function TiraDuvidas() {
     setLoading(true);
 
     const edital = selectedEdital !== "geral" ? editais.find(e => e.id === selectedEdital) : null;
-    let context = "";
+
+    // Coletar URLs dos documentos do edital (todas as etapas)
+    const fileUrls = [];
     if (edital) {
-      context = `EDITAL: ${edital.titulo}\nNúmero: ${edital.numero || "N/I"}\nDescrição: ${edital.descricao || ""}\nÁrea: ${edital.area || ""}\nValor: ${edital.valor_total || ""}\nEncerramento: ${edital.data_encerramento || ""}\nLink: ${edital.url_fapes || ""}`;
+      // Documentos antigos (documentos_modelo)
+      edital.documentos_modelo?.forEach(d => { if (d.url) fileUrls.push(d.url); });
+      // Documentos por etapa
+      edital.etapas?.forEach(etapa => {
+        etapa.documentos?.forEach(d => { if (d.url) fileUrls.push(d.url); });
+      });
+    }
+
+    // Base de treinamento da IA
+    const treinamentoStr = edital?.ia_treinamento?.length
+      ? `\n\nCONHECIMENTO COMPLEMENTAR CADASTRADO PELO ADMINISTRADOR:\n${edital.ia_treinamento.map(t => `P: ${t.pergunta}\nR: ${t.resposta}`).join("\n---\n")}`
+      : "";
+
+    let contextEdital = "";
+    if (edital) {
+      contextEdital = `EDITAL SELECIONADO: "${edital.titulo}"
+Número: ${edital.numero || "N/I"} | Órgão: ${edital.orgao || ""} | Estado: ${edital.estado || ""}
+Área: ${edital.area || ""} | Valor: ${edital.valor_total || ""} | Encerramento: ${edital.data_encerramento || ""}
+Descrição: ${edital.descricao || ""}${treinamentoStr}
+
+${fileUrls.length > 0 ? `Os documentos oficiais do edital estão anexados (${fileUrls.length} arquivo(s)). LEIA-OS e use seu conteúdo como fonte primária para responder.` : ""}`;
     }
 
     const response = await base44.integrations.Core.InvokeLLM({
-      prompt: `Você é o assistente da plataforma Munnin Crow, especialista em editais de fomento.
-${context ? `\nCONTEXTO DO EDITAL:\n${context}\n\nBusque informações adicionais sobre este edital na internet para responder com precisão.` : "Responda sobre editais de fomento em geral."}
+      prompt: `Você é o assistente especialista da plataforma Munnin Crow em editais de fomento à inovação e pesquisa.
+${contextEdital ? contextEdital : "Responda sobre editais de fomento em geral."}
 
-Histórico:
-${messages.slice(-6).map(m => `${m.role === "user" ? "Usuário" : "Assistente"}: ${m.content}`).join("\n")}
+Histórico da conversa:
+${messages.slice(-8).map(m => `${m.role === "user" ? "Usuário" : "Assistente"}: ${m.content}`).join("\n")}
 
-Pergunta do usuário: ${userMsg}
+Pergunta atual do usuário: ${userMsg}
 
-Responda de forma clara e objetiva. Se não tiver certeza, sugira buscar tutoria especializada.`,
-      add_context_from_internet: !!edital?.url_fapes,
+INSTRUÇÕES:
+- Se há documentos anexados, LEIA-OS e extraia informações concretas (itens financiáveis, não financiáveis, critérios, prazos, etc).
+- Responda com base nos documentos oficiais em primeiro lugar, depois no conhecimento complementar cadastrado.
+- Seja DIRETO e OBJETIVO. Cite os trechos relevantes do edital quando possível.
+- Nunca diga que não tem informações se os documentos foram fornecidos — leia e responda.
+- Se genuinamente não encontrar a informação, diga qual documento o usuário deve consultar e em qual seção.
+- Formato Markdown, use listas quando listar itens.`,
+      add_context_from_internet: false,
+      file_urls: fileUrls.length > 0 ? fileUrls : undefined,
     });
 
     setMessages(prev => [...prev, { role: "assistant", content: response }]);

@@ -22,10 +22,76 @@ export default function FormularioSubmissao({ proposta, edital, onSave }) {
     return () => clearTimeout(t);
   }, [campos]);
 
+  // Retorna as perguntas da etapa ativa do edital (se houver) ou de todas as etapas
+  const perguntasDoEdital = () => {
+    if (!edital?.etapas?.length) return null;
+    // Pega todas as perguntas de todas as etapas, marcando a etapa como seção prefixo
+    const todas = [];
+    edital.etapas
+      .sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
+      .forEach(etapa => {
+        if (etapa.perguntas_formulario?.length) {
+          etapa.perguntas_formulario.forEach(p => {
+            todas.push({ ...p, secao: `[${etapa.nome}] ${p.secao || "Geral"}` });
+          });
+        }
+      });
+    return todas.length > 0 ? todas : null;
+  };
+
   const gerarCampos = async () => {
     setGerando(true);
+
+    // 1. Usar perguntas extraídas dos anexos do edital (prioridade máxima)
+    const perguntasAnexo = perguntasDoEdital();
+    if (perguntasAnexo) {
+      const novos = perguntasAnexo.map(p => ({
+        id: p.id || `${Date.now()}-${Math.random()}`,
+        secao: p.secao,
+        pergunta: p.pergunta,
+        tipo_resposta: p.tipo_resposta || "texto_longo",
+        resposta: "",
+        concluido: false,
+      }));
+      setCampos(novos);
+      setGerando(false);
+      return;
+    }
+
+    // 2. Fallback: IA tenta extrair perguntas dos documentos do edital
+    const fileUrls = [];
+    edital.etapas?.forEach(etapa => {
+      etapa.documentos?.forEach(d => { if (d.url && (d.tipo === "perguntas_site" || d.tipo === "anexo_proposta")) fileUrls.push(d.url); });
+    });
+    edital.documentos_modelo?.forEach(d => { if (d.url) fileUrls.push(d.url); });
+
+    if (fileUrls.length > 0) {
+      const r = await base44.integrations.Core.InvokeLLM({
+        prompt: `Analise os documentos anexados do edital "${edital.titulo}" (${edital.orgao || ""}). Extraia TODAS as perguntas/campos que o empreendedor precisa responder para submissão da proposta. Organize por seções. Retorne JSON com "campos": array de { id (número como string), secao, pergunta, tipo_resposta (texto_longo/texto_curto/numero/data) }.`,
+        file_urls: fileUrls,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            campos: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: { id: { type: "string" }, secao: { type: "string" }, pergunta: { type: "string" }, tipo_resposta: { type: "string" } }
+              }
+            }
+          }
+        }
+      });
+      if (r.campos?.length) {
+        setCampos(r.campos.map(c => ({ ...c, resposta: "", concluido: false })));
+        setGerando(false);
+        return;
+      }
+    }
+
+    // 3. Fallback final: gerar via descrição do edital
     const r = await base44.integrations.Core.InvokeLLM({
-      prompt: `Com base no edital "${edital.titulo}" (${edital.orgao || ""}), área: ${edital.area || ""}, descrição: ${edital.descricao || ""}, gere uma lista estruturada de seções e perguntas para elaboração de uma proposta. Retorne JSON com campo "campos": array de { id (uuid simples), secao, pergunta }. Máximo 12 perguntas distribuídas em 4-5 seções.`,
+      prompt: `Com base no edital "${edital.titulo}" (${edital.orgao || ""}), área: ${edital.area || ""}, descrição: ${edital.descricao || ""}, gere uma lista estruturada de seções e perguntas para elaboração de uma proposta. Retorne JSON com campo "campos": array de { id (uuid simples), secao, pergunta, tipo_resposta (texto_longo) }. Máximo 12 perguntas distribuídas em 4-5 seções.`,
       response_json_schema: {
         type: "object",
         properties: {
@@ -33,16 +99,13 @@ export default function FormularioSubmissao({ proposta, edital, onSave }) {
             type: "array",
             items: {
               type: "object",
-              properties: { id: { type: "string" }, secao: { type: "string" }, pergunta: { type: "string" } }
+              properties: { id: { type: "string" }, secao: { type: "string" }, pergunta: { type: "string" }, tipo_resposta: { type: "string" } }
             }
           }
         }
       }
     });
-    if (r.campos) {
-      const novos = r.campos.map(c => ({ ...c, resposta: "", concluido: false }));
-      setCampos(novos);
-    }
+    if (r.campos) setCampos(r.campos.map(c => ({ ...c, resposta: "", concluido: false })));
     setGerando(false);
   };
 

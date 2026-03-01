@@ -57,9 +57,9 @@ import MinhasPropostas from './pages/MinhasPropostas';
 import Orientacoes from './pages/Orientacoes';
 import Perfil from './pages/Perfil';
 import ProjetoDetalhe from './pages/ProjetoDetalhe';
+import PropostaDetalhe from './pages/PropostaDetalhe';
 import SobreNos from './pages/SobreNos';
 import TiraDuvidas from './pages/TiraDuvidas';
-import PropostaDetalhe from './pages/PropostaDetalhe';
 import __Layout from './Layout.jsx';
 
 
@@ -74,9 +74,9 @@ export const PAGES = {
     "Orientacoes": Orientacoes,
     "Perfil": Perfil,
     "ProjetoDetalhe": ProjetoDetalhe,
+    "PropostaDetalhe": PropostaDetalhe,
     "SobreNos": SobreNos,
     "TiraDuvidas": TiraDuvidas,
-    "PropostaDetalhe": PropostaDetalhe,
 }
 
 export const pagesConfig = {
