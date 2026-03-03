@@ -551,7 +551,7 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
 }
 
 // ─── Leitura Automática (Experimental) ───────────────────────────────────────
-function LeituraAutomaticaDialog({ open, onClose, projeto, projetoId, isConsultor, onSaved, exportarItem }) {
+function LeituraAutomaticaDialog({ open, onClose, projeto, projetoId, isConsultor, autoExportDrive, onSaved, exportarItem }) {
   const [step, setStep] = useState("upload"); // upload | confirmar | salvando
   const [data, setData] = useState(""); // data de pagamento
   const [categoria, setCategoria] = useState("terceiros");
