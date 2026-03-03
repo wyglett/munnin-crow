@@ -247,15 +247,23 @@ function CampoDescricaoFinanceira({ gastos, campo, onChange, projetoDescricao })
     }).join("\n\n");
 
     const r = await base44.integrations.Core.InvokeLLM({
-      prompt: `Redija um texto corrido formal, em português, descrevendo a execução financeira do projeto abaixo para fins de prestação de contas. 
-O texto deve mencionar cada categoria e os principais itens adquiridos em cada uma, suas finalidades no projeto e os valores investidos. 
-Escreva de forma narrativa e objetiva, organizado por categoria, sem usar listas ou bullets — use parágrafos.
+      prompt: `Redija um texto corrido formal e objetivo, em português, justificando cada item adquirido no projeto abaixo para fins de prestação de contas.
+
+Para CADA item listado, explique brevemente: o que foi adquirido e por que foi necessário para o projeto.
+
+REGRAS IMPORTANTES:
+- Use APENAS texto corrido, sem listas, sem bullets, sem traços, sem numeração
+- Sem quebras de linha excessivas — escreva em parágrafos contínuos
+- Não use markdown, asteriscos ou formatação especial
+- Seja direto e objetivo
+- Mencione o valor de cada item
+
 Projeto: ${projetoDescricao}
 
-Itens por categoria:
+Itens adquiridos:
 ${resumo}`
     });
-    onChange({ ...campo, resposta: r, concluido: false });
+    onChange({ ...campo, resposta: typeof r === "string" ? r : JSON.stringify(r), concluido: false });
     setGerando(false);
   }, [gastos, campo, onChange, projetoDescricao]);
 
