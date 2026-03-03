@@ -495,25 +495,41 @@ function CampoDescricaoFinanceira({ gastos, campo, onChange, projetoDescricao })
   const gerarTexto = useCallback(async () => {
     if (gastos.length === 0) return;
     setGerando(true);
-    const lista = gastos.map(g =>
-      `- ${g.descricao}${g.fornecedor ? ` (${g.fornecedor})` : ""}, valor: ${fmt(g.valor)}${g.observacao ? `, obs: ${g.observacao}` : ""}`
-    ).join("\n");
+
+    // Agrupa por categoria
+    const grupos = Object.entries(CATEGORIAS_LABEL)
+      .map(([key, label]) => ({ key, label, items: gastos.filter(g => g.categoria === key) }))
+      .filter(g => g.items.length > 0);
+
+    const resumoPorCategoria = grupos.map(g => {
+      const itens = g.items.map(x =>
+        `  - ${x.descricao}${x.fornecedor ? ` (${x.fornecedor})` : ""}: ${fmt(x.valor)}${x.observacao ? ` — ${x.observacao}` : ""}`
+      ).join("\n");
+      return `### ${g.label}\n${itens}`;
+    }).join("\n\n");
 
     const r = await base44.integrations.Core.InvokeLLM({
-      prompt: `Você deve redigir um texto de prestação de contas formal, em português, justificando a aquisição de cada item abaixo em função do projeto descrito.
+      prompt: `Você é responsável por redigir a seção 8.1 de um relatório de prestação de contas de projeto financiado.
 
-Para cada item, explique em uma ou duas frases: o que é o item e por que ele foi necessário para o projeto.
+Redija um texto formal em português, organizado por categoria, explicando cada item adquirido/contratado.
+
+ESTRUTURA ESPERADA (repita para cada categoria que houver itens):
+
+[Nome da Categoria]
+Texto corrido explicando cada item, o que é, para que serve no contexto do projeto e por que foi necessário. Mencione o valor. Escreva em parágrafos fluidos, sem bullets, sem listas, sem numeração.
 
 REGRAS:
-- Texto corrido em parágrafos, SEM listas, SEM bullets, SEM numeração, SEM quebras duplas de linha
-- Não use markdown, asteriscos ou traços
-- Mencione o valor de cada item
-- Tom formal e objetivo
+- Cada categoria deve ter seu título em uma linha separada (ex: "Material Permanente", "Terceiros", "Material de Consumo")
+- Abaixo do título, texto corrido em um ou mais parágrafos
+- NÃO use markdown, asteriscos, traços ou símbolos especiais
+- Mencione o valor de cada item naturamente no texto
+- Tom formal e técnico
+- NÃO use "bullet points" nem numeração
 
 Projeto: ${projetoDescricao}
 
-Itens adquiridos:
-${lista}`
+Itens por categoria:
+${resumoPorCategoria}`
     });
     onChange({ ...campo, resposta: typeof r === "string" ? r : JSON.stringify(r) });
     setGerando(false);
