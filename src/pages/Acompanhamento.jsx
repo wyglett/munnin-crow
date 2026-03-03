@@ -48,6 +48,11 @@ export default function Acompanhamento() {
     queryFn: () => base44.entities.AcompanhamentoProjeto.list("-created_date", 50),
   });
 
+  const { data: editais = [] } = useQuery({
+    queryKey: ["editais"],
+    queryFn: () => base44.entities.Edital.list("-created_date", 200),
+  });
+
   // Consultores só veem projetos que estão abertos para propostas ou onde foram convidados
   const projetosFiltrados = isConsultor
     ? projetos.filter(p =>
