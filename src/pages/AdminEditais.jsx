@@ -180,24 +180,28 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
               <Button onClick={openNew} variant="outline"><Plus className="w-4 h-4 mr-2" /> Cadastrar Edital</Button>
             </div>
 
-            <div className="space-y-2">
-              {editais.map(e => (
-                <div key={e.id} className="p-4 bg-white rounded-lg border hover:border-indigo-300 transition-colors flex items-center justify-between gap-3">
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-900 truncate">{e.titulo}</p>
-                    <div className="flex gap-2 mt-1 flex-wrap">
-                      {e.area && <Badge className="bg-blue-100 text-blue-800 text-xs">{e.area}</Badge>}
-                      {e.categoria && <Badge className="bg-gray-100 text-gray-700 text-xs">{e.categoria}</Badge>}
-                      {e.documentos_modelo?.length > 0 && <Badge className="bg-green-100 text-green-800 text-xs">{e.documentos_modelo.length} docs</Badge>}
-                    </div>
-                  </div>
-                  <div className="flex gap-1">
-                    <Button size="sm" variant="ghost" onClick={() => setDocsEdital(e)} title="Documentos & IA"><BookOpen className="w-4 h-4 text-indigo-500" /></Button>
-                    <Button size="sm" variant="ghost" onClick={() => openEdit(e)}><Pencil className="w-4 h-4" /></Button>
-                    <Button size="sm" variant="ghost" className="text-red-500" onClick={() => deleteEdital.mutate(e.id)}><Trash2 className="w-4 h-4" /></Button>
-                  </div>
-                </div>
-              ))}
+            <div className="space-y-3">
+              {/* Agrupa por estado */}
+              {(() => {
+                const grupos = {};
+                editais.forEach(e => {
+                  const uf = e.estado || "ES";
+                  if (!grupos[uf]) grupos[uf] = [];
+                  grupos[uf].push(e);
+                });
+                const ordem = ["ES", "RJ", "SP", "MG"];
+                const estados = [...new Set([...ordem, ...Object.keys(grupos)])].filter(k => grupos[k]);
+                return estados.map(uf => (
+                  <GrupoEstado
+                    key={uf}
+                    estado={uf}
+                    editais={grupos[uf]}
+                    onEdit={openEdit}
+                    onDelete={(id) => deleteEdital.mutate(id)}
+                    onDocs={setDocsEdital}
+                  />
+                ));
+              })()}
             </div>
           </TabsContent>
 
