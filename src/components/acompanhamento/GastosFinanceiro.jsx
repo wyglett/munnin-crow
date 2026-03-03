@@ -539,6 +539,7 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
         projeto={projeto}
         projetoId={projetoId}
         isConsultor={isConsultor}
+        autoExportDrive={autoExportDrive}
         onSaved={() => {
           queryClient.invalidateQueries({ queryKey: ["gastos", projetoId] });
           setLeituraAutoOpen(false);
