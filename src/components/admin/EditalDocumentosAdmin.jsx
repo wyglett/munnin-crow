@@ -294,54 +294,73 @@ export default function EditalDocumentosAdmin({ edital, onUpdate }) {
         <TabsContent value="ia" className="mt-4 space-y-4">
           <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
             <h3 className="font-semibold text-indigo-800 mb-1 flex items-center gap-2"><Brain className="w-4 h-4" /> Base de Conhecimento da IA</h3>
-            <p className="text-indigo-700 text-sm">Adicione informações complementares que a IA usará para responder dúvidas sobre este edital — regras não escritas, experiências anteriores, dicas de avaliação, etc.</p>
+            <p className="text-indigo-700 text-sm">Converse com a IA sobre lacunas do edital — ela aprende em tempo real e salva automaticamente na base. Você também pode adicionar conhecimento manualmente.</p>
           </div>
 
-          {/* Formulário novo par */}
-          <Card>
-            <CardContent className="p-4 space-y-3">
-              <p className="text-sm font-semibold">Adicionar conhecimento</p>
-              <div>
-                <Label className="text-xs">Categoria (opcional)</Label>
-                <Input value={novaPerguntaIA.categoria} onChange={e => setNovaPerguntaIA({ ...novaPerguntaIA, categoria: e.target.value })} placeholder="Ex: Elegibilidade, Orçamento, Avaliação..." className="text-sm" />
-              </div>
-              <div>
-                <Label className="text-xs">Pergunta / Contexto *</Label>
-                <Input value={novaPerguntaIA.pergunta} onChange={e => setNovaPerguntaIA({ ...novaPerguntaIA, pergunta: e.target.value })} placeholder="Ex: Startups em fase de ideação são elegíveis?" className="text-sm" />
-              </div>
-              <div>
-                <Label className="text-xs">Resposta / Orientação *</Label>
-                <Textarea value={novaPerguntaIA.resposta} onChange={e => setNovaPerguntaIA({ ...novaPerguntaIA, resposta: e.target.value })} placeholder="Ex: Sim, o edital aceita projetos em fase pré-operacional desde que..." rows={3} className="text-sm" />
-              </div>
-              <Button size="sm" onClick={addTreinamento} disabled={!novaPerguntaIA.pergunta || !novaPerguntaIA.resposta} className="bg-indigo-600 hover:bg-indigo-700">
-                <Plus className="w-3.5 h-3.5 mr-1" /> Adicionar
-              </Button>
-            </CardContent>
-          </Card>
+          <Tabs defaultValue="conversa">
+            <TabsList>
+              <TabsTrigger value="conversa"><MessageSquarePlus className="w-3.5 h-3.5 mr-1" />Ensinar por Conversa</TabsTrigger>
+              <TabsTrigger value="manual"><Plus className="w-3.5 h-3.5 mr-1" />Adicionar Manual</TabsTrigger>
+              <TabsTrigger value="base">Base Salva ({treinamento.length})</TabsTrigger>
+            </TabsList>
 
-          {/* Lista de itens */}
-          {treinamento.length === 0 ? (
-            <div className="text-center py-6 text-gray-400 text-sm">Nenhum conhecimento adicionado ainda</div>
-          ) : (
-            <div className="space-y-2">
-              {treinamento.map(t => (
-                <Card key={t.id}>
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1">
-                        {t.categoria && <Badge className="bg-indigo-100 text-indigo-700 text-xs mb-2">{t.categoria}</Badge>}
-                        <p className="font-medium text-sm text-gray-900">{t.pergunta}</p>
-                        <p className="text-sm text-gray-600 mt-1">{t.resposta}</p>
-                      </div>
-                      <Button size="icon" variant="ghost" className="h-7 w-7 text-red-400 flex-shrink-0" onClick={() => removeTreinamento(t.id)}>
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
+            {/* Conversa com admin */}
+            <TabsContent value="conversa" className="mt-3">
+              <ConversaAdminIA edital={edital} treinamento={treinamento} onLearn={(novo) => { const updated = [...treinamento, novo]; setTreinamento(updated); save(null, updated); }} />
+            </TabsContent>
+
+            {/* Manual */}
+            <TabsContent value="manual" className="mt-3">
+              <Card>
+                <CardContent className="p-4 space-y-3">
+                  <div>
+                    <Label className="text-xs">Categoria (opcional)</Label>
+                    <Input value={novaPerguntaIA.categoria} onChange={e => setNovaPerguntaIA({ ...novaPerguntaIA, categoria: e.target.value })} placeholder="Ex: Elegibilidade, Orçamento..." className="text-sm" />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Pergunta / Contexto *</Label>
+                    <Input value={novaPerguntaIA.pergunta} onChange={e => setNovaPerguntaIA({ ...novaPerguntaIA, pergunta: e.target.value })} placeholder="Ex: Startups em fase de ideação são elegíveis?" className="text-sm" />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Resposta / Orientação *</Label>
+                    <Textarea value={novaPerguntaIA.resposta} onChange={e => setNovaPerguntaIA({ ...novaPerguntaIA, resposta: e.target.value })} placeholder="Ex: Sim, o edital aceita projetos em fase pré-operacional desde que..." rows={3} className="text-sm" />
+                  </div>
+                  <Button size="sm" onClick={addTreinamento} disabled={!novaPerguntaIA.pergunta || !novaPerguntaIA.resposta} className="bg-indigo-600 hover:bg-indigo-700">
+                    <Plus className="w-3.5 h-3.5 mr-1" /> Adicionar
+                  </Button>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Base salva */}
+            <TabsContent value="base" className="mt-3">
+              {treinamento.length === 0 ? (
+                <div className="text-center py-6 text-gray-400 text-sm">Nenhum conhecimento salvo ainda.</div>
+              ) : (
+                <div className="space-y-2">
+                  {treinamento.map(t => (
+                    <Card key={t.id}>
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1">
+                            <div className="flex gap-2 mb-1 flex-wrap">
+                              {t.categoria && <Badge className="bg-indigo-100 text-indigo-700 text-xs">{t.categoria}</Badge>}
+                              {t.origem === "conversa_admin" && <Badge className="bg-teal-100 text-teal-700 text-xs">Aprendido em conversa</Badge>}
+                            </div>
+                            <p className="font-medium text-sm text-gray-900">{t.pergunta}</p>
+                            <p className="text-sm text-gray-600 mt-1">{t.resposta}</p>
+                          </div>
+                          <Button size="icon" variant="ghost" className="h-7 w-7 text-red-400 flex-shrink-0" onClick={() => removeTreinamento(t.id)}>
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
         </TabsContent>
       </Tabs>
 
