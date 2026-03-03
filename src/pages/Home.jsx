@@ -10,6 +10,7 @@ import EditalDetailModal from "../components/home/EditalDetailModal";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { motion } from "framer-motion";
+import moment from "moment";
 
 const CATEGORY_LABELS = {
   inovacao_startups: "Inovação & Startups",
