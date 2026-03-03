@@ -12,6 +12,7 @@ import { Plus, Trash2, Upload, Loader2, FileText, Sparkles, Brain, ChevronDown, 
 
 const TIPO_LABELS = {
   edital_completo: { label: "Edital Completo", color: "bg-blue-100 text-blue-800", desc: "IA lê para tirar dúvidas" },
+  manual_recurso: { label: "Manual de Uso de Recursos", color: "bg-teal-100 text-teal-800", desc: "IA consulta para dúvidas de compras/pagamentos" },
   anexo_proposta: { label: "Anexo da Proposta", color: "bg-purple-100 text-purple-800", desc: "Template editável" },
   perguntas_site: { label: "Perguntas do Site", color: "bg-orange-100 text-orange-800", desc: "Formulário guiado" },
   outro: { label: "Outro", color: "bg-gray-100 text-gray-700", desc: "" },
