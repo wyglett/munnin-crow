@@ -800,9 +800,11 @@ ${lista}`
 
       <div className="space-y-3">
         {campos.map((campo, idx) => {
+          // 8.1 primeiro — justificativa narrativa de TODOS os itens do item 8
           if (isItem81(campo)) {
             return <CampoDescricaoFinanceira key={campo.id} gastos={gastos} campo={campo} onChange={(novo) => updateCampo(idx, novo)} projetoDescricao={projeto.descricao_projeto || projeto.titulo} />;
           }
+          // Demais subitens do item 8: tabelas por categoria
           if (isExecucaoFinanceira(campo)) {
             return <TabelaExecucaoFinanceira key={campo.id} gastos={gastos} orcamentoLinhas={orcamentoLinhas} campo={campo} onChange={(novo) => updateCampo(idx, novo)} />;
           }
