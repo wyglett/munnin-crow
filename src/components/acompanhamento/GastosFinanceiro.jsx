@@ -179,11 +179,12 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
     setModoSelecao(false);
   };
 
-  const exportarItem = async (gasto) => {
+  const exportarItem = async (gasto, forceExport = false) => {
     const catId = projeto.drive_categoria_ids?.[gasto.categoria];
-    if (!catId) { alert("Configure o Drive primeiro."); return; }
+    if (!catId) { if (!forceExport) alert("Configure o Drive primeiro."); return; }
+    if (!gasto.id) { console.warn("exportarItem: gasto sem id", gasto); return; }
     const currentHash = hashGasto(gasto);
-    if (gasto.drive_exportado && gasto.drive_hash === currentHash) { alert("Já exportado e sem modificações."); return; }
+    if (!forceExport && gasto.drive_exportado && gasto.drive_hash === currentHash) { alert("Já exportado e sem modificações."); return; }
 
     setExportandoIds(prev => new Set([...prev, gasto.id]));
     const res = await base44.functions.invoke("exportarItemDrive", {
