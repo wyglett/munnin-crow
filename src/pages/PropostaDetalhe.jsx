@@ -166,28 +166,10 @@ Faça uma análise crítica da proposta, aponte pontos fortes, lacunas e dê sug
           {/* SIGFAPES */}
           <TabsContent value="sigfapes">
             <Card><CardContent className="p-6">
-              <h2 className="font-bold text-lg mb-2">Formulário Sigfapes</h2>
-              <p className="text-sm text-gray-500 mb-4">Área de referência para os campos exigidos pelo Sigfapes. Use como guia para o preenchimento no sistema oficial.</p>
-              {edital?.documentos_modelo?.length > 0 && (
-                <div className="mb-4">
-                  <p className="text-xs font-semibold text-gray-600 uppercase mb-2">Documentos de Referência (Admin)</p>
-                  <div className="space-y-2">
-                    {edital.documentos_modelo.map((doc, i) => (
-                      <a key={i} href={doc.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-3 bg-indigo-50 rounded-lg border border-indigo-100 text-indigo-700 text-sm hover:bg-indigo-100 transition-all">
-                        <FileText className="w-4 h-4" /> {doc.nome}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
-              <Label>Suas anotações / checklist Sigfapes</Label>
-              <Textarea
-                value={sigfapesNotes || proposta.sigfapes_notas || ""}
-                onChange={e => setSigfapesNotes(e.target.value)}
-                onBlur={() => update.mutate({ sigfapes_notas: sigfapesNotes })}
-                placeholder="Anote campos preenchidos, pendências, observações do sistema Sigfapes..."
-                rows={8}
-                className="mt-1"
+              <SigfapesFormulario
+                proposta={proposta}
+                edital={edital || { titulo: proposta.edital_titulo, orgao: proposta.edital_orgao }}
+                onSave={(data) => update.mutate(data)}
               />
             </CardContent></Card>
           </TabsContent>
