@@ -504,26 +504,35 @@ function CampoDescricaoFinanceira({ gastos, campo, onChange, projetoDescricao })
     }).join("\n\n");
 
     const r = await base44.integrations.Core.InvokeLLM({
-      prompt: `Você é responsável por redigir a seção 8.1 de um relatório de prestação de contas de projeto financiado.
+      prompt: `Você vai redigir a seção 8.1 de um relatório de prestação de contas de projeto de inovação financiado por órgão público.
 
-Redija um texto formal em português, organizado por categoria, explicando cada item adquirido/contratado.
+MODELO DE ESCRITA (siga este estilo exato):
 
-ESTRUTURA ESPERADA (repita para cada categoria que houver itens):
+Materiais Permanentes:
 
-[Nome da Categoria]
-Texto corrido explicando cada item, o que é, para que serve no contexto do projeto e por que foi necessário. Mencione o valor. Escreva em parágrafos fluidos, sem bullets, sem listas, sem numeração.
+Foi adquirida uma Smart TV da marca Philips, 50 polegadas, sistema Google TV, utilizada como recurso audiovisual em capacitações, reuniões e eventos do Programa, garantindo qualidade na exibição de conteúdos e apresentações.
 
-REGRAS:
-- Cada categoria deve ter seu título em uma linha separada (ex: "Material Permanente", "Terceiros", "Material de Consumo")
-- Abaixo do título, texto corrido em um ou mais parágrafos
-- NÃO use markdown, asteriscos, traços ou símbolos especiais
-- Mencione o valor de cada item naturalmente no texto
-- Tom formal e técnico
-- NÃO use "bullet points" nem numeração
+Foi adquirido um Celular iPhone 16 Pro Max da marca Apple, 256gb, destinado à equipe técnica para registro de atividades, captação de imagens e vídeos em alta qualidade, além de suporte à comunicação e gestão das mídias sociais do Programa.
+
+Terceiros:
+
+Nos serviços de terceiros, foi contratada a empresa XYZ para impressão e confecção de materiais de divulgação do Programa, utilizados como apoio em evento, garantindo a comunicação institucional e a visibilidade das ações junto ao público.
+
+---
+
+REGRAS OBRIGATÓRIAS:
+- Escreva o nome da categoria seguido de dois pontos (ex: "Materiais Permanentes:"), em linha separada
+- Para cada item, escreva UM parágrafo curto (1-3 linhas), começando com "Foi adquirido/adquirida/contratado/contratada..."
+- Mencione o fornecedor/marca e o valor (ex: no valor de R$ X.XXX,XX)
+- Explique brevemente para que serve no projeto
+- Parágrafos separados por linha em branco
+- NÃO use bullet points, numeração, asteriscos, traços ou markdown
+- Tom formal e objetivo
+- Se houver observação no item, inclua naturalmente no texto
 
 Projeto: ${projetoDescricao}
 
-Itens por categoria:
+Itens financeiros registrados por categoria:
 ${resumoPorCategoria}`
     });
     onChange({ ...campo, resposta: typeof r === "string" ? r : JSON.stringify(r) });
