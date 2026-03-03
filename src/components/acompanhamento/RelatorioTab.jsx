@@ -93,26 +93,52 @@ function CampoRelatorio({ campo, onChange }) {
   );
 }
 
+// Detecta qual categoria de gasto corresponde ao título/pergunta do campo
+function detectarCategoriaDocampo(campo) {
+  const texto = ((campo.pergunta || "") + " " + (campo.secao || "")).toLowerCase();
+  if (texto.includes("permanente")) return "material_permanente";
+  if (texto.includes("consumo")) return "material_consumo";
+  if (texto.includes("terceiro") || texto.includes("serviço") || texto.includes("servico") || texto.includes("pf")) return "terceiros";
+  if (texto.includes("diária") || texto.includes("diaria")) return "diarias";
+  if (texto.includes("passagem")) return "passagens";
+  if (texto.includes("contrapartida")) return "contrapartida";
+  if (texto.includes("doaci")) return "doaci";
+  return null; // null = todas as categorias (visão geral)
+}
+
 /**
  * TabelaExecucaoFinanceira
- * Exibe, por categoria, CADA gasto como linha da tabela, com subtotal ao final de cada categoria.
- * Totalizador geral no rodapé.
+ * Exibe apenas os itens da categoria correspondente ao campo.
+ * Terceiros: colunas Tipo de Serviço, Descrição, Qtd, Custo Total.
+ * Demais: colunas Descrição, Fornecedor, Qtd, Data, Valor.
  */
 function TabelaExecucaoFinanceira({ gastos, orcamentoLinhas, campo, onChange }) {
   const [aberto, setAberto] = useState(true);
 
-  const categorias = Object.keys(CATEGORIAS_LABEL);
-  const gastosPorCat = categorias
-    .map(cat => ({
-      cat,
-      label: CATEGORIAS_LABEL[cat],
-      items: gastos.filter(g => g.categoria === cat),
-      totalAprovado: (orcamentoLinhas || []).filter(l => l.categoria === cat).reduce((s, l) => s + (Number(l.valor_aprovado) || 0), 0),
-    }))
-    .filter(c => c.items.length > 0);
+  const categoriaFiltro = detectarCategoriaDocampo(campo);
 
-  const totalGeral = gastos.reduce((s, g) => s + (Number(g.valor) || 0), 0);
-  const totalAprovadoGeral = (orcamentoLinhas || []).reduce((s, l) => s + (Number(l.valor_aprovado) || 0), 0);
+  // Se detectou categoria, filtra apenas os gastos dessa categoria; caso contrário mostra todos
+  const itensFiltrados = categoriaFiltro
+    ? gastos.filter(g => g.categoria === categoriaFiltro)
+    : gastos;
+
+  const totalFiltrado = itensFiltrados.reduce((s, g) => s + (Number(g.valor) || 0), 0);
+  const ehTerceiros = categoriaFiltro === "terceiros";
+
+  if (itensFiltrados.length === 0) {
+    return (
+      <div className="border rounded-xl overflow-hidden bg-white">
+        <div className="flex items-start gap-3 p-4">
+          <div className="flex-1 min-w-0">
+            {campo.secao && <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider mb-0.5">{campo.secao}</p>}
+            <p className="text-sm font-semibold text-gray-800">{campo.pergunta}</p>
+            <p className="text-xs text-gray-400 mt-1 italic">Nenhum item cadastrado nesta categoria.</p>
+          </div>
+          <Badge className="bg-indigo-100 text-indigo-700 text-xs flex items-center gap-1"><RefreshCw className="w-3 h-3" /> Auto</Badge>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="border rounded-xl overflow-hidden bg-white">
@@ -123,7 +149,7 @@ function TabelaExecucaoFinanceira({ gastos, orcamentoLinhas, campo, onChange }) 
         <div className="flex-1 min-w-0">
           {campo.secao && <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider mb-0.5">{campo.secao}</p>}
           <p className="text-sm font-semibold text-gray-800">{campo.pergunta}</p>
-          <p className="text-xs text-indigo-600 mt-0.5">Preenchido automaticamente a partir do Financeiro</p>
+          <p className="text-xs text-indigo-600 mt-0.5">Preenchido automaticamente a partir do Financeiro ({itensFiltrados.length} item{itensFiltrados.length > 1 ? "s" : ""})</p>
         </div>
         <div className="flex items-center gap-2">
           <Badge className="bg-indigo-100 text-indigo-700 text-xs flex items-center gap-1"><RefreshCw className="w-3 h-3" /> Auto</Badge>
@@ -132,72 +158,58 @@ function TabelaExecucaoFinanceira({ gastos, orcamentoLinhas, campo, onChange }) 
       </div>
 
       {aberto && (
-        <div className="px-4 pb-4 border-t border-gray-100 pt-3 space-y-4">
-          <Alert className="border-indigo-200 bg-indigo-50">
-            <Info className="w-4 h-4 text-indigo-600" />
-            <AlertDescription className="text-xs text-indigo-700">
-              Cada item financeiro cadastrado aparece como uma linha. O subtotal aparece ao final de cada categoria.
-            </AlertDescription>
-          </Alert>
-
+        <div className="px-4 pb-4 border-t border-gray-100 pt-3 space-y-3">
           <div className="overflow-x-auto">
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-gray-50 text-xs text-gray-600 uppercase">
-                  <th className="text-left p-2 border border-gray-200">Descrição do Item</th>
-                  <th className="text-left p-2 border border-gray-200">Fornecedor</th>
-                  <th className="text-center p-2 border border-gray-200">Qtd</th>
-                  <th className="text-right p-2 border border-gray-200">Data</th>
-                  <th className="text-right p-2 border border-gray-200">Valor</th>
+                  {ehTerceiros ? (
+                    <>
+                      <th className="text-left p-2 border border-gray-200">Tipo de Serviço</th>
+                      <th className="text-left p-2 border border-gray-200">Descrição do Executado</th>
+                      <th className="text-center p-2 border border-gray-200">Qtd</th>
+                      <th className="text-right p-2 border border-gray-200">Custo Total</th>
+                    </>
+                  ) : (
+                    <>
+                      <th className="text-left p-2 border border-gray-200">Descrição do Item</th>
+                      <th className="text-left p-2 border border-gray-200">Fornecedor</th>
+                      <th className="text-center p-2 border border-gray-200">Qtd</th>
+                      <th className="text-right p-2 border border-gray-200">Data</th>
+                      <th className="text-right p-2 border border-gray-200">Valor</th>
+                    </>
+                  )}
                 </tr>
               </thead>
               <tbody>
-                {gastosPorCat.map(({ cat, label, items, totalAprovado }) => {
-                  const totalCat = items.reduce((s, g) => s + (Number(g.valor) || 0), 0);
-                  return (
-                    <React.Fragment key={cat}>
-                      {/* Cabeçalho da categoria */}
-                      <tr className="bg-indigo-50">
-                        <td colSpan={5} className="p-2 border border-gray-200 font-bold text-indigo-800 text-xs uppercase tracking-wide">
-                          {label}
+                {itensFiltrados.map((g, i) => (
+                  <tr key={g.id || i} className="hover:bg-gray-50">
+                    {ehTerceiros ? (
+                      <>
+                        <td className="p-2 border border-gray-200 text-gray-700">{g.fornecedor || "—"}</td>
+                        <td className="p-2 border border-gray-200">{g.descricao}</td>
+                        <td className="p-2 border border-gray-200 text-center text-gray-600">{g.quantidade || 1}</td>
+                        <td className="p-2 border border-gray-200 text-right font-medium">{fmt(g.valor)}</td>
+                      </>
+                    ) : (
+                      <>
+                        <td className="p-2 border border-gray-200">{g.descricao}</td>
+                        <td className="p-2 border border-gray-200 text-gray-600">{g.fornecedor || "—"}</td>
+                        <td className="p-2 border border-gray-200 text-center text-gray-600">{g.quantidade || 1}</td>
+                        <td className="p-2 border border-gray-200 text-right text-gray-600 whitespace-nowrap">
+                          {g.data ? new Date(g.data + "T12:00:00").toLocaleDateString("pt-BR") : "—"}
                         </td>
-                      </tr>
-                      {/* Itens da categoria */}
-                      {items.map((g, i) => (
-                        <tr key={g.id || i} className="hover:bg-gray-50">
-                          <td className="p-2 border border-gray-200">{g.descricao}</td>
-                          <td className="p-2 border border-gray-200 text-gray-600">{g.fornecedor || "—"}</td>
-                          <td className="p-2 border border-gray-200 text-center text-gray-600">{g.quantidade || 1}</td>
-                          <td className="p-2 border border-gray-200 text-right text-gray-600 whitespace-nowrap">
-                            {g.data ? new Date(g.data + "T12:00:00").toLocaleDateString("pt-BR") : "—"}
-                          </td>
-                          <td className="p-2 border border-gray-200 text-right font-medium">{fmt(g.valor)}</td>
-                        </tr>
-                      ))}
-                      {/* Subtotal da categoria */}
-                      <tr className="bg-gray-100 font-bold">
-                        <td colSpan={4} className="p-2 border border-gray-200 text-right text-xs uppercase text-gray-600">
-                          Subtotal — {label}
-                          {totalAprovado > 0 && <span className="ml-2 font-normal text-gray-400">(aprovado: {fmt(totalAprovado)})</span>}
-                        </td>
-                        <td className="p-2 border border-gray-200 text-right text-indigo-700">{fmt(totalCat)}</td>
-                      </tr>
-                    </React.Fragment>
-                  );
-                })}
-                {/* Total geral */}
-                <tr className="bg-gray-200 font-bold text-sm">
-                  <td colSpan={4} className="p-2 border border-gray-300 text-right uppercase">TOTAL GERAL</td>
-                  <td className="p-2 border border-gray-300 text-right text-indigo-900">{fmt(totalGeral)}</td>
-                </tr>
-                {totalAprovadoGeral > 0 && (
-                  <tr className="bg-gray-50 text-xs text-gray-500">
-                    <td colSpan={4} className="p-2 border border-gray-200 text-right">Total Aprovado / Saldo</td>
-                    <td className="p-2 border border-gray-200 text-right">
-                      {fmt(totalAprovadoGeral)} / <span className={totalAprovadoGeral - totalGeral < 0 ? "text-red-600" : "text-green-700"}>{fmt(totalAprovadoGeral - totalGeral)}</span>
-                    </td>
+                        <td className="p-2 border border-gray-200 text-right font-medium">{fmt(g.valor)}</td>
+                      </>
+                    )}
                   </tr>
-                )}
+                ))}
+                <tr className="bg-gray-100 font-bold text-sm">
+                  <td colSpan={ehTerceiros ? 3 : 4} className="p-2 border border-gray-200 text-right text-xs uppercase text-gray-600">
+                    Total
+                  </td>
+                  <td className="p-2 border border-gray-200 text-right text-indigo-700">{fmt(totalFiltrado)}</td>
+                </tr>
               </tbody>
             </table>
           </div>
