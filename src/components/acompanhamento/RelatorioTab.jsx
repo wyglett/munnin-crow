@@ -938,7 +938,7 @@ ${resumoPorCategoria}`
           </div>
           <input type="file" className="hidden" accept=".pdf" onChange={uploadTemplate} disabled={uploadingPdf || extraindo} />
         </label>
-        <ImportProjetoAprovado projeto={projeto} onSave={onSave} />
+        <ImportProjetoAprovado projeto={projeto} onSave={onSave} campos={campos} onSalvarCampos={salvar} />
       </div>
 
       {projeto.relatorio_template_url && (
