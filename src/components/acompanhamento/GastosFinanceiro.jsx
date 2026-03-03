@@ -47,6 +47,7 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
   const [modoSelecao, setModoSelecao] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(null); // null | "single" | "bulk"
   const [deletingId, setDeletingId] = useState(null);
+  const [leituraAutoOpen, setLeituraAutoOpen] = useState(false);
 
   const orcamentoLinhas = projeto.orcamento_linhas || [];
   const valorContratado = projeto.valor_contratado || 0;
