@@ -124,6 +124,7 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
     const payload = {
       ...form,
       valor: parseFloat(form.valor) || 0,
+      quantidade: parseFloat(form.quantidade) || 1,
       anexos: form.anexos || [],
     };
     if (editingId) {
