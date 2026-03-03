@@ -27,6 +27,7 @@ const DRIVE_STRUCT = [
   "Diárias",
   "Passagens",
   "Contrapartida",
+  "DOACI",
 ];
 
 // Extrai o folder ID de um link do Google Drive
