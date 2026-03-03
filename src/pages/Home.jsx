@@ -28,6 +28,63 @@ const STATE_NAMES = {
   RR: "Roraima", SC: "Santa Catarina", SP: "São Paulo", SE: "Sergipe", TO: "Tocantins",
 };
 
+function EditaisLista({ editais, category, onBack, onSelect }) {
+  const [mostrarAntigos, setMostrarAntigos] = useState(false);
+  const abertos = editais.filter(e => {
+    if (e.status === "encerrado") return false;
+    if (e.data_encerramento && moment(e.data_encerramento).isBefore(moment(), "day")) return false;
+    return true;
+  });
+  const encerrados = editais.filter(e => !abertos.includes(e));
+
+  return (
+    <div>
+      <div className="flex items-center gap-3 mb-6">
+        <button onClick={onBack} className="text-white/40 hover:text-white transition-colors">
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        <div className="flex items-center gap-3">
+          <h2 className="text-xl font-bold text-white">{CATEGORY_LABELS[category]}</h2>
+          <span className="text-xs bg-white/10 text-white/50 px-2 py-0.5 rounded-full">
+            {abertos.length} abertos
+          </span>
+        </div>
+      </div>
+
+      {abertos.length === 0 && (
+        <div className="text-center py-10">
+          <p className="text-white/40">Nenhum edital aberto nesta categoria</p>
+        </div>
+      )}
+
+      <div className="space-y-3">
+        {abertos.map((edital) => (
+          <EditalCard key={edital.id} edital={edital} onClick={onSelect} />
+        ))}
+      </div>
+
+      {encerrados.length > 0 && (
+        <div className="mt-6">
+          <button
+            onClick={() => setMostrarAntigos(v => !v)}
+            className="flex items-center gap-2 text-xs text-white/30 hover:text-white/50 transition-colors py-2"
+          >
+            <ChevronRight className={`w-3.5 h-3.5 transition-transform ${mostrarAntigos ? "rotate-90" : ""}`} />
+            Editais Antigos ({encerrados.length})
+          </button>
+          {mostrarAntigos && (
+            <div className="space-y-2 mt-2 opacity-60">
+              {encerrados.map((edital) => (
+                <EditalCard key={edital.id} edital={edital} onClick={onSelect} />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Home() {
   const [selectedState, setSelectedState] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
