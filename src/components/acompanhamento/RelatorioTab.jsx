@@ -93,61 +93,26 @@ function CampoRelatorio({ campo, onChange }) {
   );
 }
 
-// --- Tabela de execução financeira linkada ao financeiro ---
-function TabelaExecucaoFinanceira({ gastos, orcamentoLinhas, campo, onChange, projetoDescricao }) {
-  const [gerando, setGerando] = useState(false);
+/**
+ * TabelaExecucaoFinanceira
+ * Exibe, por categoria, CADA gasto como linha da tabela, com subtotal ao final de cada categoria.
+ * Totalizador geral no rodapé.
+ */
+function TabelaExecucaoFinanceira({ gastos, orcamentoLinhas, campo, onChange }) {
   const [aberto, setAberto] = useState(true);
 
-  // Agrupa gastos por categoria e gera linhas automáticas
   const categorias = Object.keys(CATEGORIAS_LABEL);
-  const gastosPorCat = {};
-  categorias.forEach(cat => {
-    gastosPorCat[cat] = gastos.filter(g => g.categoria === cat);
-  });
+  const gastosPorCat = categorias
+    .map(cat => ({
+      cat,
+      label: CATEGORIAS_LABEL[cat],
+      items: gastos.filter(g => g.categoria === cat),
+      totalAprovado: (orcamentoLinhas || []).filter(l => l.categoria === cat).reduce((s, l) => s + (Number(l.valor_aprovado) || 0), 0),
+    }))
+    .filter(c => c.items.length > 0);
 
-  // Para cada categoria, calcula total gasto e valor aprovado (do orçamento)
-  const linhas = categorias.map(cat => {
-    const gastosNaCat = gastosPorCat[cat];
-    const totalGasto = gastosNaCat.reduce((s, g) => s + (Number(g.valor) || 0), 0);
-    const orcamentoCat = (orcamentoLinhas || []).filter(l => l.categoria === cat);
-    const valorAprovado = orcamentoCat.reduce((s, l) => s + (Number(l.valor_aprovado) || 0), 0);
-    return { cat, label: CATEGORIAS_LABEL[cat], totalGasto, valorAprovado, gastos: gastosNaCat };
-  });
-
-  const gerarDescricaoTecnica = async (linha) => {
-    if (linha.gastos.length === 0) return;
-    setGerando(true);
-    const listaItens = linha.gastos.map(g => `- ${g.descricao}${g.fornecedor ? ` (${g.fornecedor})` : ""}: ${fmt(g.valor)}`).join("\n");
-    const r = await base44.integrations.Core.InvokeLLM({
-      prompt: `Escreva uma descrição técnica formal e sucinta (2-3 frases) para a categoria "${linha.label}" no contexto do projeto abaixo.
-Projeto: ${projetoDescricao || "projeto de inovação"}
-Itens adquiridos nesta categoria:\n${listaItens}
-A descrição deve mencionar os principais itens, suas finalidades no projeto, e o total investido.`
-    });
-    // Atualiza o campo com a descrição técnica desta categoria
-    const itensAtuais = campo.itens_execucao || [];
-    const idx = itensAtuais.findIndex(i => i.categoria === linha.cat);
-    const novoItem = { categoria: linha.cat, descricao_tecnica: r };
-    const novosItens = idx >= 0
-      ? itensAtuais.map((it, i) => i === idx ? { ...it, descricao_tecnica: r } : it)
-      : [...itensAtuais, novoItem];
-    onChange({ ...campo, itens_execucao: novosItens });
-    setGerando(false);
-  };
-
-  const getDescTecnica = (cat) => {
-    return (campo.itens_execucao || []).find(i => i.categoria === cat)?.descricao_tecnica || "";
-  };
-
-  const setDescTecnica = (cat, val) => {
-    const itensAtuais = campo.itens_execucao || [];
-    const idx = itensAtuais.findIndex(i => i.categoria === cat);
-    const novoItem = { categoria: cat, descricao_tecnica: val };
-    const novos = idx >= 0
-      ? itensAtuais.map((it, i) => i === idx ? { ...it, descricao_tecnica: val } : it)
-      : [...itensAtuais, novoItem];
-    onChange({ ...campo, itens_execucao: novos });
-  };
+  const totalGeral = gastos.reduce((s, g) => s + (Number(g.valor) || 0), 0);
+  const totalAprovadoGeral = (orcamentoLinhas || []).reduce((s, l) => s + (Number(l.valor_aprovado) || 0), 0);
 
   return (
     <div className="border rounded-xl overflow-hidden bg-white">
@@ -171,7 +136,7 @@ A descrição deve mencionar os principais itens, suas finalidades no projeto, e
           <Alert className="border-indigo-200 bg-indigo-50">
             <Info className="w-4 h-4 text-indigo-600" />
             <AlertDescription className="text-xs text-indigo-700">
-              Os valores são puxados automaticamente do Financeiro. Categorias sem gastos aparecem como R$ 0,00. Gere a descrição técnica com IA para cada categoria.
+              Cada item financeiro cadastrado aparece como uma linha. O subtotal aparece ao final de cada categoria.
             </AlertDescription>
           </Alert>
 
@@ -179,65 +144,62 @@ A descrição deve mencionar os principais itens, suas finalidades no projeto, e
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-gray-50 text-xs text-gray-600 uppercase">
-                  <th className="text-left p-2 border border-gray-200">Categoria</th>
-                  <th className="text-right p-2 border border-gray-200">Orçado</th>
-                  <th className="text-right p-2 border border-gray-200">Executado</th>
-                  <th className="text-right p-2 border border-gray-200">Saldo</th>
-                  <th className="text-center p-2 border border-gray-200 w-24">%</th>
+                  <th className="text-left p-2 border border-gray-200">Descrição do Item</th>
+                  <th className="text-left p-2 border border-gray-200">Fornecedor</th>
+                  <th className="text-center p-2 border border-gray-200">Qtd</th>
+                  <th className="text-right p-2 border border-gray-200">Data</th>
+                  <th className="text-right p-2 border border-gray-200">Valor</th>
                 </tr>
               </thead>
               <tbody>
-                {linhas.map(linha => {
-                  const saldo = linha.valorAprovado - linha.totalGasto;
-                  const pct = linha.valorAprovado > 0 ? (linha.totalGasto / linha.valorAprovado * 100) : (linha.totalGasto > 0 ? 100 : 0);
+                {gastosPorCat.map(({ cat, label, items, totalAprovado }) => {
+                  const totalCat = items.reduce((s, g) => s + (Number(g.valor) || 0), 0);
                   return (
-                    <tr key={linha.cat} className={linha.totalGasto === 0 ? "opacity-50" : ""}>
-                      <td className="p-2 border border-gray-200 font-medium">{linha.label}</td>
-                      <td className="p-2 border border-gray-200 text-right text-gray-600">{linha.valorAprovado > 0 ? fmt(linha.valorAprovado) : "—"}</td>
-                      <td className="p-2 border border-gray-200 text-right font-bold text-indigo-700">{fmt(linha.totalGasto)}</td>
-                      <td className={`p-2 border border-gray-200 text-right font-medium ${saldo < 0 ? "text-red-600" : "text-green-700"}`}>{linha.valorAprovado > 0 ? fmt(saldo) : "—"}</td>
-                      <td className="p-2 border border-gray-200 text-center text-xs">
-                        {pct > 0 ? `${pct.toFixed(0)}%` : "—"}
-                      </td>
-                    </tr>
+                    <React.Fragment key={cat}>
+                      {/* Cabeçalho da categoria */}
+                      <tr className="bg-indigo-50">
+                        <td colSpan={5} className="p-2 border border-gray-200 font-bold text-indigo-800 text-xs uppercase tracking-wide">
+                          {label}
+                        </td>
+                      </tr>
+                      {/* Itens da categoria */}
+                      {items.map((g, i) => (
+                        <tr key={g.id || i} className="hover:bg-gray-50">
+                          <td className="p-2 border border-gray-200">{g.descricao}</td>
+                          <td className="p-2 border border-gray-200 text-gray-600">{g.fornecedor || "—"}</td>
+                          <td className="p-2 border border-gray-200 text-center text-gray-600">{g.quantidade || 1}</td>
+                          <td className="p-2 border border-gray-200 text-right text-gray-600 whitespace-nowrap">
+                            {g.data ? new Date(g.data + "T12:00:00").toLocaleDateString("pt-BR") : "—"}
+                          </td>
+                          <td className="p-2 border border-gray-200 text-right font-medium">{fmt(g.valor)}</td>
+                        </tr>
+                      ))}
+                      {/* Subtotal da categoria */}
+                      <tr className="bg-gray-100 font-bold">
+                        <td colSpan={4} className="p-2 border border-gray-200 text-right text-xs uppercase text-gray-600">
+                          Subtotal — {label}
+                          {totalAprovado > 0 && <span className="ml-2 font-normal text-gray-400">(aprovado: {fmt(totalAprovado)})</span>}
+                        </td>
+                        <td className="p-2 border border-gray-200 text-right text-indigo-700">{fmt(totalCat)}</td>
+                      </tr>
+                    </React.Fragment>
                   );
                 })}
-                <tr className="bg-gray-50 font-bold">
-                  <td className="p-2 border border-gray-200">TOTAL</td>
-                  <td className="p-2 border border-gray-200 text-right">{fmt(linhas.reduce((s, l) => s + l.valorAprovado, 0))}</td>
-                  <td className="p-2 border border-gray-200 text-right text-indigo-700">{fmt(linhas.reduce((s, l) => s + l.totalGasto, 0))}</td>
-                  <td className="p-2 border border-gray-200 text-right">{fmt(linhas.reduce((s, l) => s + (l.valorAprovado - l.totalGasto), 0))}</td>
-                  <td className="p-2 border border-gray-200" />
+                {/* Total geral */}
+                <tr className="bg-gray-200 font-bold text-sm">
+                  <td colSpan={4} className="p-2 border border-gray-300 text-right uppercase">TOTAL GERAL</td>
+                  <td className="p-2 border border-gray-300 text-right text-indigo-900">{fmt(totalGeral)}</td>
                 </tr>
+                {totalAprovadoGeral > 0 && (
+                  <tr className="bg-gray-50 text-xs text-gray-500">
+                    <td colSpan={4} className="p-2 border border-gray-200 text-right">Total Aprovado / Saldo</td>
+                    <td className="p-2 border border-gray-200 text-right">
+                      {fmt(totalAprovadoGeral)} / <span className={totalAprovadoGeral - totalGeral < 0 ? "text-red-600" : "text-green-700"}>{fmt(totalAprovadoGeral - totalGeral)}</span>
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
-          </div>
-
-          {/* Descrições técnicas por categoria */}
-          <div className="space-y-3 mt-2">
-            <p className="text-xs font-bold text-gray-600 uppercase">Descrições Técnicas por Categoria</p>
-            {linhas.filter(l => l.totalGasto > 0).map(linha => (
-              <div key={linha.cat} className="border rounded-lg p-3 bg-gray-50">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-bold text-gray-700">{linha.label} — {fmt(linha.totalGasto)}</span>
-                  <Button
-                    type="button" size="sm" variant="ghost"
-                    className="h-6 text-xs text-indigo-600 hover:text-indigo-800 px-2"
-                    onClick={() => gerarDescricaoTecnica(linha)}
-                    disabled={gerando}
-                  >
-                    {gerando ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Sparkles className="w-3 h-3 mr-1" />}
-                    Gerar com IA
-                  </Button>
-                </div>
-                <Textarea
-                  value={getDescTecnica(linha.cat)}
-                  onChange={e => setDescTecnica(linha.cat, e.target.value)}
-                  placeholder={`Descrição técnica dos itens de ${linha.label}...`}
-                  className="text-sm min-h-[60px] resize-none bg-white"
-                />
-              </div>
-            ))}
           </div>
         </div>
       )}
@@ -245,7 +207,10 @@ A descrição deve mencionar os principais itens, suas finalidades no projeto, e
   );
 }
 
-// --- Campo 8.1: texto corrido dos itens financeiros ---
+/**
+ * CampoDescricaoFinanceira (item 8.1)
+ * Gera texto narrativo descrevendo cada categoria e seus itens.
+ */
 function CampoDescricaoFinanceira({ gastos, campo, onChange, projetoDescricao }) {
   const [gerando, setGerando] = useState(false);
   const [aberto, setAberto] = useState(false);
@@ -253,24 +218,34 @@ function CampoDescricaoFinanceira({ gastos, campo, onChange, projetoDescricao })
   const gerarTexto = useCallback(async () => {
     if (gastos.length === 0) return;
     setGerando(true);
-    const listaGastos = gastos.map(g =>
-      `- ${g.descricao} (${CATEGORIAS_LABEL[g.categoria] || g.categoria}): ${fmt(g.valor)}${g.fornecedor ? `, fornecedor: ${g.fornecedor}` : ""}${g.data ? `, data: ${g.data}` : ""}`
-    ).join("\n");
+
+    // Agrupa por categoria para a narrativa
+    const categorias = Object.keys(CATEGORIAS_LABEL);
+    const grupos = categorias
+      .map(cat => ({
+        label: CATEGORIAS_LABEL[cat],
+        items: gastos.filter(g => g.categoria === cat),
+      }))
+      .filter(g => g.items.length > 0);
+
+    const resumo = grupos.map(g => {
+      const total = g.items.reduce((s, x) => s + (Number(x.valor) || 0), 0);
+      const lista = g.items.map(x => `  - ${x.descricao}${x.fornecedor ? ` (${x.fornecedor})` : ""}: ${fmt(x.valor)}`).join("\n");
+      return `${g.label} — Total: ${fmt(total)}\n${lista}`;
+    }).join("\n\n");
+
     const r = await base44.integrations.Core.InvokeLLM({
-      prompt: `Redija um texto corrido formal, em português, descrevendo a execução financeira do projeto abaixo. 
-O texto deve mencionar todos os itens adquiridos, suas categorias e valores, de forma narrativa e objetiva, como se fosse para um relatório de prestação de contas oficial.
+      prompt: `Redija um texto corrido formal, em português, descrevendo a execução financeira do projeto abaixo para fins de prestação de contas. 
+O texto deve mencionar cada categoria e os principais itens adquiridos em cada uma, suas finalidades no projeto e os valores investidos. 
+Escreva de forma narrativa e objetiva, organizado por categoria, sem usar listas ou bullets — use parágrafos.
 Projeto: ${projetoDescricao}
-Itens executados:\n${listaGastos}
-O texto deve ser fluido, sem listas ou bullets, em parágrafo(s).`
+
+Itens por categoria:
+${resumo}`
     });
     onChange({ ...campo, resposta: r, concluido: false });
     setGerando(false);
   }, [gastos, campo, onChange, projetoDescricao]);
-
-  // Regenera automaticamente sempre que a lista de gastos mudar
-  useEffect(() => {
-    if (gastos.length > 0 && !campo._geradoHash) return; // só regera se já gerou antes
-  }, [gastos.length]);
 
   return (
     <div className={`border rounded-xl overflow-hidden ${campo.concluido ? "border-green-200 bg-green-50/30" : "border-amber-200 bg-amber-50/20"}`}>
@@ -278,7 +253,7 @@ O texto deve ser fluido, sem listas ou bullets, em parágrafo(s).`
         <div className="flex-1 min-w-0">
           {campo.secao && <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wider mb-0.5">{campo.secao}</p>}
           <p className="text-sm font-semibold text-gray-800">{campo.pergunta}</p>
-          <p className="text-xs text-amber-700 mt-0.5">Gerado automaticamente com base nos itens do Financeiro</p>
+          <p className="text-xs text-amber-700 mt-0.5">Descrição narrativa por categoria — gerada com IA a partir dos itens do Financeiro</p>
           {campo.concluido && campo.resposta && <p className="text-xs text-gray-500 mt-1 line-clamp-2">{campo.resposta}</p>}
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
@@ -306,7 +281,7 @@ O texto deve ser fluido, sem listas ou bullets, em parágrafo(s).`
           <Textarea
             value={campo.resposta || ""}
             onChange={e => onChange({ ...campo, resposta: e.target.value })}
-            placeholder="Texto corrido será gerado automaticamente ao clicar no botão acima..."
+            placeholder="Clique em 'Gerar com IA' para gerar o texto automaticamente, ou escreva manualmente..."
             className="min-h-[150px] text-sm"
           />
           <div className="flex justify-end">
@@ -506,18 +481,24 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
     salvar(novos);
   };
 
-  // Detecta se um campo é de execução financeira (tabela de recursos)
+  // Detecta se um campo é de tabela de execução financeira (itens linha a linha)
   const isExecucaoFinanceira = (campo) => {
     const p = (campo.pergunta || "").toLowerCase();
+    const s = (campo.secao || "").toLowerCase();
     return campo.tipo_resposta === "tabela_itens" ||
-      p.includes("execução") || p.includes("execucao") || p.includes("recursos financeiro") ||
-      p.includes("despesa") || p.includes("gasto") || p.includes("orçamento execut");
+      p.includes("execução") || p.includes("execucao") ||
+      p.includes("recursos financeiro") || p.includes("despesa") ||
+      p.includes("gasto") || p.includes("orçamento execut") ||
+      s.includes("execução") || s.includes("execucao");
   };
 
-  // Detecta se um campo é o item 8.1 (descrição financeira em texto)
+  // Detecta se é o campo 8.1 — descrição narrativa financeira
   const isItem81 = (campo) => {
-    const p = (campo.pergunta || campo.secao || "").toLowerCase();
-    return p.includes("8.1") || (p.includes("descriç") && (p.includes("financ") || p.includes("recurso") || p.includes("gasto")));
+    const p = (campo.pergunta || "").toLowerCase();
+    const s = (campo.secao || "").toLowerCase();
+    return p.includes("8.1") || s.includes("8.1") ||
+      ((p.includes("descriç") || p.includes("justif")) &&
+       (p.includes("financ") || p.includes("recurso") || p.includes("gasto")));
   };
 
   const uploadTemplate = async (e) => {
@@ -559,8 +540,6 @@ Ordene pelos campos na ordem que aparecem no documento.`,
         pergunta: c.pergunta || `Campo ${i + 1}`,
         tipo_resposta: c.tipo_resposta || "texto_longo",
         resposta: "",
-        itens_tabela: [],
-        itens_execucao: [],
         concluido: false,
       }));
       salvar(novos);
@@ -625,7 +604,6 @@ Ordene pelos campos na ordem que aparecem no documento.`,
                 orcamentoLinhas={orcamentoLinhas}
                 campo={campo}
                 onChange={(novo) => updateCampo(idx, novo)}
-                projetoDescricao={projeto.descricao_projeto || projeto.titulo}
               />
             );
           }
