@@ -104,7 +104,7 @@ ${envolveMoneda ? "- Informe as cotações atuais do dólar e euro buscadas na i
 ${envolveVrte ? "- Informe o VRTE vigente e como ele se aplica ao contexto da pergunta." : ""}
 - Formato Markdown, use listas quando listar itens.`,
       add_context_from_internet: buscaInternet,
-      file_urls: fileUrls.length > 0 ? fileUrls : undefined,
+      file_urls: allFileUrls.length > 0 ? allFileUrls : undefined,
     });
 
     setMessages(prev => [...prev, { role: "assistant", content: response }]);
