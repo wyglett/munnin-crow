@@ -481,24 +481,28 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
     salvar(novos);
   };
 
-  // Detecta se um campo é de tabela de execução financeira (itens linha a linha)
+  // Detecta se é exatamente o campo "8 - EXECUÇÃO DOS RECURSOS FINANCEIROS"
+  // Só aplica a tabela financeira nessa seção específica
   const isExecucaoFinanceira = (campo) => {
     const p = (campo.pergunta || "").toLowerCase();
     const s = (campo.secao || "").toLowerCase();
-    return campo.tipo_resposta === "tabela_itens" ||
-      p.includes("execução") || p.includes("execucao") ||
-      p.includes("recursos financeiro") || p.includes("despesa") ||
-      p.includes("gasto") || p.includes("orçamento execut") ||
-      s.includes("execução") || s.includes("execucao");
+    // Seção exata "8" sobre recursos financeiros (excluindo bolsistas que é outra seção)
+    const ehSecao8 = /^8(\s|$|-|\.|\s*[-–])/.test(campo.secao || "") && 
+      (s.includes("recurso") || s.includes("financ") || s.includes("execução"));
+    const ehTabelaItens = campo.tipo_resposta === "tabela_itens" && 
+      (s.includes("financ") || s.includes("recurso") || p.includes("financ"));
+    return ehSecao8 || ehTabelaItens;
   };
 
-  // Detecta se é o campo 8.1 — descrição narrativa financeira
+  // Detecta se é o campo de descrição/justificativa financeira (gerado com IA)
+  // Está dentro da seção 8 e pede descrição/justificativa
   const isItem81 = (campo) => {
     const p = (campo.pergunta || "").toLowerCase();
     const s = (campo.secao || "").toLowerCase();
-    return p.includes("8.1") || s.includes("8.1") ||
-      ((p.includes("descriç") || p.includes("justif")) &&
-       (p.includes("financ") || p.includes("recurso") || p.includes("gasto")));
+    const ehSecao8 = /^8(\s|$|-|\.|\s*[-–])/.test(campo.secao || "") &&
+      (s.includes("recurso") || s.includes("financ") || s.includes("execução"));
+    const ehDescricaoJustif = p.includes("descriç") || p.includes("justif") || p.includes("8.1");
+    return ehSecao8 && ehDescricaoJustif;
   };
 
   const uploadTemplate = async (e) => {
