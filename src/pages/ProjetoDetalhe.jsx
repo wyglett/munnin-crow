@@ -110,18 +110,6 @@ export default function ProjetoDetalhe() {
     setCriandoDrive(false);
   };
 
-  const gerarRelatorio = async () => {
-    setGerando(true);
-    const totalGasto = gastos.reduce((s, g) => s + (Number(g.valor) || 0), 0);
-    const saldo = (projeto.valor_contratado || 0) - totalGasto;
-    const gastosStr = gastos.map(g => `- ${g.data || "?"}: ${g.descricao} | ${g.categoria} | ${fmt(g.valor)} | ${g.fornecedor || ""}`).join("\n");
-    const r = await base44.integrations.Core.InvokeLLM({
-      prompt: `Gere um Relatório Parcial de Execução formal para:\nProjeto: ${projeto.titulo}\nÓrgão: ${projeto.orgao_financiador || "N/I"}\nValor Contratado: ${fmt(projeto.valor_contratado)}\nPeríodo: ${projeto.data_inicio || "?"} a ${projeto.data_fim_prevista || "?"}\nTotal Executado: ${fmt(totalGasto)}\nSaldo: ${fmt(saldo)}\nGastos:\n${gastosStr || "Nenhum"}\nFormato Markdown, linguagem formal.`
-    });
-    setRelatorio(r);
-    setGerando(false);
-  };
-
   if (!projeto) return <div className="flex items-center justify-center h-64"><Loader2 className="w-6 h-6 animate-spin text-indigo-600" /></div>;
 
   return (
