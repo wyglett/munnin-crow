@@ -779,7 +779,28 @@ Ordene pelos campos na ordem que aparecem no documento.`,
         return `### ${g.label}\n${itens}`;
       }).join("\n\n");
       const r = await base44.integrations.Core.InvokeLLM({
-        prompt: `Redija a seção 8.1 de prestação de contas, organizada por categoria. Para cada categoria, coloque o nome como título numa linha separada e escreva texto corrido explicando cada item (o que é, para que serve, por que foi necessário, mencionando o valor). Sem bullets, sem listas, sem markdown, sem asteriscos. Tom formal.
+        prompt: `Você vai redigir a seção 8.1 de um relatório de prestação de contas de projeto de inovação financiado por órgão público.
+
+MODELO DE ESCRITA (siga este estilo exato):
+
+Materiais Permanentes:
+
+Foi adquirida uma Smart TV da marca Philips, 50 polegadas, sistema Google TV, utilizada como recurso audiovisual em capacitações, reuniões e eventos do Programa, garantindo qualidade na exibição de conteúdos e apresentações.
+
+Terceiros:
+
+Nos serviços de terceiros, foi contratada a empresa XYZ para impressão de materiais de divulgação, utilizados como apoio em evento, garantindo a comunicação institucional.
+
+---
+
+REGRAS:
+- Categoria em linha separada com dois pontos (ex: "Materiais Permanentes:")
+- Um parágrafo curto por item (1-3 linhas), iniciando com "Foi adquirido/contratado..."
+- Mencione fornecedor/marca e valor
+- Explique brevemente a finalidade no projeto
+- Parágrafos separados por linha em branco
+- Sem bullets, sem numeração, sem markdown
+- Tom formal e objetivo
 
 Projeto: ${projeto.descricao_projeto || projeto.titulo}
 
