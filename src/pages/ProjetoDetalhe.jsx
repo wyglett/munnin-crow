@@ -40,8 +40,6 @@ function extrairFolderId(url) {
 export default function ProjetoDetalhe() {
   const id = new URLSearchParams(window.location.search).get("id");
   const [user, setUser] = useState(null);
-  const [relatorio, setRelatorio] = useState(null);
-  const [gerando, setGerando] = useState(false);
   const [driveDialog, setDriveDialog] = useState(false);
   const [driveUrl, setDriveUrl] = useState("");
   const [criandoDrive, setCriandoDrive] = useState(false);
