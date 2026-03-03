@@ -27,36 +27,50 @@ const CATEGORIAS_LABEL = {
 const MESES = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
 
 // Detecta qual categoria de gasto corresponde ao título/pergunta do campo (seção 8)
+// Ordem importa: mais específico primeiro para evitar falsos positivos
 function detectarCategoriaDocampo(campo) {
   const texto = ((campo.pergunta || "") + " " + (campo.secao || "")).toLowerCase();
+  // Permanente e consumo antes de terceiros para evitar conflito
   if (texto.includes("permanente")) return "material_permanente";
   if (texto.includes("consumo")) return "material_consumo";
-  if (texto.includes("terceiro") || texto.includes("serviço") || texto.includes("servico") || texto.includes("pf")) return "terceiros";
-  if (texto.includes("diária") || texto.includes("diaria")) return "diarias";
+  // Passagens e diárias ANTES de terceiros (passagens pode conter "serviço de transporte")
+  if (texto.includes("passagem") || texto.includes("hospedagem") || (texto.includes("diária") || texto.includes("diaria"))) {
+    // Diferenciar: se contém "passagem" ou "diária" mas NÃO "terceiro", é passagens/diárias
+    if (texto.includes("passagem") && !texto.includes("terceiro")) return "passagens";
+    if ((texto.includes("diária") || texto.includes("diaria")) && !texto.includes("terceiro")) return "diarias";
+  }
+  // Terceiros: só se explicitamente menciona terceiro/serviço de terceiro/PF
+  if (texto.includes("terceiro") || texto.match(/servi[çc]o(s)? de/)) return "terceiros";
   if (texto.includes("passagem")) return "passagens";
+  if (texto.includes("diária") || texto.includes("diaria")) return "diarias";
   if (texto.includes("contrapartida")) return "contrapartida";
   if (texto.includes("doaci")) return "doaci";
   return null;
 }
 
-// Detecção de tipo de campo
+// Detecta se é seção 8 (execução financeira) de forma geral
+function isSecao8(campo) {
+  const s = (campo.secao || "").toLowerCase();
+  return /^8(\s|$|-|\.|\s*[-–])/.test(campo.secao || "") &&
+    (s.includes("recurso") || s.includes("financ") || s.includes("execução"));
+}
+
+// Campo 8.1: APENAS o campo de justificativa/descrição narrativa de TODOS os itens
+function isItem81(campo) {
+  const p = (campo.pergunta || "").toLowerCase();
+  return isSecao8(campo) && (p.includes("8.1") || p.includes("justif") ||
+    (p.includes("descriç") && !p.includes("nome") && !p.includes("custo") && !p.includes("qtd")));
+}
+
+// Campos de tabela da seção 8 (permanente, consumo, terceiros, diárias etc.) — exceto 8.1
 function isExecucaoFinanceira(campo) {
+  if (isItem81(campo)) return false; // 8.1 é narrativa, não tabela
   const s = (campo.secao || "").toLowerCase();
   const p = (campo.pergunta || "").toLowerCase();
-  const ehSecao8 = /^8(\s|$|-|\.|\s*[-–])/.test(campo.secao || "") &&
-    (s.includes("recurso") || s.includes("financ") || s.includes("execução"));
+  const ehSecao8 = isSecao8(campo);
   const ehTabelaItens = campo.tipo_resposta === "tabela_itens" &&
     (s.includes("financ") || s.includes("recurso") || p.includes("financ"));
   return ehSecao8 || ehTabelaItens;
-}
-
-function isItem81(campo) {
-  const p = (campo.pergunta || "").toLowerCase();
-  const s = (campo.secao || "").toLowerCase();
-  const ehSecao8 = /^8(\s|$|-|\.|\s*[-–])/.test(campo.secao || "") &&
-    (s.includes("recurso") || s.includes("financ") || s.includes("execução"));
-  const ehDescricaoJustif = p.includes("descriç") || p.includes("justif") || p.includes("8.1");
-  return ehSecao8 && ehDescricaoJustif;
 }
 
 function isAtividades(campo) {
