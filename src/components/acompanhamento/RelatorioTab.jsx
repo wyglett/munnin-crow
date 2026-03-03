@@ -755,14 +755,20 @@ Ordene pelos campos na ordem que aparecem no documento.`,
     const campo81 = campos[idx81];
     if (campo81.concluido) return;
     (async () => {
-      const lista = gastos.map(g => `- ${g.descricao}${g.fornecedor ? ` (${g.fornecedor})` : ""}, valor: ${fmt(g.valor)}${g.observacao ? `, obs: ${g.observacao}` : ""}`).join("\n");
+      const grupos = Object.entries(CATEGORIAS_LABEL)
+        .map(([key, label]) => ({ key, label, items: gastos.filter(g => g.categoria === key) }))
+        .filter(g => g.items.length > 0);
+      const resumoPorCategoria = grupos.map(g => {
+        const itens = g.items.map(x => `  - ${x.descricao}${x.fornecedor ? ` (${x.fornecedor})` : ""}: ${fmt(x.valor)}${x.observacao ? ` — ${x.observacao}` : ""}`).join("\n");
+        return `### ${g.label}\n${itens}`;
+      }).join("\n\n");
       const r = await base44.integrations.Core.InvokeLLM({
-        prompt: `Redija um texto formal de prestação de contas justificando cada item abaixo em função do projeto. Para cada item, explique em uma ou duas frases o que é e por que foi necessário. Texto corrido, SEM listas, SEM bullets, SEM quebras duplas de linha, sem markdown. Mencione o valor de cada item.
+        prompt: `Redija a seção 8.1 de prestação de contas, organizada por categoria. Para cada categoria, coloque o nome como título numa linha separada e escreva texto corrido explicando cada item (o que é, para que serve, por que foi necessário, mencionando o valor). Sem bullets, sem listas, sem markdown, sem asteriscos. Tom formal.
 
 Projeto: ${projeto.descricao_projeto || projeto.titulo}
 
-Itens:
-${lista}`
+Itens por categoria:
+${resumoPorCategoria}`
       });
       const novos = [...campos];
       novos[idx81] = { ...campo81, resposta: typeof r === "string" ? r : JSON.stringify(r) };
