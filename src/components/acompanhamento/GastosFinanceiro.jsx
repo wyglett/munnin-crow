@@ -59,6 +59,29 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
     try { localStorage.setItem(autoExportKey, String(val)); } catch {}
   };
 
+  // Auto-export reativo: quando autoExportDrive está ativo, exporta itens pendentes ao montar e quando gastos mudam
+  const prevGastosRef = useRef([]);
+  useEffect(() => {
+    if (!autoExportDrive || !projeto.drive_categoria_ids) return;
+    const prevIds = new Set(prevGastosRef.current.map(g => g.id));
+    const gastosPendentes = gastos.filter(g => {
+      const catId = projeto.drive_categoria_ids?.[g.categoria];
+      if (!catId) return false;
+      const hash = hashGasto(g);
+      // Exportar se: novo item OU modificado OU nunca exportado
+      return !g.drive_exportado || g.drive_hash !== hash || !prevIds.has(g.id);
+    });
+    if (gastosPendentes.length > 0) {
+      (async () => {
+        for (const g of gastosPendentes) {
+          await exportarItem(g, true);
+        }
+      })();
+    }
+    prevGastosRef.current = gastos;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gastos, autoExportDrive]);
+
   const orcamentoLinhas = projeto.orcamento_linhas || [];
   const valorContratado = projeto.valor_contratado || 0;
   const totalGasto = gastos.reduce((s, g) => s + (Number(g.valor) || 0), 0);
