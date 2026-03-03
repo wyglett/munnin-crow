@@ -11,7 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Plus, Trash2, Loader2, Upload, ExternalLink, FolderOpen, CheckCircle2, AlertTriangle, ChevronDown, ChevronRight, Pencil, X } from "lucide-react";
+import { Plus, Trash2, Loader2, Upload, ExternalLink, FolderOpen, CheckCircle2, AlertTriangle, ChevronDown, ChevronRight, Pencil, X, Sparkles } from "lucide-react";
 import moment from "moment";
 
 const fmt = (v) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0);
