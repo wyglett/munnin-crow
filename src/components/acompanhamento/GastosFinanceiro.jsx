@@ -631,9 +631,10 @@ Se houver múltiplos documentos, retorne os dados do documento principal ou uma 
       drive_exportado: false,
     };
     const criado = await base44.entities.GastoProjeto.create(payload);
-    // Exportar para Drive automaticamente se configurado
-    if (projeto.drive_categoria_ids?.[categoria]) {
-      await exportarItem({ ...criado, ...payload, id: criado.id });
+    // Exportar para Drive (sempre para leitura automática se drive configurado, ou se auto-export ligado)
+    const temDrive = projeto.drive_categoria_ids?.[categoria];
+    if (temDrive && (autoExportDrive || true)) {
+      await exportarItem({ ...payload, ...criado, id: criado.id });
     }
     setSalvando(false);
     resetar();
