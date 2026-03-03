@@ -101,7 +101,7 @@ export default function AdminEditais() {
             <div className="flex flex-wrap gap-3">
               <Button onClick={importar} disabled={importando} className="bg-indigo-600 hover:bg-indigo-700">
                 {importando ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
-                {importando ? "Importando..." : "Importar da FAPES"}
+                {importando ? "Importando editais..." : "Importar Editais (ES, RJ, SP, MG)"}
               </Button>
               <Button onClick={openNew} variant="outline"><Plus className="w-4 h-4 mr-2" /> Cadastrar Edital</Button>
             </div>
