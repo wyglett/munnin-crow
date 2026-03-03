@@ -599,16 +599,24 @@ Ordene pelos campos na ordem que aparecem no documento.`,
         return `${g.label} — Total: ${fmt(total)}\n${lista}`;
       }).join("\n\n");
       const r = await base44.integrations.Core.InvokeLLM({
-        prompt: `Redija um texto corrido formal, em português, descrevendo a execução financeira do projeto abaixo para fins de prestação de contas. 
-O texto deve mencionar cada categoria e os principais itens adquiridos em cada uma, suas finalidades no projeto e os valores investidos. 
-Escreva de forma narrativa e objetiva, organizado por categoria, sem usar listas ou bullets — use parágrafos.
+        prompt: `Redija um texto corrido formal e objetivo, em português, justificando cada item adquirido no projeto abaixo para fins de prestação de contas.
+
+Para CADA item listado, explique brevemente: o que foi adquirido e por que foi necessário para o projeto.
+
+REGRAS IMPORTANTES:
+- Use APENAS texto corrido, sem listas, sem bullets, sem traços, sem numeração
+- Sem quebras de linha excessivas — escreva em parágrafos contínuos
+- Não use markdown, asteriscos ou formatação especial
+- Seja direto e objetivo
+- Mencione o valor de cada item
+
 Projeto: ${projeto.descricao_projeto || projeto.titulo}
 
-Itens por categoria:
+Itens adquiridos:
 ${resumo}`
       });
       const novos = [...campos];
-      novos[idx81] = { ...campo81, resposta: r };
+      novos[idx81] = { ...campo81, resposta: typeof r === "string" ? r : JSON.stringify(r) };
       salvar(novos);
     })();
   // eslint-disable-next-line react-hooks/exhaustive-deps
