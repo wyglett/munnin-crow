@@ -62,9 +62,79 @@ export default function Acompanhamento() {
     : projetos.filter(p => p.created_by === user?.email);
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.AcompanhamentoProjeto.create({ ...data, valor_contratado: data.valor_contratado ? parseFloat(data.valor_contratado) : null }),
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["acompanhamentos"] }); setDialogOpen(false); setForm({ titulo: "", descricao_projeto: "", orgao_financiador: "", numero_edital: "", valor_contratado: "", data_inicio: "", data_fim_prevista: "", status: "ativo" }); },
+    mutationFn: async (data) => {
+      // Se selecionou "novo edital", cria o edital primeiro
+      let editalId = editalVinculo && editalVinculo !== "nenhum" && editalVinculo !== "novo" ? editalVinculo : null;
+      if (editalVinculo === "novo" && novoEditalForm.titulo) {
+        const novoE = await base44.entities.Edital.create({
+          titulo: novoEditalForm.titulo,
+          numero: novoEditalForm.numero,
+          orgao: novoEditalForm.orgao,
+          estado: novoEditalForm.estado,
+          status: "aberto",
+        });
+        editalId = novoE.id;
+      }
+      const editalSelecionado = editais.find(e => e.id === editalId);
+      return base44.entities.AcompanhamentoProjeto.create({
+        ...data,
+        valor_contratado: data.valor_contratado ? parseFloat(data.valor_contratado) : null,
+        template_relatorio_url: projetoAprovadoUrl || undefined,
+        orgao_financiador: data.orgao_financiador || editalSelecionado?.orgao || "",
+        numero_edital: data.numero_edital || editalSelecionado?.numero || "",
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["acompanhamentos"] });
+      queryClient.invalidateQueries({ queryKey: ["editais"] });
+      setDialogOpen(false);
+      setForm({ titulo: "", descricao_projeto: "", orgao_financiador: "", numero_edital: "", valor_contratado: "", data_inicio: "", data_fim_prevista: "", status: "ativo" });
+      setProjetoAprovadoUrl(null);
+      setEditalVinculo("");
+      setNovoEditalForm({ titulo: "", numero: "", orgao: "", estado: "ES" });
+    },
   });
+
+  const handleUploadPdf = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploadingPdf(true);
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    setProjetoAprovadoUrl(file_url);
+    setUploadingPdf(false);
+    // Extrai dados do PDF para pré-preencher o form
+    setExtraindoPdf(true);
+    const r = await base44.integrations.Core.InvokeLLM({
+      prompt: `Analise este documento de projeto aprovado e extraia: titulo do projeto, orgao_financiador (nome do órgão que aprovou), numero_edital, valor_contratado (número sem formatação), data_inicio (YYYY-MM-DD), data_fim_prevista (YYYY-MM-DD), descricao_projeto (resumo do projeto em 2-3 frases).`,
+      file_urls: [file_url],
+      response_json_schema: {
+        type: "object",
+        properties: {
+          titulo: { type: "string" },
+          orgao_financiador: { type: "string" },
+          numero_edital: { type: "string" },
+          valor_contratado: { type: "number" },
+          data_inicio: { type: "string" },
+          data_fim_prevista: { type: "string" },
+          descricao_projeto: { type: "string" },
+        }
+      }
+    });
+    setExtraindoPdf(false);
+    if (r) {
+      setForm(f => ({
+        ...f,
+        titulo: r.titulo || f.titulo,
+        orgao_financiador: r.orgao_financiador || f.orgao_financiador,
+        numero_edital: r.numero_edital || f.numero_edital,
+        valor_contratado: r.valor_contratado ? String(r.valor_contratado) : f.valor_contratado,
+        data_inicio: r.data_inicio || f.data_inicio,
+        data_fim_prevista: r.data_fim_prevista || f.data_fim_prevista,
+        descricao_projeto: r.descricao_projeto || f.descricao_projeto,
+      }));
+    }
+    e.target.value = "";
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 p-6">
