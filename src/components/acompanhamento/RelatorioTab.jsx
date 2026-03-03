@@ -479,24 +479,15 @@ function TabelaExecucaoFinanceira({ gastos, campo }) {
   );
 }
 
-// ─── Campo 8.1 — Justificativa narrativa (textarea auto-crescente) ────────────
+// ─── Campo 8.1 — Justificativa narrativa colapsável ──────────────────────────
 function CampoDescricaoFinanceira({ gastos, campo, onChange, projetoDescricao }) {
   const [gerando, setGerando] = useState(false);
-  const textareaRef = useRef(null);
-
-  // Auto-resize
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
-    }
-  }, [campo.resposta]);
+  const [aberto, setAberto] = useState(false);
 
   const gerarTexto = useCallback(async () => {
     if (gastos.length === 0) return;
     setGerando(true);
 
-    // Agrupa por categoria
     const grupos = Object.entries(CATEGORIAS_LABEL)
       .map(([key, label]) => ({ key, label, items: gastos.filter(g => g.categoria === key) }))
       .filter(g => g.items.length > 0);
@@ -522,7 +513,7 @@ REGRAS:
 - Cada categoria deve ter seu título em uma linha separada (ex: "Material Permanente", "Terceiros", "Material de Consumo")
 - Abaixo do título, texto corrido em um ou mais parágrafos
 - NÃO use markdown, asteriscos, traços ou símbolos especiais
-- Mencione o valor de cada item naturamente no texto
+- Mencione o valor de cada item naturalmente no texto
 - Tom formal e técnico
 - NÃO use "bullet points" nem numeração
 
@@ -533,53 +524,65 @@ ${resumoPorCategoria}`
     });
     onChange({ ...campo, resposta: typeof r === "string" ? r : JSON.stringify(r) });
     setGerando(false);
+    setAberto(true); // abre ao gerar
   }, [gastos, campo, onChange, projetoDescricao]);
 
+  const preview = campo.resposta ? campo.resposta.slice(0, 120) + (campo.resposta.length > 120 ? "..." : "") : null;
+
   return (
-    <div className={`border rounded-xl overflow-hidden ${campo.concluido ? "border-green-200 bg-green-50/30" : "border-amber-200 bg-amber-50/20"}`}>
-      <div className="flex items-start gap-3 p-4">
+    <div className={`border rounded-xl overflow-hidden transition-all ${campo.concluido ? "border-green-200 bg-green-50/30" : "border-amber-200 bg-amber-50/20"}`}>
+      {/* Cabeçalho clicável */}
+      <div
+        className="flex items-start gap-3 p-4 cursor-pointer hover:bg-amber-50/30 transition-colors"
+        onClick={() => !campo.concluido && setAberto(v => !v)}
+      >
         <div className="flex-1 min-w-0">
           {campo.secao && <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wider mb-0.5">{campo.secao}</p>}
           <p className="text-sm font-semibold text-gray-800">{campo.pergunta}</p>
           <p className="text-xs text-amber-700 mt-0.5">Justificativa narrativa — gerada automaticamente pela IA a partir dos itens financeiros</p>
+          {!aberto && preview && (
+            <p className="text-xs text-gray-500 mt-1 italic line-clamp-2">{preview}</p>
+          )}
+          {!aberto && !preview && (
+            <p className="text-xs text-gray-400 mt-1 italic">Clique para expandir e editar...</p>
+          )}
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           {campo.concluido
             ? <Badge className="bg-green-100 text-green-700 text-xs"><CheckCircle2 className="w-3 h-3 inline mr-1" />Concluído</Badge>
             : <Badge className="bg-amber-100 text-amber-700 text-xs"><RefreshCw className="w-3 h-3 inline mr-1" />Auto</Badge>}
+          {!campo.concluido && (aberto ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />)}
           {campo.concluido && (
-            <button type="button" onClick={() => onChange({ ...campo, concluido: false })} className="text-gray-400 hover:text-amber-500">
+            <button type="button" onClick={e => { e.stopPropagation(); onChange({ ...campo, concluido: false }); }} className="text-gray-400 hover:text-amber-500">
               <Unlock className="w-4 h-4" />
             </button>
           )}
         </div>
       </div>
 
-      <div className="px-4 pb-4 border-t border-gray-100 pt-3 space-y-3">
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-500">{gastos.length} item(s) no financeiro</span>
-          <Button type="button" size="sm" variant="outline" onClick={gerarTexto} disabled={gerando || gastos.length === 0} className="text-amber-700 border-amber-300 hover:bg-amber-50">
-            {gerando ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Sparkles className="w-3 h-3 mr-1" />}
-            {gerando ? "Gerando..." : "Gerar / Atualizar com IA"}
-          </Button>
-        </div>
-        <textarea
-          ref={textareaRef}
-          value={campo.resposta || ""}
-          onChange={e => onChange({ ...campo, resposta: e.target.value })}
-          placeholder="A justificativa será gerada automaticamente quando novos itens forem adicionados ao financeiro, ou clique em 'Gerar com IA'..."
-          disabled={campo.concluido}
-          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 resize-none overflow-hidden min-h-[80px] focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:bg-gray-50 disabled:text-gray-500"
-          style={{ lineHeight: "1.6" }}
-        />
-        {!campo.concluido && (
+      {/* Conteúdo expandido */}
+      {aberto && !campo.concluido && (
+        <div className="px-4 pb-4 border-t border-amber-100 pt-3 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-gray-500">{gastos.length} item(s) no financeiro</span>
+            <Button type="button" size="sm" variant="outline" onClick={gerarTexto} disabled={gerando || gastos.length === 0} className="text-amber-700 border-amber-300 hover:bg-amber-50">
+              {gerando ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Sparkles className="w-3 h-3 mr-1" />}
+              {gerando ? "Gerando..." : "Gerar / Atualizar com IA"}
+            </Button>
+          </div>
+          <Textarea
+            value={campo.resposta || ""}
+            onChange={e => onChange({ ...campo, resposta: e.target.value })}
+            placeholder="A justificativa será gerada automaticamente quando novos itens forem adicionados ao financeiro, ou clique em 'Gerar com IA'..."
+            className="min-h-[200px] text-sm leading-relaxed"
+          />
           <div className="flex justify-end">
-            <Button type="button" size="sm" onClick={() => onChange({ ...campo, concluido: true })} className="bg-green-600 hover:bg-green-700" disabled={!campo.resposta}>
+            <Button type="button" size="sm" onClick={() => { onChange({ ...campo, concluido: true }); setAberto(false); }} className="bg-green-600 hover:bg-green-700" disabled={!campo.resposta}>
               <CheckCircle2 className="w-4 h-4 mr-1" /> Concluir campo
             </Button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
