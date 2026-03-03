@@ -551,6 +551,49 @@ Ordene pelos campos na ordem que aparecem no documento.`,
     setExtraindo(false);
   };
 
+  // Regera automaticamente a justificativa IA quando novos itens financeiros são adicionados
+  const prevGastosCount = useRef(gastos.length);
+  useEffect(() => {
+    const novoCount = gastos.length;
+    if (novoCount <= prevGastosCount.current) {
+      prevGastosCount.current = novoCount;
+      return;
+    }
+    prevGastosCount.current = novoCount;
+    if (gastos.length === 0 || campos.length === 0) return;
+    // Encontra o campo 8.1 (justificativa narrativa) e o regera
+    const idx81 = campos.findIndex(c => isItem81(c));
+    if (idx81 === -1) return;
+    const campo81 = campos[idx81];
+    if (campo81.concluido) return; // Não sobrescreve campo já concluído
+    // Gerar IA automaticamente
+    (async () => {
+      const categorias = Object.keys(CATEGORIAS_LABEL);
+      const grupos = categorias.map(cat => ({
+        label: CATEGORIAS_LABEL[cat],
+        items: gastos.filter(g => g.categoria === cat),
+      })).filter(g => g.items.length > 0);
+      const resumo = grupos.map(g => {
+        const total = g.items.reduce((s, x) => s + (Number(x.valor) || 0), 0);
+        const lista = g.items.map(x => `  - ${x.descricao}${x.fornecedor ? ` (${x.fornecedor})` : ""}: ${fmt(x.valor)}`).join("\n");
+        return `${g.label} — Total: ${fmt(total)}\n${lista}`;
+      }).join("\n\n");
+      const r = await base44.integrations.Core.InvokeLLM({
+        prompt: `Redija um texto corrido formal, em português, descrevendo a execução financeira do projeto abaixo para fins de prestação de contas. 
+O texto deve mencionar cada categoria e os principais itens adquiridos em cada uma, suas finalidades no projeto e os valores investidos. 
+Escreva de forma narrativa e objetiva, organizado por categoria, sem usar listas ou bullets — use parágrafos.
+Projeto: ${projeto.descricao_projeto || projeto.titulo}
+
+Itens por categoria:
+${resumo}`
+      });
+      const novos = [...campos];
+      novos[idx81] = { ...campo81, resposta: r };
+      salvar(novos);
+    })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gastos.length]);
+
   const concluidos = campos.filter(c => c.concluido).length;
   const pct = campos.length > 0 ? (concluidos / campos.length) * 100 : 0;
   const orcamentoLinhas = projeto.orcamento_linhas || [];
