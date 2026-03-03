@@ -49,6 +49,15 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
   const [confirmDelete, setConfirmDelete] = useState(null); // null | "single" | "bulk"
   const [deletingId, setDeletingId] = useState(null);
   const [leituraAutoOpen, setLeituraAutoOpen] = useState(false);
+  // Exportação automática: lê do localStorage por projeto para persistir preferência
+  const autoExportKey = `autoExportDrive_${projetoId}`;
+  const [autoExportDrive, setAutoExportDrive] = useState(() => {
+    try { return localStorage.getItem(autoExportKey) === "true"; } catch { return false; }
+  });
+  const toggleAutoExport = (val) => {
+    setAutoExportDrive(val);
+    try { localStorage.setItem(autoExportKey, String(val)); } catch {}
+  };
 
   const orcamentoLinhas = projeto.orcamento_linhas || [];
   const valorContratado = projeto.valor_contratado || 0;
