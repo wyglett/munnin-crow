@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Activity, Calendar, DollarSign, Loader2, ArrowRight, Users, Clock, CheckCircle } from "lucide-react";
+import { Plus, Activity, Calendar, DollarSign, Loader2, ArrowRight, Users, Clock, CheckCircle, Upload, FileText, Sparkles, Link2 } from "lucide-react";
 import moment from "moment";
 
 const STATUS_MAP = {
