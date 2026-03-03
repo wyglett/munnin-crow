@@ -7,10 +7,11 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Plus, Trash2, Loader2, Upload, ExternalLink, FolderOpen, CheckCircle2, AlertTriangle, ChevronDown, ChevronRight } from "lucide-react";
+import { Plus, Trash2, Loader2, Upload, ExternalLink, FolderOpen, CheckCircle2, AlertTriangle, ChevronDown, ChevronRight, Pencil, X } from "lucide-react";
 import moment from "moment";
 
 const fmt = (v) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0);
@@ -23,48 +24,93 @@ const CATEGORIAS = [
   { key: "passagens", label: "Passagens" },
   { key: "contrapartida", label: "Contrapartida" },
 ];
-const CAT_LABEL = Object.fromEntries(CATEGORIAS.map(c => [c.key, c.label]));
-const FORM_EMPTY = { descricao: "", categoria: "terceiros", subcategoria_id: "", valor: "", data: "", fornecedor: "", observacao: "", anexo_url: "" };
+
+const FORM_EMPTY = { descricao: "", categoria: "terceiros", subcategoria_id: "", valor: "", data: "", fornecedor: "", observacao: "", anexos: [] };
 
 function hashGasto(g) {
-  return [g.descricao, g.categoria, g.valor, g.data, g.fornecedor, g.observacao].join("|");
+  return [g.descricao, g.categoria, g.valor, g.data, g.fornecedor, g.observacao, JSON.stringify(g.anexos || [])].join("|");
 }
 
 export default function GastosFinanceiro({ projeto, gastos, isConsultor, projetoId }) {
   const queryClient = useQueryClient();
   const [gastoDialog, setGastoDialog] = useState(false);
+  const [editingId, setEditingId] = useState(null); // id do item sendo editado
   const [gastoForm, setGastoForm] = useState(FORM_EMPTY);
   const [uploadingAnexo, setUploadingAnexo] = useState(false);
   const [exportandoTodos, setExportandoTodos] = useState(false);
-  const [exportandoId, setExportandoId] = useState(null);
+  const [exportandoIds, setExportandoIds] = useState(new Set());
   const [categoriasAbertas, setCategoriasAbertas] = useState({});
   const [alertaEstouro, setAlertaEstouro] = useState(false);
   const [pendingSubmit, setPendingSubmit] = useState(null);
+  const [selecionados, setSelecionados] = useState(new Set()); // IDs selecionados
+  const [modoSelecao, setModoSelecao] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(null); // null | "single" | "bulk"
+  const [deletingId, setDeletingId] = useState(null);
 
   const orcamentoLinhas = projeto.orcamento_linhas || [];
   const valorContratado = projeto.valor_contratado || 0;
   const totalGasto = gastos.reduce((s, g) => s + (Number(g.valor) || 0), 0);
   const saldo = valorContratado - totalGasto;
-
-  // Subcategorias da categoria selecionada
   const subcategoriasDaCat = orcamentoLinhas.filter(l => l.categoria === gastoForm.categoria && l.subcategoria);
 
   const toggleCategoria = (key) => setCategoriasAbertas(prev => ({ ...prev, [key]: !prev[key] }));
 
+  const toggleSelecionado = (id) => {
+    setSelecionados(prev => {
+      const n = new Set(prev);
+      n.has(id) ? n.delete(id) : n.add(id);
+      return n;
+    });
+  };
+
+  const toggleTodos = () => {
+    if (selecionados.size === gastos.length) setSelecionados(new Set());
+    else setSelecionados(new Set(gastos.map(g => g.id)));
+  };
+
   const handleAnexoUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
     setUploadingAnexo(true);
-    const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    setGastoForm(f => ({ ...f, anexo_url: file_url }));
+    for (const file of files) {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setGastoForm(f => ({ ...f, anexos: [...(f.anexos || []), { nome: file.name, url: file_url }] }));
+    }
     setUploadingAnexo(false);
+    e.target.value = "";
+  };
+
+  const removerAnexo = (idx) => {
+    setGastoForm(f => ({ ...f, anexos: f.anexos.filter((_, i) => i !== idx) }));
+  };
+
+  const abrirEditar = (g) => {
+    setEditingId(g.id);
+    setGastoForm({
+      descricao: g.descricao || "",
+      categoria: g.categoria || "terceiros",
+      subcategoria_id: g.subcategoria_id || "",
+      valor: g.valor || "",
+      data: g.data || "",
+      fornecedor: g.fornecedor || "",
+      observacao: g.observacao || "",
+      anexos: g.anexos || [],
+    });
+    setGastoDialog(true);
+  };
+
+  const fecharDialog = () => {
+    setGastoDialog(false);
+    setEditingId(null);
+    setGastoForm(FORM_EMPTY);
   };
 
   const verificarESubmeter = (e) => {
     e.preventDefault();
     const novoValor = parseFloat(gastoForm.valor) || 0;
-    const novoTotal = totalGasto + novoValor;
-    if (valorContratado > 0 && novoTotal > valorContratado) {
+    const valorAnterior = editingId ? (gastos.find(g => g.id === editingId)?.valor || 0) : 0;
+    const novoTotal = totalGasto - valorAnterior + novoValor;
+    if (!editingId && valorContratado > 0 && novoTotal > valorContratado) {
       setPendingSubmit(gastoForm);
       setAlertaEstouro(true);
     } else {
@@ -73,40 +119,54 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
   };
 
   const submitGasto = async (form) => {
-    await base44.entities.GastoProjeto.create({
+    const payload = {
       ...form,
-      acompanhamento_id: projetoId,
       valor: parseFloat(form.valor) || 0,
-      adicionado_por: isConsultor ? "consultor" : "empreendedor",
-      status_revisao: isConsultor ? "pendente_revisao" : "normal",
-      drive_exportado: false,
-    });
+      anexos: form.anexos || [],
+    };
+    if (editingId) {
+      await base44.entities.GastoProjeto.update(editingId, { ...payload, drive_exportado: false });
+    } else {
+      await base44.entities.GastoProjeto.create({
+        ...payload,
+        acompanhamento_id: projetoId,
+        adicionado_por: isConsultor ? "consultor" : "empreendedor",
+        status_revisao: isConsultor ? "pendente_revisao" : "normal",
+        drive_exportado: false,
+      });
+    }
     queryClient.invalidateQueries({ queryKey: ["gastos", projetoId] });
-    setGastoDialog(false);
-    setGastoForm(FORM_EMPTY);
+    fecharDialog();
     setAlertaEstouro(false);
     setPendingSubmit(null);
   };
 
   const deleteGasto = async (gid) => {
+    const g = gastos.find(x => x.id === gid);
+    if (g?.drive_item_folder_id && projeto.drive_categoria_ids) {
+      await base44.functions.invoke("excluirItemDrive", { folderId: g.drive_item_folder_id });
+    }
     await base44.entities.GastoProjeto.delete(gid);
     queryClient.invalidateQueries({ queryKey: ["gastos", projetoId] });
   };
 
+  const deleteBulk = async () => {
+    for (const id of selecionados) {
+      await deleteGasto(id);
+    }
+    setSelecionados(new Set());
+    setModoSelecao(false);
+  };
+
   const exportarItem = async (gasto) => {
     const catId = projeto.drive_categoria_ids?.[gasto.categoria];
-    if (!catId) {
-      alert("Configure o Drive primeiro para criar a estrutura de pastas.");
-      return;
-    }
+    if (!catId) { alert("Configure o Drive primeiro."); return; }
     const currentHash = hashGasto(gasto);
-    if (gasto.drive_exportado && gasto.drive_hash === currentHash) {
-      alert("Este item já foi exportado e não foi modificado.");
-      return;
-    }
-    setExportandoId(gasto.id);
+    if (gasto.drive_exportado && gasto.drive_hash === currentHash) { alert("Já exportado e sem modificações."); return; }
+
+    setExportandoIds(prev => new Set([...prev, gasto.id]));
     const res = await base44.functions.invoke("exportarItemDrive", {
-      gasto: { ...gasto, drive_resumo_id: gasto.drive_resumo_id || null },
+      gasto: { ...gasto, created_date: gasto.created_date, updated_date: gasto.updated_date },
       categoriaFolderId: catId,
     });
     if (res.data?.success) {
@@ -119,7 +179,16 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
       });
       queryClient.invalidateQueries({ queryKey: ["gastos", projetoId] });
     }
-    setExportandoId(null);
+    setExportandoIds(prev => { const n = new Set(prev); n.delete(gasto.id); return n; });
+  };
+
+  const exportarSelecionados = async () => {
+    setExportandoTodos(true);
+    for (const id of selecionados) {
+      const g = gastos.find(x => x.id === id);
+      if (g) await exportarItem(g);
+    }
+    setExportandoTodos(false);
   };
 
   const exportarTodos = async () => {
@@ -134,7 +203,6 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
     setExportandoTodos(false);
   };
 
-  // Agrupa gastos por categoria
   const gastosPorCat = CATEGORIAS.map(cat => ({
     ...cat,
     items: gastos.filter(g => g.categoria === cat.key),
@@ -142,8 +210,15 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
   })).filter(c => c.items.length > 0);
 
   const exportPendentes = gastos.filter(g => {
-    const currentHash = hashGasto(g);
-    return !g.drive_exportado || g.drive_hash !== currentHash;
+    const h = hashGasto(g);
+    return !g.drive_exportado || g.drive_hash !== h;
+  }).length;
+
+  const selecionadosExportaveis = [...selecionados].filter(id => {
+    const g = gastos.find(x => x.id === id);
+    if (!g) return false;
+    const h = hashGasto(g);
+    return !g.drive_exportado || g.drive_hash !== h;
   }).length;
 
   return (
@@ -168,38 +243,62 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
         <div className="mb-4 p-3 bg-white rounded-lg border">
           <div className="flex justify-between text-xs text-gray-500 mb-1">
             <span>Execução orçamentária</span>
-            <span>{valorContratado > 0 ? ((totalGasto / valorContratado) * 100).toFixed(1) : 0}%</span>
+            <span>{((totalGasto / valorContratado) * 100).toFixed(1)}%</span>
           </div>
-          <Progress value={valorContratado > 0 ? Math.min((totalGasto / valorContratado) * 100, 100) : 0} className="h-2" />
+          <Progress value={Math.min((totalGasto / valorContratado) * 100, 100)} className="h-2" />
         </div>
       )}
 
-      {/* Ações */}
+      {/* Barra de ações em modo seleção */}
+      {modoSelecao && (
+        <div className="flex flex-wrap items-center gap-2 mb-3 p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
+          <Checkbox checked={selecionados.size === gastos.length && gastos.length > 0} onCheckedChange={toggleTodos} />
+          <span className="text-sm text-indigo-700 font-medium">{selecionados.size} selecionados</span>
+          <div className="flex gap-2 ml-auto flex-wrap">
+            {projeto.drive_categoria_ids && selecionados.size > 0 && (
+              <Button size="sm" variant="outline" onClick={exportarSelecionados} disabled={exportandoTodos || selecionadosExportaveis === 0}>
+                {exportandoTodos ? <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" /> : <FolderOpen className="w-3.5 h-3.5 mr-1" />}
+                Exportar selecionados ({selecionadosExportaveis})
+              </Button>
+            )}
+            {selecionados.size > 0 && (
+              <Button size="sm" variant="destructive" onClick={() => setConfirmDelete("bulk")}>
+                <Trash2 className="w-3.5 h-3.5 mr-1" /> Excluir selecionados ({selecionados.size})
+              </Button>
+            )}
+            <Button size="sm" variant="ghost" onClick={() => { setModoSelecao(false); setSelecionados(new Set()); }}>
+              <X className="w-3.5 h-3.5 mr-1" /> Cancelar
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Ações principais */}
       <div className="flex flex-wrap gap-2 justify-end mb-4">
-        {projeto.drive_categoria_ids && exportPendentes > 0 && (
+        {gastos.length > 0 && !modoSelecao && (
+          <Button variant="outline" size="sm" onClick={() => setModoSelecao(true)}>Selecionar</Button>
+        )}
+        {projeto.drive_categoria_ids && exportPendentes > 0 && !modoSelecao && (
           <Button variant="outline" size="sm" onClick={exportarTodos} disabled={exportandoTodos}>
             {exportandoTodos ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <FolderOpen className="w-4 h-4 mr-1" />}
-            Exportar Todos ({exportPendentes} pendentes)
+            Exportar Todos ({exportPendentes})
           </Button>
         )}
-        <Button onClick={() => setGastoDialog(true)} className="bg-indigo-600 hover:bg-indigo-700" size="sm">
+        <Button onClick={() => { fecharDialog(); setGastoDialog(true); }} className="bg-indigo-600 hover:bg-indigo-700" size="sm">
           <Plus className="w-4 h-4 mr-2" /> Registrar Item
         </Button>
       </div>
 
-      {/* Lista por categoria com collapse */}
+      {/* Lista */}
       {gastos.length === 0 ? (
         <Card><CardContent className="text-center py-10 text-gray-400">Nenhum item registrado</CardContent></Card>
       ) : (
         <div className="space-y-3">
           {gastosPorCat.map(cat => {
-            const aberta = categoriasAbertas[cat.key] !== false; // aberta por padrão
+            const aberta = categoriasAbertas[cat.key] !== false;
             return (
               <Card key={cat.key}>
-                <div
-                  className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 rounded-t-lg"
-                  onClick={() => toggleCategoria(cat.key)}
-                >
+                <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 rounded-t-lg" onClick={() => toggleCategoria(cat.key)}>
                   <div className="flex items-center gap-2">
                     {aberta ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
                     <span className="font-semibold text-gray-800 text-sm">{cat.label}</span>
@@ -214,39 +313,60 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
                         const currentHash = hashGasto(g);
                         const exportado = g.drive_exportado && g.drive_hash === currentHash;
                         const modificado = g.drive_exportado && g.drive_hash !== currentHash;
+                        const isExportando = exportandoIds.has(g.id);
+
                         return (
-                          <div key={g.id} className={`p-3 bg-white rounded-lg border flex items-start justify-between gap-3 ${g.status_revisao === "pendente_revisao" ? "border-l-4 border-l-amber-400" : ""}`}>
+                          <div key={g.id} className={`p-3 bg-white rounded-lg border flex items-start gap-3 ${g.status_revisao === "pendente_revisao" ? "border-l-4 border-l-amber-400" : ""}`}>
+                            {modoSelecao && (
+                              <div className="pt-0.5" onClick={e => e.stopPropagation()}>
+                                <Checkbox checked={selecionados.has(g.id)} onCheckedChange={() => toggleSelecionado(g.id)} />
+                              </div>
+                            )}
                             <div className="min-w-0 flex-1">
                               <p className="font-medium text-gray-900 text-sm break-words">{g.descricao}</p>
                               <div className="flex flex-wrap gap-1.5 text-xs text-gray-500 mt-1">
-                                {g.fornecedor && <span className="truncate max-w-[140px]">{g.fornecedor}</span>}
-                                {g.data && <span>{moment(g.data).format("DD/MM/YY")}</span>}
+                                {g.fornecedor && <span>{g.fornecedor}</span>}
+                                {g.data && <span>· {moment(g.data).format("DD/MM/YY")}</span>}
                                 {g.adicionado_por === "consultor" && <Badge className="text-xs bg-purple-100 text-purple-700">Consultor</Badge>}
                                 {g.status_revisao === "pendente_revisao" && <Badge className="text-xs bg-amber-100 text-amber-700">Pendente revisão</Badge>}
                                 {exportado && <span className="flex items-center gap-0.5 text-green-600"><CheckCircle2 className="w-3 h-3" /> Exportado</span>}
                                 {modificado && <span className="flex items-center gap-0.5 text-orange-500"><AlertTriangle className="w-3 h-3" /> Modificado</span>}
                               </div>
+                              {/* Datas de cadastro e alteração */}
+                              <div className="flex flex-wrap gap-2 text-[10px] text-gray-400 mt-1">
+                                {g.created_date && <span>Cadastrado: {moment(g.created_date).format("DD/MM/YY HH:mm")}</span>}
+                                {g.updated_date && g.updated_date !== g.created_date && <span>· Alterado: {moment(g.updated_date).format("DD/MM/YY HH:mm")}</span>}
+                              </div>
                               {g.observacao && <p className="text-xs text-indigo-600 mt-1 italic">{g.observacao}</p>}
-                              {g.anexo_url && (
-                                <a href={g.anexo_url} target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-500 hover:underline flex items-center gap-1 mt-1">
-                                  <ExternalLink className="w-3 h-3" /> Anexo
-                                </a>
+                              {/* Anexos */}
+                              {(g.anexos || []).length > 0 && (
+                                <div className="flex flex-wrap gap-2 mt-1">
+                                  {g.anexos.map((a, i) => (
+                                    <a key={i} href={a.url} target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-500 hover:underline flex items-center gap-1">
+                                      <ExternalLink className="w-3 h-3" /> {a.nome || `Anexo ${i + 1}`}
+                                    </a>
+                                  ))}
+                                </div>
                               )}
                             </div>
                             <div className="flex items-center gap-1.5 flex-shrink-0">
                               <span className="font-bold text-sm whitespace-nowrap">{fmt(g.valor)}</span>
-                              {projeto.drive_categoria_ids && !exportado && (
-                                <Button size="icon" variant="ghost" className="h-7 w-7 text-indigo-400 hover:text-indigo-600" onClick={() => exportarItem(g)} disabled={exportandoId === g.id}>
-                                  {exportandoId === g.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <FolderOpen className="w-3.5 h-3.5" />}
+                              {/* Editar */}
+                              <Button size="icon" variant="ghost" className="h-7 w-7 text-gray-400 hover:text-gray-600" onClick={() => abrirEditar(g)}>
+                                <Pencil className="w-3.5 h-3.5" />
+                              </Button>
+                              {/* Exportar Drive */}
+                              {projeto.drive_categoria_ids && (!exportado || modificado) && (
+                                <Button size="icon" variant="ghost"
+                                  className={`h-7 w-7 ${modificado ? "text-orange-400 hover:text-orange-600" : "text-indigo-400 hover:text-indigo-600"}`}
+                                  onClick={() => exportarItem(g)} disabled={isExportando} title={modificado ? "Re-exportar (modificado)" : "Exportar para Drive"}>
+                                  {isExportando ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <FolderOpen className="w-3.5 h-3.5" />}
                                 </Button>
                               )}
-                              {projeto.drive_categoria_ids && modificado && (
-                                <Button size="icon" variant="ghost" className="h-7 w-7 text-orange-400 hover:text-orange-600" onClick={() => exportarItem(g)} disabled={exportandoId === g.id} title="Re-exportar (item modificado)">
-                                  {exportandoId === g.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <FolderOpen className="w-3.5 h-3.5" />}
-                                </Button>
-                              )}
+                              {/* Excluir */}
                               {(!isConsultor || g.adicionado_por === "consultor") && (
-                                <Button size="icon" variant="ghost" className="h-7 w-7 text-red-400" onClick={() => deleteGasto(g.id)}>
+                                <Button size="icon" variant="ghost" className="h-7 w-7 text-red-400 hover:text-red-600"
+                                  onClick={() => { setDeletingId(g.id); setConfirmDelete("single"); }}>
                                   <Trash2 className="w-3.5 h-3.5" />
                                 </Button>
                               )}
@@ -263,10 +383,10 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
         </div>
       )}
 
-      {/* Dialog registrar item */}
-      <Dialog open={gastoDialog} onOpenChange={setGastoDialog}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader><DialogTitle>Registrar Item</DialogTitle></DialogHeader>
+      {/* Dialog registrar/editar item */}
+      <Dialog open={gastoDialog} onOpenChange={(v) => { if (!v) fecharDialog(); }}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>{editingId ? "Editar Item" : "Registrar Item"}</DialogTitle></DialogHeader>
           <form onSubmit={verificarESubmeter} className="space-y-3">
             <div>
               <Label>Descrição *</Label>
@@ -304,52 +424,73 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
               </div>
               <div>
                 <Label>Fornecedor</Label>
-                <Input value={gastoForm.fornecedor} onChange={e => setGastoForm({ ...gastoForm, fornecedor: e.target.value })} placeholder="Razão Social ou Nome Fantasia" />
+                <Input value={gastoForm.fornecedor} onChange={e => setGastoForm({ ...gastoForm, fornecedor: e.target.value })} placeholder="Razão Social ou Nome" />
               </div>
             </div>
             <div>
-              <Label>Anexo (NF, comprovante, etc.)</Label>
-              <div className="flex items-center gap-2 mt-1">
-                <label className="cursor-pointer flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm text-gray-700 transition-all">
+              <Label>Anexos (PDF, NF, comprovantes)</Label>
+              <div className="mt-1 space-y-2">
+                {(gastoForm.anexos || []).map((a, i) => (
+                  <div key={i} className="flex items-center gap-2 text-xs bg-gray-50 rounded px-2 py-1.5">
+                    <ExternalLink className="w-3 h-3 text-indigo-400 flex-shrink-0" />
+                    <a href={a.url} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline truncate flex-1">{a.nome || `Anexo ${i + 1}`}</a>
+                    <button type="button" onClick={() => removerAnexo(i)} className="text-red-400 hover:text-red-600"><X className="w-3 h-3" /></button>
+                  </div>
+                ))}
+                <label className="cursor-pointer flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm text-gray-700 transition-all w-fit">
                   {uploadingAnexo ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                  {uploadingAnexo ? "Enviando..." : "Selecionar arquivo"}
-                  <input type="file" className="hidden" onChange={handleAnexoUpload} accept=".pdf,.jpg,.jpeg,.png,.xml" />
+                  {uploadingAnexo ? "Enviando..." : "Adicionar arquivo(s)"}
+                  <input type="file" multiple className="hidden" onChange={handleAnexoUpload} accept=".pdf,.jpg,.jpeg,.png,.xml" />
                 </label>
-                {gastoForm.anexo_url && <span className="text-xs text-green-600 flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> Adicionado</span>}
               </div>
             </div>
-            {isConsultor && (
-              <div>
-                <Label>Observação</Label>
-                <Input value={gastoForm.observacao} onChange={e => setGastoForm({ ...gastoForm, observacao: e.target.value })} placeholder="Obs para o empreendedor..." />
-              </div>
+            <div>
+              <Label>Observação</Label>
+              <Input value={gastoForm.observacao} onChange={e => setGastoForm({ ...gastoForm, observacao: e.target.value })} placeholder="Obs para o empreendedor..." />
+            </div>
+            {editingId && (
+              <p className="text-xs text-amber-600 bg-amber-50 p-2 rounded">Ao salvar, o item será marcado para re-exportação ao Drive.</p>
             )}
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setGastoDialog(false)}>Cancelar</Button>
-              <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700">Registrar</Button>
+              <Button type="button" variant="outline" onClick={fecharDialog}>Cancelar</Button>
+              <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700">{editingId ? "Salvar" : "Registrar"}</Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
 
-      {/* Alerta estouro orçamento */}
+      {/* Alerta estouro */}
       <AlertDialog open={alertaEstouro} onOpenChange={setAlertaEstouro}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center gap-2 text-amber-700">
-              <AlertTriangle className="w-5 h-5" /> Atenção: Estouro de Orçamento
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              Este item fará os gastos ultrapassarem o valor contratado. É necessário um <strong>remanejamento orçamentário</strong> aprovado pelo órgão financiador antes de continuar.
-              <br /><br />
-              Deseja registrar o item mesmo assim? Após a aprovação do remanejamento, atualize os valores na aba Orçamento.
-            </AlertDialogDescription>
+            <AlertDialogTitle className="flex items-center gap-2 text-amber-700"><AlertTriangle className="w-5 h-5" /> Estouro de Orçamento</AlertDialogTitle>
+            <AlertDialogDescription>Este item fará os gastos ultrapassarem o valor contratado. É necessário um <strong>remanejamento orçamentário</strong>.<br /><br />Deseja registrar mesmo assim?</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => { setAlertaEstouro(false); setPendingSubmit(null); }}>Cancelar</AlertDialogCancel>
-            <AlertDialogAction className="bg-amber-600 hover:bg-amber-700" onClick={() => submitGasto(pendingSubmit)}>
-              Registrar mesmo assim
-            </AlertDialogAction>
+            <AlertDialogAction className="bg-amber-600 hover:bg-amber-700" onClick={() => submitGasto(pendingSubmit)}>Registrar mesmo assim</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Confirmação excluir */}
+      <AlertDialog open={!!confirmDelete} onOpenChange={(v) => { if (!v) { setConfirmDelete(null); setDeletingId(null); } }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+            <AlertDialogDescription>
+              {confirmDelete === "bulk"
+                ? `Excluir ${selecionados.size} item(s) selecionado(s)? ${projeto.drive_categoria_ids ? "As pastas no Drive também serão excluídas." : ""}`
+                : `Excluir este item? ${projeto.drive_categoria_ids ? "A pasta no Drive também será excluída." : ""}`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction className="bg-red-600 hover:bg-red-700" onClick={async () => {
+              if (confirmDelete === "bulk") await deleteBulk();
+              else if (deletingId) { await deleteGasto(deletingId); setDeletingId(null); }
+              setConfirmDelete(null);
+            }}>Excluir</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
