@@ -55,11 +55,15 @@ function isSecao8(campo) {
     (s.includes("recurso") || s.includes("financ") || s.includes("execução"));
 }
 
-// Campo 8.1: APENAS o campo de justificativa/descrição narrativa de TODOS os itens
+// Campo 8.1: campo de justificativa narrativa — detecta pelo número "8.1" na pergunta/seção
+// OU é o primeiro campo da seção 8 que pede descrição/justificativa textual
 function isItem81(campo) {
   const p = (campo.pergunta || "").toLowerCase();
-  return isSecao8(campo) && (p.includes("8.1") || p.includes("justif") ||
-    (p.includes("descriç") && !p.includes("nome") && !p.includes("custo") && !p.includes("qtd")));
+  const s = (campo.secao || "").toLowerCase();
+  // Detecta explicitamente pelo 8.1 ou "justif"
+  if (p.includes("8.1") || s.includes("8.1")) return true;
+  if (isSecao8(campo) && p.includes("justif")) return true;
+  return false;
 }
 
 // Campos de tabela da seção 8 (permanente, consumo, terceiros, diárias etc.) — exceto 8.1
