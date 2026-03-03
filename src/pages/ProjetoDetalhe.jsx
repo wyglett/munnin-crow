@@ -90,6 +90,7 @@ export default function ProjetoDetalhe() {
         "Diárias": "diarias",
         "Passagens": "passagens",
         "Contrapartida": "contrapartida",
+        "DOACI": "doaci",
       };
       Object.entries(res.data.pastas || {}).forEach(([nome, fid]) => {
         const key = catMap[nome];
