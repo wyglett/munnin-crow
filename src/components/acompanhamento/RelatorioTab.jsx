@@ -601,12 +601,14 @@ ${resumoPorCategoria}`
 }
 
 // ─── Import de projeto aprovado ──────────────────────────────────────────────
-function ImportProjetoAprovado({ projeto, onSave }) {
+function ImportProjetoAprovado({ projeto, onSave, campos, onSalvarCampos }) {
   const [open, setOpen] = useState(false);
   const [url, setUrl] = useState(projeto.template_relatorio_url || "");
   const [uploading, setUploading] = useState(false);
   const [extraindo, setExtraindo] = useState(false);
   const [resultado, setResultado] = useState(null);
+  const [aplicandoRelatorio, setAplicandoRelatorio] = useState(false);
+  const [aplicadoRelatorio, setAplicadoRelatorio] = useState(false);
 
   const handleUpload = async (e) => {
     const file = e.target.files[0];
@@ -623,20 +625,22 @@ function ImportProjetoAprovado({ projeto, onSave }) {
     if (!fileUrl) return;
     setExtraindo(true);
     const r = await base44.integrations.Core.InvokeLLM({
-      prompt: `Analise este documento de projeto aprovado. Extraia: 1) atividades previstas, 2) cronograma, 3) equipe, 4) linhas orçamento, 5) objetivos.`,
+      prompt: `Analise este documento de projeto aprovado. Extraia detalhadamente: 1) atividades/ações previstas (lista completa), 2) cronograma por fase/etapa, 3) equipe do projeto com funções, 4) linhas de orçamento, 5) objetivos do projeto, 6) entregas/resultados esperados.`,
       file_urls: [fileUrl],
       response_json_schema: {
         type: "object",
         properties: {
+          objetivos: { type: "string" },
           atividades: { type: "array", items: { type: "string" } },
-          cronograma: { type: "array", items: { type: "object", properties: { fase: { type: "string" }, periodo: { type: "string" }, descricao: { type: "string" } } } },
-          equipe: { type: "array", items: { type: "object", properties: { nome: { type: "string" }, funcao: { type: "string" } } } },
+          entregas: { type: "array", items: { type: "string" } },
+          equipe: { type: "array", items: { type: "object", properties: { nome: { type: "string" }, funcao: { type: "string" }, carga_horaria: { type: "string" } } } },
+          cronograma: { type: "array", items: { type: "object", properties: { atividade: { type: "string" }, inicio: { type: "string" }, fim: { type: "string" }, responsavel: { type: "string" } } } },
           linhas_orcamento: { type: "array", items: { type: "object", properties: { categoria: { type: "string" }, descricao: { type: "string" }, valor_aprovado: { type: "number" } } } },
-          objetivos: { type: "string" }
         }
       }
     });
     setResultado(r);
+    setAplicadoRelatorio(false);
     setExtraindo(false);
   };
 
@@ -651,9 +655,73 @@ function ImportProjetoAprovado({ projeto, onSave }) {
       valor_aprovado: Number(l.valor_aprovado) || 0
     }));
     await onSave({ orcamento_linhas: [...(projeto.orcamento_linhas || []), ...novasLinhas] });
-    setOpen(false);
-    setResultado(null);
   };
+
+  const aplicarNoRelatorio = async () => {
+    if (!resultado || !campos?.length) return;
+    setAplicandoRelatorio(true);
+    const novosCampos = [...campos];
+
+    // Para cada campo do relatório, tenta preencher com dados extraídos
+    novosCampos.forEach((campo, idx) => {
+      const p = (campo.pergunta || "").toLowerCase();
+      const s = (campo.secao || "").toLowerCase();
+
+      // Objetivos
+      if ((p.includes("objetivo") || s.includes("objetivo")) && resultado.objetivos && !campo.concluido) {
+        novosCampos[idx] = { ...campo, resposta: resultado.objetivos };
+        return;
+      }
+
+      // Atividades/Ações
+      if (isAtividades(campo) && resultado.atividades?.length && !campo.concluido) {
+        const linhasAtv = resultado.atividades.map((a, i) => ({
+          id: `atv-import-${Date.now()}-${i}`,
+          descricao: a,
+          responsavel: "",
+          resultado: ""
+        }));
+        novosCampos[idx] = { ...campo, itens_tabela: linhasAtv };
+        return;
+      }
+
+      // Entregas / resultados esperados
+      if ((p.includes("entrega") || p.includes("resultado") || s.includes("entrega")) && resultado.entregas?.length && !campo.concluido) {
+        novosCampos[idx] = { ...campo, resposta: resultado.entregas.map((e, i) => `${i + 1}. ${e}`).join("\n") };
+        return;
+      }
+
+      // Equipe
+      if ((p.includes("equipe") || p.includes("membro") || s.includes("equipe")) && resultado.equipe?.length && !campo.concluido) {
+        novosCampos[idx] = {
+          ...campo,
+          resposta: resultado.equipe.map(m => `${m.nome} — ${m.funcao}${m.carga_horaria ? ` (${m.carga_horaria})` : ""}`).join("\n")
+        };
+        return;
+      }
+
+      // Cronograma
+      if (isCronograma(campo) && resultado.cronograma?.length && !campo.concluido) {
+        const linhasCrono = resultado.cronograma.map((c, i) => ({
+          id: `crono-import-${Date.now()}-${i}`,
+          descricao: c.atividade || "",
+          meses: [],
+          responsavel: c.responsavel || ""
+        }));
+        novosCampos[idx] = { ...campo, itens_tabela: linhasCrono };
+        return;
+      }
+    });
+
+    await onSalvarCampos(novosCampos);
+    setAplicandoRelatorio(false);
+    setAplicadoRelatorio(true);
+  };
+
+  const temDadosParaRelatorio = resultado && campos?.length > 0 && (
+    resultado.objetivos || resultado.atividades?.length || resultado.entregas?.length ||
+    resultado.equipe?.length || resultado.cronograma?.length
+  );
 
   return (
     <>
@@ -685,20 +753,62 @@ function ImportProjetoAprovado({ projeto, onSave }) {
             )}
             {resultado && (
               <div className="space-y-3">
-                {resultado.objetivos && <div className="bg-gray-50 rounded-lg p-3"><p className="text-xs font-bold text-gray-600 mb-1">OBJETIVOS</p><p className="text-sm text-gray-700">{resultado.objetivos}</p></div>}
+                {resultado.objetivos && (
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-xs font-bold text-gray-600 mb-1">OBJETIVOS</p>
+                    <p className="text-sm text-gray-700">{resultado.objetivos}</p>
+                  </div>
+                )}
                 {resultado.atividades?.length > 0 && (
                   <div className="bg-gray-50 rounded-lg p-3">
                     <p className="text-xs font-bold text-gray-600 mb-1">ATIVIDADES ({resultado.atividades.length})</p>
                     <ul className="space-y-0.5">{resultado.atividades.slice(0, 5).map((a, i) => <li key={i} className="text-xs">• {a}</li>)}{resultado.atividades.length > 5 && <li className="text-xs text-gray-400">...e mais {resultado.atividades.length - 5}</li>}</ul>
                   </div>
                 )}
-                {resultado.linhas_orcamento?.length > 0 && (
-                  <div className="bg-indigo-50 rounded-lg p-3">
-                    <p className="text-xs font-bold text-indigo-700 mb-2">LINHAS DE ORÇAMENTO ({resultado.linhas_orcamento.length})</p>
-                    <div className="space-y-1">{resultado.linhas_orcamento.map((l, i) => <div key={i} className="flex justify-between text-xs text-gray-700"><span>{l.categoria} — {l.descricao}</span><span className="font-bold">{fmt(l.valor_aprovado)}</span></div>)}</div>
-                    <Button size="sm" onClick={aplicarNoOrcamento} className="mt-3 bg-indigo-600 hover:bg-indigo-700 w-full">Aplicar no Orçamento do Projeto</Button>
+                {resultado.entregas?.length > 0 && (
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-xs font-bold text-gray-600 mb-1">ENTREGAS / RESULTADOS ESPERADOS ({resultado.entregas.length})</p>
+                    <ul className="space-y-0.5">{resultado.entregas.slice(0, 4).map((e, i) => <li key={i} className="text-xs">• {e}</li>)}{resultado.entregas.length > 4 && <li className="text-xs text-gray-400">...e mais {resultado.entregas.length - 4}</li>}</ul>
                   </div>
                 )}
+                {resultado.equipe?.length > 0 && (
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-xs font-bold text-gray-600 mb-1">EQUIPE ({resultado.equipe.length})</p>
+                    <div className="space-y-0.5">{resultado.equipe.map((m, i) => <div key={i} className="text-xs text-gray-700"><span className="font-medium">{m.nome}</span> — {m.funcao}{m.carga_horaria ? <span className="text-gray-400"> ({m.carga_horaria})</span> : null}</div>)}</div>
+                  </div>
+                )}
+                {resultado.cronograma?.length > 0 && (
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-xs font-bold text-gray-600 mb-1">CRONOGRAMA ({resultado.cronograma.length} etapas)</p>
+                    <div className="space-y-0.5">{resultado.cronograma.slice(0, 4).map((c, i) => <div key={i} className="text-xs text-gray-700">• {c.atividade}{c.inicio ? <span className="text-gray-400"> ({c.inicio}{c.fim ? ` → ${c.fim}` : ""})</span> : null}</div>)}{resultado.cronograma.length > 4 && <div className="text-xs text-gray-400">...e mais {resultado.cronograma.length - 4}</div>}</div>
+                  </div>
+                )}
+
+                {/* Botões de aplicar */}
+                <div className="border-t pt-3 space-y-2">
+                  {temDadosParaRelatorio && (
+                    <Button
+                      size="sm"
+                      onClick={aplicarNoRelatorio}
+                      disabled={aplicandoRelatorio || aplicadoRelatorio || !campos?.length}
+                      className="w-full bg-purple-600 hover:bg-purple-700"
+                    >
+                      {aplicandoRelatorio ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Aplicando...</> :
+                       aplicadoRelatorio ? <><CheckCircle2 className="w-4 h-4 mr-2" />Aplicado no Relatório!</> :
+                       <><Sparkles className="w-4 h-4 mr-2" />Aplicar no Relatório (equipe, atividades, cronograma)</>}
+                    </Button>
+                  )}
+                  {!campos?.length && temDadosParaRelatorio && (
+                    <p className="text-xs text-amber-600 text-center">⚠️ Faça upload do modelo de relatório (PDF) primeiro para habilitar esta opção.</p>
+                  )}
+                  {resultado.linhas_orcamento?.length > 0 && (
+                    <div className="bg-indigo-50 rounded-lg p-3">
+                      <p className="text-xs font-bold text-indigo-700 mb-2">LINHAS DE ORÇAMENTO ({resultado.linhas_orcamento.length})</p>
+                      <div className="space-y-1">{resultado.linhas_orcamento.map((l, i) => <div key={i} className="flex justify-between text-xs text-gray-700"><span>{l.categoria} — {l.descricao}</span><span className="font-bold">{fmt(l.valor_aprovado)}</span></div>)}</div>
+                      <Button size="sm" onClick={aplicarNoOrcamento} className="mt-3 bg-indigo-600 hover:bg-indigo-700 w-full">Aplicar no Orçamento do Projeto</Button>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
