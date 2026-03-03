@@ -404,9 +404,13 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
                 </Select>
               </div>
               <div>
-                <Label>Valor (R$) *</Label>
-                <Input type="number" step="0.01" value={gastoForm.valor} onChange={e => setGastoForm({ ...gastoForm, valor: e.target.value })} required placeholder="0,00" />
+                <Label>Quantidade</Label>
+                <Input type="number" min="1" step="1" value={gastoForm.quantidade} onChange={e => setGastoForm({ ...gastoForm, quantidade: e.target.value })} placeholder="1" />
               </div>
+            </div>
+            <div>
+              <Label>Valor Total (R$) *</Label>
+              <Input type="number" step="0.01" value={gastoForm.valor} onChange={e => setGastoForm({ ...gastoForm, valor: e.target.value })} required placeholder="0,00" />
             </div>
             {subcategoriasDaCat.length > 0 && (
               <div>
