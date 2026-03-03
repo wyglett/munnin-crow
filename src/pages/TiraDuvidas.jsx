@@ -97,11 +97,13 @@ ${messages.slice(-8).map(m => `${m.role === "user" ? "Usuário" : "Assistente"}:
 
 Pergunta: ${userMsg}
 
-INSTRUÇÕES:
-- Se há documentos, LEIA-OS e use como fonte primária.
-- Seja DIRETO e OBJETIVO. Cite trechos relevantes do edital quando possível.
-${envolveMoneda ? "- Informe as cotações atuais do dólar e euro buscadas na internet." : ""}
-${envolveVrte ? "- Informe o VRTE vigente e como ele se aplica ao contexto da pergunta." : ""}
+INSTRUÇÕES DE RESPOSTA:
+1. Prioridade das fontes: (1º) Edital oficial → (2º) Manual de uso de recursos → (3º) Conhecimento aprendido (base admin) → (4º) Conhecimento geral sobre fomento.
+2. Se há manuais de uso de recursos anexados, consulte-os para responder dúvidas sobre o que pode ser comprado, como pagar fornecedores, documentação exigida, elegibilidade de despesas, diárias, passagens, etc.
+3. Seja DIRETO e OBJETIVO. Quando citar o manual ou edital, indique a fonte: "(conforme Manual de Uso de Recursos)" ou "(conforme o edital)".
+4. Se a dúvida não estiver coberta por nenhuma fonte disponível, seja honesto e diga: "Esta informação não está no edital ou manual disponíveis. Recomendo consultar o órgão fomentador ou um consultor especializado."
+${envolveMoneda ? "5. Informe as cotações atuais do dólar e euro buscadas na internet." : ""}
+${envolveVrte ? "5. Informe o VRTE vigente e como ele se aplica ao contexto da pergunta." : ""}
 - Formato Markdown, use listas quando listar itens.`,
       add_context_from_internet: buscaInternet,
       file_urls: allFileUrls.length > 0 ? allFileUrls : undefined,
