@@ -505,6 +505,221 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Leitura Automática (Experimental) */}
+      <LeituraAutomaticaDialog
+        open={leituraAutoOpen}
+        onClose={() => setLeituraAutoOpen(false)}
+        projeto={projeto}
+        projetoId={projetoId}
+        isConsultor={isConsultor}
+        onSaved={() => {
+          queryClient.invalidateQueries({ queryKey: ["gastos", projetoId] });
+          setLeituraAutoOpen(false);
+        }}
+        exportarItem={exportarItem}
+      />
     </div>
+  );
+}
+
+// ─── Leitura Automática (Experimental) ───────────────────────────────────────
+function LeituraAutomaticaDialog({ open, onClose, projeto, projetoId, isConsultor, onSaved, exportarItem }) {
+  const [step, setStep] = useState("upload"); // upload | confirmar | salvando
+  const [data, setData] = useState(""); // data de pagamento
+  const [categoria, setCategoria] = useState("terceiros");
+  const [uploading, setUploading] = useState(false);
+  const [anexos, setAnexos] = useState([]);
+  const [lendo, setLendo] = useState(false);
+  const [extraido, setExtraido] = useState(null); // dados extraídos pela IA
+  const [salvando, setSalvando] = useState(false);
+
+  const resetar = () => {
+    setStep("upload");
+    setData("");
+    setCategoria("terceiros");
+    setAnexos([]);
+    setExtraido(null);
+    setSalvando(false);
+  };
+
+  const handleAnexo = async (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    setUploading(true);
+    const novos = [];
+    for (const file of files) {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      novos.push({ nome: file.name, url: file_url });
+    }
+    setAnexos(prev => [...prev, ...novos]);
+    setUploading(false);
+    e.target.value = "";
+  };
+
+  const lerDocumentos = async () => {
+    if (!anexos.length) return;
+    setLendo(true);
+    const r = await base44.integrations.Core.InvokeLLM({
+      prompt: `Você é um especialista em leitura de documentos fiscais brasileiros. Analise o(s) documento(s) anexado(s) (Nota Fiscal, Invoice, Recibo, Cupom Fiscal ou similar) e extraia as seguintes informações:
+- fornecedor: Nome/Razão Social do emissor do documento
+- descricao: Descrição dos itens comprados (resuma em um texto se houver vários itens)
+- quantidade: Quantidade total de unidades (se for produto único ou soma geral; use 1 se for serviço)
+- valor_total: Valor total da nota/documento (número, sem símbolo de moeda)
+- observacao: Qualquer informação relevante adicional (número da NF, CNPJ, condições, etc.)
+
+Se houver múltiplos documentos, retorne os dados do documento principal ou uma consolidação.`,
+      file_urls: anexos.map(a => a.url),
+      response_json_schema: {
+        type: "object",
+        properties: {
+          fornecedor: { type: "string" },
+          descricao: { type: "string" },
+          quantidade: { type: "number" },
+          valor_total: { type: "number" },
+          observacao: { type: "string" }
+        }
+      }
+    });
+    setExtraido(r);
+    setStep("confirmar");
+    setLendo(false);
+  };
+
+  const salvar = async () => {
+    if (!extraido) return;
+    setSalvando(true);
+    const payload = {
+      descricao: extraido.descricao || "Item importado automaticamente",
+      categoria,
+      valor: Number(extraido.valor_total) || 0,
+      quantidade: Number(extraido.quantidade) || 1,
+      fornecedor: extraido.fornecedor || "",
+      data,
+      observacao: extraido.observacao || "",
+      anexos,
+      acompanhamento_id: projetoId,
+      adicionado_por: isConsultor ? "consultor" : "empreendedor",
+      status_revisao: "normal",
+      drive_exportado: false,
+    };
+    const criado = await base44.entities.GastoProjeto.create(payload);
+    // Exportar para Drive automaticamente se configurado
+    if (projeto.drive_categoria_ids?.[categoria]) {
+      await exportarItem({ ...criado, ...payload, id: criado.id });
+    }
+    setSalvando(false);
+    resetar();
+    onSaved();
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={(v) => { if (!v) { resetar(); onClose(); } }}>
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-teal-600" />
+            Leitura Automática de Documento Fiscal
+            <Badge className="bg-amber-100 text-amber-700 text-xs ml-1">Experimental</Badge>
+          </DialogTitle>
+        </DialogHeader>
+
+        {step === "upload" && (
+          <div className="space-y-4">
+            <div className="bg-teal-50 border border-teal-200 rounded-lg p-3 text-sm text-teal-800">
+              Anexe a NF, Invoice ou Recibo. A IA lerá o documento e preencherá os dados automaticamente. Confirme antes de salvar.
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label>Data de Pagamento *</Label>
+                <input type="date" value={data} onChange={e => setData(e.target.value)}
+                  className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500" />
+              </div>
+              <div>
+                <Label>Categoria</Label>
+                <select value={categoria} onChange={e => setCategoria(e.target.value)}
+                  className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+                  {CATEGORIAS.map(c => <option key={c.key} value={c.key}>{c.label}</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <Label>Documentos Fiscais (NF, Invoice, Recibo...)</Label>
+              <div className="mt-2 space-y-2">
+                {anexos.map((a, i) => (
+                  <div key={i} className="flex items-center gap-2 text-xs bg-gray-50 rounded px-2 py-1.5">
+                    <ExternalLink className="w-3 h-3 text-teal-400 flex-shrink-0" />
+                    <a href={a.url} target="_blank" rel="noopener noreferrer" className="text-teal-600 hover:underline truncate flex-1">{a.nome}</a>
+                    <button type="button" onClick={() => setAnexos(prev => prev.filter((_, j) => j !== i))} className="text-red-400 hover:text-red-600"><X className="w-3 h-3" /></button>
+                  </div>
+                ))}
+                <label className="cursor-pointer flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm text-gray-700 transition-all w-fit">
+                  {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                  {uploading ? "Enviando..." : "Adicionar documento(s)"}
+                  <input type="file" multiple className="hidden" onChange={handleAnexo} accept=".pdf,.jpg,.jpeg,.png,.xml" />
+                </label>
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => { resetar(); onClose(); }}>Cancelar</Button>
+              <Button onClick={lerDocumentos} disabled={!anexos.length || !data || lendo} className="bg-teal-600 hover:bg-teal-700">
+                {lendo ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Lendo documento...</> : <><Sparkles className="w-4 h-4 mr-2" />Ler e Extrair Dados</>}
+              </Button>
+            </DialogFooter>
+          </div>
+        )}
+
+        {step === "confirmar" && extraido && (
+          <div className="space-y-4">
+            <div className="bg-teal-50 border border-teal-200 rounded-lg p-3 text-sm text-teal-800 font-medium">
+              Confira os dados extraídos pela IA antes de salvar:
+            </div>
+
+            <div className="space-y-3">
+              <div>
+                <Label className="text-xs">Fornecedor</Label>
+                <input className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 text-sm" value={extraido.fornecedor || ""} onChange={e => setExtraido(x => ({ ...x, fornecedor: e.target.value }))} />
+              </div>
+              <div>
+                <Label className="text-xs">Descrição dos Itens</Label>
+                <textarea className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 text-sm min-h-[70px] resize-none" value={extraido.descricao || ""} onChange={e => setExtraido(x => ({ ...x, descricao: e.target.value }))} />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-xs">Quantidade</Label>
+                  <input type="number" min="1" className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 text-sm" value={extraido.quantidade || 1} onChange={e => setExtraido(x => ({ ...x, quantidade: e.target.value }))} />
+                </div>
+                <div>
+                  <Label className="text-xs">Valor Total (R$)</Label>
+                  <input type="number" step="0.01" className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 text-sm" value={extraido.valor_total || ""} onChange={e => setExtraido(x => ({ ...x, valor_total: e.target.value }))} />
+                </div>
+              </div>
+              {extraido.observacao && (
+                <div>
+                  <Label className="text-xs">Observação</Label>
+                  <input className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 text-sm" value={extraido.observacao || ""} onChange={e => setExtraido(x => ({ ...x, observacao: e.target.value }))} />
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-2 text-xs text-gray-500 flex-wrap">
+              <span>Data: {data}</span>
+              <span>· Categoria: {CATEGORIAS.find(c => c.key === categoria)?.label}</span>
+              <span>· {anexos.length} documento(s)</span>
+            </div>
+
+            <DialogFooter className="gap-2">
+              <Button variant="outline" onClick={() => setStep("upload")}>Voltar</Button>
+              <Button onClick={salvar} disabled={salvando || !extraido.valor_total} className="bg-teal-600 hover:bg-teal-700">
+                {salvando ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Salvando...</> : <><CheckCircle2 className="w-4 h-4 mr-2" />Confirmar e Salvar</>}
+              </Button>
+            </DialogFooter>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }
