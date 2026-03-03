@@ -11,9 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import {
-  ArrowLeft, FolderOpen, Info, Loader2, Sparkles, Users, CheckCircle2
+  ArrowLeft, FolderOpen, Info, Loader2, Users, CheckCircle2
 } from "lucide-react";
-import ReactMarkdown from "react-markdown";
 import ConsultorTab from "../components/acompanhamento/ConsultorTab";
 import GastosFinanceiro from "../components/acompanhamento/GastosFinanceiro";
 import OrcamentoTab from "../components/acompanhamento/OrcamentoTab";
