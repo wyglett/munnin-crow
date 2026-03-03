@@ -486,7 +486,10 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
               <Input value={gastoForm.observacao} onChange={e => setGastoForm({ ...gastoForm, observacao: e.target.value })} placeholder="Obs para o empreendedor..." />
             </div>
             {editingId && (
-              <p className="text-xs text-amber-600 bg-amber-50 p-2 rounded">Ao salvar, o item será marcado para re-exportação ao Drive.</p>
+              <p className="text-xs text-amber-600 bg-amber-50 p-2 rounded">Ao salvar, o item será {autoExportDrive && projeto.drive_categoria_ids ? "re-exportado automaticamente ao Drive." : "marcado para re-exportação ao Drive."}</p>
+            )}
+            {!editingId && autoExportDrive && projeto.drive_categoria_ids && (
+              <p className="text-xs text-green-700 bg-green-50 p-2 rounded flex items-center gap-1"><Zap className="w-3 h-3" /> Exportação automática ao Drive ativada.</p>
             )}
             <DialogFooter>
               <Button type="button" variant="outline" onClick={fecharDialog}>Cancelar</Button>
