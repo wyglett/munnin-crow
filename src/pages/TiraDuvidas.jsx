@@ -43,7 +43,6 @@ export default function TiraDuvidas() {
 
     const edital = selectedEdital !== "geral" ? editais.find(e => e.id === selectedEdital) : null;
 
-    // Coletar URLs dos documentos do edital (apenas PDF e imagens — formatos suportados pelo InvokeLLM)
     const isSupportedFile = (url) => /\.(pdf|png|jpg|jpeg)(\?|$)/i.test(url);
     const fileUrls = [];
     if (edital) {
@@ -53,9 +52,8 @@ export default function TiraDuvidas() {
       });
     }
 
-    // Base de treinamento da IA
     const treinamentoStr = edital?.ia_treinamento?.length
-      ? `\n\nCONHECIMENTO COMPLEMENTAR CADASTRADO PELO ADMINISTRADOR:\n${edital.ia_treinamento.map(t => `P: ${t.pergunta}\nR: ${t.resposta}`).join("\n---\n")}`
+      ? `\n\nCONHECIMENTO COMPLEMENTAR:\n${edital.ia_treinamento.map(t => `P: ${t.pergunta}\nR: ${t.resposta}`).join("\n---\n")}`
       : "";
 
     let contextEdital = "";
@@ -64,27 +62,38 @@ export default function TiraDuvidas() {
 Número: ${edital.numero || "N/I"} | Órgão: ${edital.orgao || ""} | Estado: ${edital.estado || ""}
 Área: ${edital.area || ""} | Valor: ${edital.valor_total || ""} | Encerramento: ${edital.data_encerramento || ""}
 Descrição: ${edital.descricao || ""}${treinamentoStr}
-
-${fileUrls.length > 0 ? `Os documentos oficiais do edital estão anexados (${fileUrls.length} arquivo(s)). LEIA-OS e use seu conteúdo como fonte primária para responder.` : ""}`;
+${fileUrls.length > 0 ? `\nDocumentos oficiais anexados (${fileUrls.length} arquivo(s)). LEIA-OS para responder.` : ""}`;
     }
 
-    const response = await base44.integrations.Core.InvokeLLM({
-      prompt: `Você é o assistente especialista da plataforma Munnin Crow em editais de fomento à inovação e pesquisa.
-${contextEdital ? contextEdital : "Responda sobre editais de fomento em geral."}
+    // Detecta se a pergunta envolve moeda estrangeira ou limites de gastos
+    const envolveMoneda = /dólar|dollar|euro|moeda|câmbio|usd|eur/i.test(userMsg);
+    const envolveVrte = /vrte|limite|diária|diaria|deslocamento/i.test(userMsg);
+    const buscaInternet = envolveMoneda || envolveVrte;
 
-Histórico da conversa:
+    const contextoEconomico = buscaInternet
+      ? `\n\nBUSQUE NA INTERNET:
+${envolveMoneda ? "- Cotação atual do dólar (USD/BRL) e do euro (EUR/BRL) do dia de hoje." : ""}
+${envolveVrte ? "- Valor de Referência de Teto de Efeito (VRTE) vigente no Brasil para o ano atual, utilizado como limite para diárias e gastos em projetos de fomento." : ""}
+Use esses valores atualizados para orientar o usuário com precisão.`
+      : "";
+
+    const response = await base44.integrations.Core.InvokeLLM({
+      prompt: `Você é o assistente especialista da plataforma Munnin Crow em editais de fomento à inovação e pesquisa no Brasil.
+${contextEdital || "Responda sobre editais de fomento em geral."}
+${contextoEconomico}
+
+Histórico:
 ${messages.slice(-8).map(m => `${m.role === "user" ? "Usuário" : "Assistente"}: ${m.content}`).join("\n")}
 
-Pergunta atual do usuário: ${userMsg}
+Pergunta: ${userMsg}
 
 INSTRUÇÕES:
-- Se há documentos anexados, LEIA-OS e extraia informações concretas (itens financiáveis, não financiáveis, critérios, prazos, etc).
-- Responda com base nos documentos oficiais em primeiro lugar, depois no conhecimento complementar cadastrado.
-- Seja DIRETO e OBJETIVO. Cite os trechos relevantes do edital quando possível.
-- Nunca diga que não tem informações se os documentos foram fornecidos — leia e responda.
-- Se genuinamente não encontrar a informação, diga qual documento o usuário deve consultar e em qual seção.
+- Se há documentos, LEIA-OS e use como fonte primária.
+- Seja DIRETO e OBJETIVO. Cite trechos relevantes do edital quando possível.
+${envolveMoneda ? "- Informe as cotações atuais do dólar e euro buscadas na internet." : ""}
+${envolveVrte ? "- Informe o VRTE vigente e como ele se aplica ao contexto da pergunta." : ""}
 - Formato Markdown, use listas quando listar itens.`,
-      add_context_from_internet: false,
+      add_context_from_internet: buscaInternet,
       file_urls: fileUrls.length > 0 ? fileUrls : undefined,
     });
 
