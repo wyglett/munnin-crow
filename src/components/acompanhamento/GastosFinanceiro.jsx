@@ -138,21 +138,28 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
       quantidade: parseFloat(form.quantidade) || 1,
       anexos: form.anexos || [],
     };
+    let savedId = editingId;
     if (editingId) {
       await base44.entities.GastoProjeto.update(editingId, { ...payload, drive_exportado: false });
     } else {
-      await base44.entities.GastoProjeto.create({
+      const criado = await base44.entities.GastoProjeto.create({
         ...payload,
         acompanhamento_id: projetoId,
         adicionado_por: isConsultor ? "consultor" : "empreendedor",
         status_revisao: isConsultor ? "pendente_revisao" : "normal",
         drive_exportado: false,
       });
+      savedId = criado.id;
     }
     queryClient.invalidateQueries({ queryKey: ["gastos", projetoId] });
     fecharDialog();
     setAlertaEstouro(false);
     setPendingSubmit(null);
+    // Auto-export se habilitado e Drive configurado
+    if (autoExportDrive && projeto.drive_categoria_ids?.[payload.categoria] && savedId) {
+      const gastoParaExportar = { ...payload, id: savedId, drive_exportado: false, drive_hash: undefined };
+      await exportarItem(gastoParaExportar);
+    }
   };
 
   const deleteGasto = async (gid) => {
