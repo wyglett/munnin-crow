@@ -17,6 +17,7 @@ import ReactMarkdown from "react-markdown";
 import ConsultorTab from "../components/acompanhamento/ConsultorTab";
 import GastosFinanceiro from "../components/acompanhamento/GastosFinanceiro";
 import OrcamentoTab from "../components/acompanhamento/OrcamentoTab";
+import RelatorioTab from "../components/acompanhamento/RelatorioTab";
 
 const fmt = (v) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0);
 const STATUS_MAP = { ativo: "bg-green-100 text-green-800", concluido: "bg-blue-100 text-blue-800", suspenso: "bg-yellow-100 text-yellow-800" };
