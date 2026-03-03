@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Trash2, Upload, Loader2, FileText, Sparkles, Brain, ChevronDown, ChevronUp, GripVertical, ExternalLink } from "lucide-react";
+import { Plus, Trash2, Upload, Loader2, FileText, Sparkles, Brain, ChevronDown, ChevronUp, GripVertical, MessageSquarePlus, Send } from "lucide-react";
 
 const TIPO_LABELS = {
   edital_completo: { label: "Edital Completo", color: "bg-blue-100 text-blue-800", desc: "IA lê para tirar dúvidas" },
