@@ -294,6 +294,15 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
         </div>
       )}
 
+      {/* Toggle exportação automática */}
+      {projeto.drive_categoria_ids && (
+        <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-white border rounded-lg w-fit ml-auto">
+          <Zap className={`w-3.5 h-3.5 ${autoExportDrive ? "text-green-600" : "text-gray-400"}`} />
+          <span className="text-xs text-gray-600">Exportar para Drive automaticamente</span>
+          <Switch checked={autoExportDrive} onCheckedChange={toggleAutoExport} />
+        </div>
+      )}
+
       {/* Ações principais */}
       <div className="flex flex-wrap gap-2 justify-end mb-4">
         {gastos.length > 0 && !modoSelecao && (
