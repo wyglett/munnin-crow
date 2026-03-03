@@ -186,15 +186,11 @@ export default function ProjetoDetalhe() {
           </TabsContent>
 
           <TabsContent value="relatorio">
-            <div className="flex justify-between items-start mb-4">
-              <p className="text-sm text-gray-500">A IA gera um relatório formal baseado nos dados e gastos do projeto</p>
-              <Button onClick={gerarRelatorio} disabled={gerando} className="bg-indigo-600 hover:bg-indigo-700">
-                {gerando ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Gerando...</> : <><Sparkles className="w-4 h-4 mr-2" />Gerar Relatório</>}
-              </Button>
-            </div>
-            {relatorio
-              ? <Card><CardContent className="p-6 prose prose-sm max-w-none"><ReactMarkdown>{relatorio}</ReactMarkdown></CardContent></Card>
-              : <Card><CardContent className="text-center py-14 text-gray-400">Clique em "Gerar Relatório" para criar o documento</CardContent></Card>}
+            <RelatorioTab
+              projeto={projeto}
+              gastos={gastos}
+              onSave={(data) => updateProjeto.mutateAsync(data)}
+            />
           </TabsContent>
         </Tabs>
       </div>
