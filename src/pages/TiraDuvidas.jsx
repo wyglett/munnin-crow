@@ -44,16 +44,25 @@ export default function TiraDuvidas() {
     const edital = selectedEdital !== "geral" ? editais.find(e => e.id === selectedEdital) : null;
 
     const isSupportedFile = (url) => /\.(pdf|png|jpg|jpeg)(\?|$)/i.test(url);
-    const fileUrls = [];
+
+    // Separa arquivos por tipo: edital/manuais vs outros
+    const fileUrlsEdital = [];
+    const fileUrlsManuais = [];
     if (edital) {
-      edital.documentos_modelo?.forEach(d => { if (d.url && isSupportedFile(d.url)) fileUrls.push(d.url); });
+      edital.documentos_modelo?.forEach(d => { if (d.url && isSupportedFile(d.url)) fileUrlsEdital.push(d.url); });
       edital.etapas?.forEach(etapa => {
-        etapa.documentos?.forEach(d => { if (d.url && isSupportedFile(d.url)) fileUrls.push(d.url); });
+        etapa.documentos?.forEach(d => {
+          if (!d.url || !isSupportedFile(d.url)) return;
+          if (d.tipo === "manual_recurso") fileUrlsManuais.push(d.url);
+          else if (d.tipo === "edital_completo") fileUrlsEdital.push(d.url);
+        });
       });
     }
 
+    const allFileUrls = [...fileUrlsEdital, ...fileUrlsManuais];
+
     const treinamentoStr = edital?.ia_treinamento?.length
-      ? `\n\nCONHECIMENTO COMPLEMENTAR:\n${edital.ia_treinamento.map(t => `P: ${t.pergunta}\nR: ${t.resposta}`).join("\n---\n")}`
+      ? `\n\nCONHECIMENTO APRENDIDO (base de conhecimento do admin):\n${edital.ia_treinamento.map(t => `[${t.categoria || "Geral"}] ${t.pergunta} → ${t.resposta}`).join("\n")}`
       : "";
 
     let contextEdital = "";
@@ -62,7 +71,8 @@ export default function TiraDuvidas() {
 Número: ${edital.numero || "N/I"} | Órgão: ${edital.orgao || ""} | Estado: ${edital.estado || ""}
 Área: ${edital.area || ""} | Valor: ${edital.valor_total || ""} | Encerramento: ${edital.data_encerramento || ""}
 Descrição: ${edital.descricao || ""}${treinamentoStr}
-${fileUrls.length > 0 ? `\nDocumentos oficiais anexados (${fileUrls.length} arquivo(s)). LEIA-OS para responder.` : ""}`;
+${fileUrlsEdital.length > 0 ? `\n📄 Edital oficial anexado (${fileUrlsEdital.length} arquivo(s)). Use como fonte primária.` : ""}
+${fileUrlsManuais.length > 0 ? `\n📘 Manual(is) de uso de recursos anexado(s) (${fileUrlsManuais.length}). Consulte para dúvidas sobre compras, pagamentos, elegibilidade de gastos e uso de verbas.` : ""}`;
     }
 
     // Detecta se a pergunta envolve moeda estrangeira ou limites de gastos
