@@ -92,6 +92,7 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
       categoria: g.categoria || "terceiros",
       subcategoria_id: g.subcategoria_id || "",
       valor: g.valor || "",
+      quantidade: g.quantidade || 1,
       data: g.data || "",
       fornecedor: g.fornecedor || "",
       observacao: g.observacao || "",
