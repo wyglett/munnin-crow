@@ -211,9 +211,58 @@ export default function Acompanhamento() {
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader><DialogTitle>Novo Projeto</DialogTitle></DialogHeader>
-          <form onSubmit={(e) => { e.preventDefault(); createMutation.mutate(form); }} className="space-y-3">
+          <form onSubmit={(e) => { e.preventDefault(); createMutation.mutate(form); }} className="space-y-4">
+
+            {/* Upload do projeto aprovado */}
+            <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-3 space-y-2">
+              <p className="text-xs font-semibold text-indigo-700 flex items-center gap-1"><Sparkles className="w-3.5 h-3.5" /> Projeto Aprovado (PDF)</p>
+              <p className="text-xs text-indigo-600">Faça upload do projeto aprovado para preenchimento automático e extração de orçamento e relatório.</p>
+              {projetoAprovadoUrl ? (
+                <div className="flex items-center gap-2 text-xs text-green-700 bg-green-50 rounded p-2">
+                  <FileText className="w-4 h-4 flex-shrink-0" />
+                  <a href={projetoAprovadoUrl} target="_blank" rel="noopener noreferrer" className="hover:underline truncate">Arquivo carregado — clique para visualizar</a>
+                  <button type="button" onClick={() => setProjetoAprovadoUrl(null)} className="ml-auto text-red-400 hover:text-red-600 flex-shrink-0">✕</button>
+                </div>
+              ) : (
+                <label className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-medium transition-all">
+                  {uploadingPdf || extraindoPdf ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+                  {uploadingPdf ? "Enviando..." : extraindoPdf ? "Extraindo dados..." : "Upload do PDF"}
+                  <input type="file" className="hidden" accept=".pdf" onChange={handleUploadPdf} disabled={uploadingPdf || extraindoPdf} />
+                </label>
+              )}
+            </div>
+
+            {/* Vincular ao edital */}
+            <div>
+              <Label className="flex items-center gap-1"><Link2 className="w-3.5 h-3.5" /> Vincular ao Edital</Label>
+              <select
+                value={editalVinculo}
+                onChange={e => setEditalVinculo(e.target.value)}
+                className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="nenhum">Sem vínculo</option>
+                {editais.map(e => <option key={e.id} value={e.id}>{e.titulo}{e.numero ? ` (${e.numero})` : ""} — {e.estado || "ES"}</option>)}
+                <option value="novo">+ Cadastrar novo edital</option>
+              </select>
+            </div>
+
+            {editalVinculo === "novo" && (
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 space-y-2">
+                <p className="text-xs font-semibold text-amber-700">Novo Edital</p>
+                <Input placeholder="Título do edital *" value={novoEditalForm.titulo} onChange={e => setNovoEditalForm(f => ({ ...f, titulo: e.target.value }))} />
+                <div className="grid grid-cols-2 gap-2">
+                  <Input placeholder="Número (ex: 03/2025)" value={novoEditalForm.numero} onChange={e => setNovoEditalForm(f => ({ ...f, numero: e.target.value }))} />
+                  <Input placeholder="Órgão (FAPES, CNPq...)" value={novoEditalForm.orgao} onChange={e => setNovoEditalForm(f => ({ ...f, orgao: e.target.value }))} />
+                </div>
+                <select value={novoEditalForm.estado} onChange={e => setNovoEditalForm(f => ({ ...f, estado: e.target.value }))}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+                  {["ES","RJ","SP","MG","Nacional"].map(uf => <option key={uf} value={uf}>{uf}</option>)}
+                </select>
+              </div>
+            )}
+
             <div><Label>Título *</Label><Input value={form.titulo} onChange={(e) => setForm({ ...form, titulo: e.target.value })} required placeholder="Nome do projeto" /></div>
             <div className="grid grid-cols-2 gap-3">
               <div><Label>Órgão Financiador</Label><Input value={form.orgao_financiador} onChange={(e) => setForm({ ...form, orgao_financiador: e.target.value })} placeholder="FAPES, CNPq..." /></div>
