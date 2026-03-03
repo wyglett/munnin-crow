@@ -158,7 +158,7 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
     // Auto-export se habilitado e Drive configurado
     if (autoExportDrive && projeto.drive_categoria_ids?.[payload.categoria] && savedId) {
       const gastoParaExportar = { ...payload, id: savedId, drive_exportado: false, drive_hash: undefined };
-      await exportarItem(gastoParaExportar);
+      await exportarItem(gastoParaExportar, true);
     }
   };
 
