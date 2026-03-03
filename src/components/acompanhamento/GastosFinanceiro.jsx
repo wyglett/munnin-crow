@@ -23,9 +23,10 @@ const CATEGORIAS = [
   { key: "diarias", label: "Diárias" },
   { key: "passagens", label: "Passagens" },
   { key: "contrapartida", label: "Contrapartida" },
+  { key: "doaci", label: "DOACI" },
 ];
 
-const FORM_EMPTY = { descricao: "", categoria: "terceiros", subcategoria_id: "", valor: "", data: "", fornecedor: "", observacao: "", anexos: [] };
+const FORM_EMPTY = { descricao: "", categoria: "terceiros", subcategoria_id: "", valor: "", quantidade: 1, data: "", fornecedor: "", observacao: "", anexos: [] };
 
 function hashGasto(g) {
   return [g.descricao, g.categoria, g.valor, g.data, g.fornecedor, g.observacao, JSON.stringify(g.anexos || [])].join("|");
