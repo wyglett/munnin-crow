@@ -32,6 +32,11 @@ export default function Acompanhamento() {
   const [user, setUser] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState({ titulo: "", descricao_projeto: "", orgao_financiador: "", numero_edital: "", valor_contratado: "", data_inicio: "", data_fim_prevista: "", status: "ativo" });
+  const [projetoAprovadoUrl, setProjetoAprovadoUrl] = useState(null);
+  const [uploadingPdf, setUploadingPdf] = useState(false);
+  const [extraindoPdf, setExtraindoPdf] = useState(false);
+  const [editalVinculo, setEditalVinculo] = useState(""); // id do edital selecionado ou "novo"
+  const [novoEditalForm, setNovoEditalForm] = useState({ titulo: "", numero: "", orgao: "", estado: "ES" });
   const queryClient = useQueryClient();
 
   useEffect(() => { base44.auth.me().then(setUser).catch(() => {}); }, []);
