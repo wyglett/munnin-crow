@@ -170,6 +170,7 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
           <TabsList className="mb-6">
             <TabsTrigger value="editais">Editais</TabsTrigger>
             <TabsTrigger value="usuarios">Usuários</TabsTrigger>
+            <TabsTrigger value="informativos">Informativos</TabsTrigger>
           </TabsList>
 
           <TabsContent value="editais" className="space-y-4">
