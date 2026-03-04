@@ -13,6 +13,7 @@ import {
   Upload, Loader2, FileText, ChevronDown, ChevronRight,
   CheckCircle2, Unlock, Sparkles, RefreshCw, BookOpen, Plus, Trash2, Image as ImageIcon, Calendar
 } from "lucide-react";
+import ExportarRelatorio from "./ExportarRelatorio";
 
 const fmt = (v) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0);
 
