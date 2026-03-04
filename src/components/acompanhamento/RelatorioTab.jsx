@@ -601,29 +601,20 @@ function SeletorMeses({ mesesSelecionados, todosMeses, onChange }) {
   );
 }
 
-// ─── Item 7 — Cronograma com OEs do Item 4 e seletor de meses por popover ────
+// ─── Item 7 — Cronograma Físico: mesma estrutura do Item 5, mas com seletor de meses no lugar de % ────
 function CronogramaItem7({ campo, onChange, camposAtividades }) {
   const [aberto, setAberto] = useState(true);
   const duracao = campo.duracao_anos || 1;
   const objetivos = campo.cronograma_oes || [];
-
-  // Todos os meses disponíveis conforme duração
   const todosMeses = Array.from({ length: duracao * 12 }, (_, i) => `M${i + 1}`);
+  const atividadesRef = camposAtividades?.flatMap(c => c.itens_tabela || []) || [];
 
-  // Sincronizar OEs com Item 4
   const sincronizar = () => {
-    const atv = camposAtividades?.flatMap(c => c.itens_tabela || []) || [];
-    if (!atv.length) return;
-    const novos = atv.map((a, i) => {
+    const novos = atividadesRef.map((a, i) => {
       const exist = objetivos.find(o => o.objetivo_ref === a.id || o.objetivo_num === i + 1);
       if (exist) return exist;
-      return {
-        id: `c7oe-${Date.now()}-${i}`,
-        objetivo_num: i + 1,
-        objetivo_ref: a.id,
-        objetivo_titulo: a.titulo || `OE ${i + 1}`,
-        acoes: [{ id: `c7a-${Date.now()}-${i}`, descricao: "", meses: [] }]
-      };
+      // Tenta sincronizar entregas do item 5 se existirem
+      return { id: `c7oe-${Date.now()}-${i}`, objetivo_num: i + 1, objetivo_ref: a.id, objetivo_titulo: a.titulo || `OE ${i + 1}`, acoes: [{ id: `c7a-${Date.now()}-${i}`, descricao: "", meses: [] }] };
     });
     onChange({ ...campo, cronograma_oes: novos });
   };
@@ -636,8 +627,6 @@ function CronogramaItem7({ campo, onChange, camposAtividades }) {
   const addOE = () => onChange({ ...campo, cronograma_oes: [...objetivos, { id: `c7oe-${Date.now()}`, objetivo_num: objetivos.length + 1, objetivo_titulo: "", acoes: [{ id: `c7a-${Date.now()}`, descricao: "", meses: [] }] }] });
   const remOE = (oi) => onChange({ ...campo, cronograma_oes: objetivos.filter((_, idx) => idx !== oi) });
 
-  const atividadesRef = camposAtividades?.flatMap(c => c.itens_tabela || []) || [];
-
   return (
     <div className="border rounded-xl overflow-hidden bg-white">
       <div className="flex items-start gap-3 p-4 cursor-pointer hover:bg-gray-50/50" onClick={() => setAberto(v => !v)}>
@@ -647,10 +636,10 @@ function CronogramaItem7({ campo, onChange, camposAtividades }) {
         </div>
         <div className="flex items-center gap-2">
           <div className="flex gap-1">
-            {[1, 2].map(n => (
+            {[1, 2, 3, 4].map(n => (
               <button key={n} type="button" onClick={e => { e.stopPropagation(); onChange({ ...campo, duracao_anos: n }); }}
                 className={`px-2 py-0.5 rounded text-xs border ${duracao === n ? "bg-indigo-600 text-white border-indigo-600" : "border-gray-300 text-gray-600"}`}>
-                {n} Ano{n > 1 ? "s" : ""}
+                {n}A
               </button>
             ))}
           </div>
@@ -658,42 +647,55 @@ function CronogramaItem7({ campo, onChange, camposAtividades }) {
         </div>
       </div>
       {aberto && (
-        <div className="px-4 pb-4 border-t border-gray-100 pt-3 space-y-3">
+        <div className="border-t border-gray-100 pt-3 pb-4 px-4 space-y-3">
           {atividadesRef.length > 0 && objetivos.length === 0 && (
             <Button type="button" size="sm" variant="outline" onClick={sincronizar} className="text-indigo-700 border-indigo-300">
               <RefreshCw className="w-3.5 h-3.5 mr-1" /> Importar OEs do Item 4
             </Button>
           )}
-          <div className="space-y-2">
-            {objetivos.map((obj, oi) => (
-              <div key={obj.id || oi} className="border border-gray-200 rounded-lg overflow-hidden">
-                {/* Cabeçalho do OE */}
-                <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 border-b border-gray-200">
-                  <span className="text-xs font-bold text-indigo-600 bg-indigo-100 rounded px-2 py-0.5">OE {obj.objetivo_num || oi + 1}</span>
-                  <Input value={obj.objetivo_titulo || ""} onChange={e => updOE(oi, "objetivo_titulo", e.target.value)} className="text-xs h-7 flex-1 border-gray-200" placeholder="Título do objetivo específico..." />
-                  <button type="button" onClick={() => remOE(oi)} className="text-red-300 hover:text-red-500 flex-shrink-0"><Trash2 className="w-3.5 h-3.5" /></button>
-                </div>
-                {/* Ações/entregas */}
-                <div className="divide-y divide-gray-100">
-                  {(obj.acoes || []).map((acao, ai) => (
-                    <div key={acao.id || ai} className="flex items-center gap-2 px-3 py-2">
-                      <span className="text-[10px] text-gray-400 font-mono w-4 flex-shrink-0">{ai + 1}.</span>
-                      <Input value={acao.descricao || ""} onChange={e => updAcaoDesc(oi, ai, e.target.value)} className="text-xs h-7 flex-1 border-gray-200" placeholder="Descrição da ação/entrega..." />
-                      <SeletorMeses mesesSelecionados={acao.meses || []} todosMeses={todosMeses} onChange={novos => updAcaoMeses(oi, ai, novos)} />
-                      <button type="button" onClick={() => remAcao(oi, ai)} className="text-red-300 hover:text-red-500 flex-shrink-0"><Trash2 className="w-3 h-3" /></button>
-                    </div>
-                  ))}
-                </div>
-                <div className="px-3 py-1.5 border-t border-gray-100">
-                  <button type="button" onClick={() => addAcao(oi)} className="text-xs text-indigo-400 hover:text-indigo-600 flex items-center gap-1">
-                    <Plus className="w-3 h-3" /> Adicionar ação
-                  </button>
-                </div>
-              </div>
-            ))}
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+              <thead>
+                <tr className="bg-gray-100 text-xs text-gray-700 uppercase font-bold">
+                  <th className="p-2 border border-gray-300 text-center w-10">Nº OE</th>
+                  <th className="p-2 border border-gray-300 text-left">Entrega Pactuada para Atingir os Objetivos Específicos do Projeto (Quadro 4)</th>
+                  <th className="p-2 border border-gray-300 text-center w-52">Meses de Execução</th>
+                  <th className="p-2 border border-gray-300 w-8"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {objetivos.map((obj, oi) => (
+                  <React.Fragment key={obj.id || oi}>
+                    {(obj.acoes || []).map((acao, ai) => (
+                      <tr key={acao.id || ai} className="hover:bg-gray-50">
+                        {ai === 0 && (
+                          <td rowSpan={(obj.acoes || []).length} className="border border-gray-300 text-center font-bold text-gray-700 align-middle">
+                            <div className="flex flex-col items-center gap-1 p-1">
+                              <span>{obj.objetivo_num || oi + 1}</span>
+                              <button type="button" onClick={() => remOE(oi)} className="text-red-300 hover:text-red-500"><Trash2 className="w-3 h-3" /></button>
+                            </div>
+                          </td>
+                        )}
+                        <td className="p-1 border border-gray-200">
+                          <Input value={acao.descricao || ""} onChange={e => updAcaoDesc(oi, ai, e.target.value)} className="border-0 text-sm h-8 bg-transparent" placeholder={`Entrega ${ai + 1}`} />
+                        </td>
+                        <td className="p-1 border border-gray-200">
+                          <SeletorMeses mesesSelecionados={acao.meses || []} todosMeses={todosMeses} onChange={novos => updAcaoMeses(oi, ai, novos)} />
+                        </td>
+                        <td className="p-1 border border-gray-200 text-center">
+                          {ai === (obj.acoes || []).length - 1
+                            ? <button type="button" onClick={() => addAcao(oi)} className="text-indigo-400 hover:text-indigo-600"><Plus className="w-3.5 h-3.5" /></button>
+                            : <button type="button" onClick={() => remAcao(oi, ai)} className="text-red-300 hover:text-red-500"><Trash2 className="w-3 h-3" /></button>}
+                        </td>
+                      </tr>
+                    ))}
+                  </React.Fragment>
+                ))}
+              </tbody>
+            </table>
           </div>
           <Button type="button" size="sm" variant="outline" onClick={addOE}>
-            <Plus className="w-3.5 h-3.5 mr-1" /> Adicionar OE
+            <Plus className="w-3.5 h-3.5 mr-1" /> Adicionar Objetivo
           </Button>
         </div>
       )}
