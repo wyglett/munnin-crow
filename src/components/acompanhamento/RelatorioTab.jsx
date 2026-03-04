@@ -67,8 +67,7 @@ function isExecucaoFinanceira(campo) {
 }
 function isItem1(campo) {
   const s = (campo.secao || "").toLowerCase();
-  const p = (campo.pergunta || "").toLowerCase();
-  return s.startsWith("1") && (s.includes("identifica") || s.includes("dado") || p.includes("projeto") || p.includes("edital") || p.includes("coordenador") || p.includes("razão") || p.includes("cnpj"));
+  return s.match(/^1(\s|$|-|\.|\s*[-–])/) && (s.includes("identifica") || s.includes("dado") || s.includes("projeto") || s.includes("geral"));
 }
 function isEquipe(campo) {
   const s = (campo.secao || "").toLowerCase();
