@@ -152,7 +152,7 @@ function BotaoMelhorarIA({ texto, onMelhorado, instrucao }) {
   );
 }
 
-// ─── Item 1 — Identificação do Projeto ───────────────────────────────────────
+// ─── Item 1 — Dados Gerais do Projeto (quadro único) ─────────────────────────
 function Item1Identificacao({ campo, onChange }) {
   const [aberto, setAberto] = useState(true);
   const dados = campo.dados_item1 || {};
@@ -163,14 +163,12 @@ function Item1Identificacao({ campo, onChange }) {
       <div className="flex items-start gap-3 p-4 cursor-pointer hover:bg-gray-50/50" onClick={() => setAberto(v => !v)}>
         <div className="flex-1 min-w-0">
           {campo.secao && <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider mb-0.5">{campo.secao}</p>}
-          <p className="text-sm font-semibold text-gray-800">{campo.pergunta}</p>
+          <p className="text-sm font-semibold text-gray-800">{campo.pergunta || "Dados Gerais do Projeto"}</p>
         </div>
-        <div className="flex items-center gap-2">
-          {aberto ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
-        </div>
+        {aberto ? <ChevronDown className="w-4 h-4 text-gray-400 flex-shrink-0" /> : <ChevronRight className="w-4 h-4 text-gray-400 flex-shrink-0" />}
       </div>
       {aberto && (
-        <div className="px-4 pb-4 border-t border-gray-100 pt-3 grid grid-cols-1 gap-3">
+        <div className="px-4 pb-4 border-t border-gray-100 pt-3 space-y-3">
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-[10px] font-bold text-gray-500 uppercase">Projeto / Edital</label>
@@ -204,7 +202,7 @@ function Item1Identificacao({ campo, onChange }) {
               <label className="text-[10px] font-bold text-gray-500 uppercase">CNPJ</label>
               <div className="flex gap-2 mt-0.5">
                 <Input value={dados.cnpj || ""} onChange={e => set("cnpj", e.target.value)} className="text-sm flex-1" placeholder="XX.XXX.XXX/XXXX-XX" />
-                {dados.razao_social && !dados.cnpj && (
+                {dados.razao_social && (
                   <BuscarCNPJ razaoSocial={dados.razao_social} onEncontrado={v => set("cnpj", v)} />
                 )}
               </div>
@@ -212,9 +210,7 @@ function Item1Identificacao({ campo, onChange }) {
             <div>
               <label className="text-[10px] font-bold text-gray-500 uppercase">Modelo de Análise</label>
               <Select value={dados.modelo_analise || ""} onValueChange={val => set("modelo_analise", val)}>
-                <SelectTrigger className="mt-0.5 h-9 text-sm">
-                  <SelectValue placeholder="Selecione..." />
-                </SelectTrigger>
+                <SelectTrigger className="mt-0.5 h-9 text-sm"><SelectValue placeholder="Selecione..." /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="parcial">Parcial</SelectItem>
                   <SelectItem value="final">Final</SelectItem>
