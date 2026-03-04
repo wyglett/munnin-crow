@@ -609,12 +609,19 @@ function SeletorMeses({ mesesSelecionados, todosMeses, onChange }) {
   );
 }
 
-// ─── Item 7 — Cronograma Físico: OEs+entregas do Item 5, seletor de meses (sem % de execução) ────
+// ─── Item 7 — Cronograma Físico: seleção de meses por ano ────────────────────
 function CronogramaItem7({ campo, onChange, camposEntregas }) {
   const [aberto, setAberto] = useState(true);
   const duracao = campo.duracao_anos || 1;
   const cronograma = campo.cronograma_oes || [];
-  const todosMeses = Array.from({ length: duracao * 12 }, (_, i) => `M${i + 1}`);
+
+  // Gera lista de meses como "Ano 1 - M1" etc.
+  const todosMeses = [];
+  for (let ano = 1; ano <= duracao; ano++) {
+    for (let mes = 1; mes <= 12; mes++) {
+      todosMeses.push(`Ano ${ano} - M${mes}`);
+    }
+  }
 
   // Sincroniza com os OEs+entregas do Item 5
   const sincronizarDoItem5 = () => {
