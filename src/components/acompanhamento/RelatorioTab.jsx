@@ -930,15 +930,15 @@ function ImportProjetoAprovado({ projeto, onSave, campos, onSalvarCampos }) {
       if (isAtividades(campo) && resultado.atividades?.length) {
         return { ...campo, itens_tabela: resultado.atividades.map((a, i) => ({ id: `atv-${Date.now()}-${i}`, titulo: a })) };
       }
-      // Entregas (Item 5)
-      if (isEntregas(campo) && resultado.entregas_por_objetivo?.length) {
+      // Entregas (Item 5) — gera OEs baseados nas atividades do Item 4 (sem preencher entregas)
+      if (isEntregas(campo) && resultado.atividades?.length) {
         return {
           ...campo,
-          itens_tabela: resultado.entregas_por_objetivo.map((obj, oi) => ({
+          itens_tabela: resultado.atividades.map((atv, oi) => ({
             id: `ent-${Date.now()}-${oi}`,
-            objetivo_num: obj.objetivo_num || oi + 1,
-            objetivo_titulo: obj.objetivo_titulo || "",
-            entregas: (obj.entregas || []).map((e, ei) => ({ id: `e-${Date.now()}-${oi}-${ei}`, descricao: e, percentagem: "0" }))
+            objetivo_num: oi + 1,
+            objetivo_titulo: atv,
+            entregas: [{ id: `e-${Date.now()}-${oi}-0`, descricao: "", percentagem: "0" }]
           }))
         };
       }
