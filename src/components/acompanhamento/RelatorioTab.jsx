@@ -8,9 +8,10 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Upload, Loader2, FileText, ChevronDown, ChevronRight,
-  CheckCircle2, Unlock, Sparkles, RefreshCw, BookOpen, Plus, Trash2, Image as ImageIcon
+  CheckCircle2, Unlock, Sparkles, RefreshCw, BookOpen, Plus, Trash2, Image as ImageIcon, Calendar
 } from "lucide-react";
 
 const fmt = (v) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0);
