@@ -1133,7 +1133,7 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
           if (isResultadosAlcancados(campo)) return <CampoTextoComImagem key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} instrucaoIA="Melhore o texto para descrever os resultados e impactos alcançados pelo projeto:" />;
           // Item 7.1 ANTES do item 7 para evitar captura errada
           if (isJustificativaCronograma(campo)) return <CampoJustificativa key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} placeholder="Justifique alterações no cronograma..." instrucaoIA="Melhore o texto para justificar de forma técnica e objetiva as alterações no cronograma:" />;
-          if (isCronogramaItem7(campo)) return <CronogramaItem7 key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} camposAtividades={camposAtividades} />;
+          if (isCronogramaItem7(campo)) return <CronogramaItem7 key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} camposEntregas={camposEntregas} />;
           return <CampoRelatorio key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} />;
         })}
       </div>
