@@ -1133,7 +1133,10 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
           if (isEquipe(campo)) return <TabelaEquipe key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} />;
           if (isJustificativaMudanca(campo)) return <CampoJustificativa key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} placeholder="Descreva as razões da mudança..." instrucaoIA="Melhore o texto para justificar de forma técnica e objetiva a razão da mudança de objetivos:" />;
           if (isAtividades(campo)) return <ListaAtividades key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} />;
-          if (isPercentagemTotal(campo)) return null; // quadro duplicado "percentagem total" suprimido
+          if (isPercentagemTotal(campo)) return null;
+          // 7.1 e Item 7 ANTES de isEntregas/isDescricaoEntregas para não serem capturados como plano de entregas
+          if (isJustificativaCronograma(campo)) return <CampoJustificativa key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} placeholder="Justifique alterações no cronograma..." instrucaoIA="Melhore o texto para justificar de forma técnica e objetiva as alterações no cronograma:" />;
+          if (isCronogramaItem7(campo)) return <CronogramaItem7 key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} camposEntregas={camposEntregas} />;
           if (isDescricaoEntregas(campo)) return <CampoJustificativa key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} placeholder="Descreva detalhadamente as entregas realizadas neste período..." instrucaoIA="Melhore o texto para descrever de forma técnica e objetiva as entregas realizadas:" />;
           if (isEntregas(campo)) return <TabelaEntregas key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} camposAtividades={camposAtividades} />;
           if (isResultadosAlcancados(campo)) return <CampoTextoComImagem key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} instrucaoIA="Melhore o texto para descrever os resultados e impactos alcançados pelo projeto:" />;
