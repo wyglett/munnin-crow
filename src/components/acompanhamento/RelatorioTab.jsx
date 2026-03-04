@@ -84,6 +84,13 @@ function isAtividades(campo) {
   return (p.includes("atividade") || s.includes("atividade")) &&
     !p.includes("mudança") && !p.includes("alteração") && !p.includes("cronograma");
 }
+function isJustificativaMudancaEquipe(campo) {
+  const p = (campo.pergunta || "").toLowerCase();
+  const s = (campo.secao || "").toLowerCase();
+  return s.includes("2.1") || p.includes("2.1") ||
+    ((p.includes("mudança") || p.includes("alteração") || p.includes("justif")) &&
+     (p.includes("equipe") || s.includes("2.")));
+}
 function isJustificativaMudanca(campo) {
   const p = (campo.pergunta || "").toLowerCase();
   const s = (campo.secao || "").toLowerCase();
