@@ -996,10 +996,30 @@ function ImportProjetoAprovado({ projeto, onSave, campos, onSalvarCampos }) {
                 {resultado.atividades?.length > 0 && <div className="bg-gray-50 rounded-lg p-3"><p className="text-xs font-bold text-gray-600 mb-1">ATIVIDADES ({resultado.atividades.length})</p>{resultado.atividades.slice(0, 5).map((a, i) => <div key={i} className="text-xs">• {a}</div>)}{resultado.atividades.length > 5 && <div className="text-xs text-gray-400">...e mais {resultado.atividades.length - 5}</div>}</div>}
                 {resultado.entregas_por_objetivo?.length > 0 && <div className="bg-gray-50 rounded-lg p-3"><p className="text-xs font-bold text-gray-600 mb-1">ENTREGAS POR OBJETIVO ({resultado.entregas_por_objetivo.length} OEs)</p>{resultado.entregas_por_objetivo.slice(0, 3).map((obj, i) => <div key={i} className="text-xs text-gray-700">OE {obj.objetivo_num}: {obj.entregas?.length || 0} entrega(s)</div>)}</div>}
                 <div className="border-t pt-3 space-y-2">
-                  {temDados && (
-                    <Button size="sm" onClick={aplicarNoRelatorio} disabled={aplicando || aplicado || !campos?.length} className="w-full bg-purple-600 hover:bg-purple-700">
+                  {temDados && !confirmarSobrescrita && (
+                    <Button size="sm" onClick={() => {
+                      // Verifica se algum campo já tem dados preenchidos
+                      const temDadosExistentes = campos?.some(c =>
+                        c.resposta || c.dados_item1 || (c.itens_tabela && c.itens_tabela.length > 0)
+                      );
+                      if (temDadosExistentes) {
+                        setConfirmarSobrescrita(true);
+                      } else {
+                        aplicarNoRelatorio();
+                      }
+                    }} disabled={aplicando || aplicado || !campos?.length} className="w-full bg-purple-600 hover:bg-purple-700">
                       {aplicando ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Aplicando...</> : aplicado ? <><CheckCircle2 className="w-4 h-4 mr-2" />Aplicado!</> : <><Sparkles className="w-4 h-4 mr-2" />Aplicar no Relatório</>}
                     </Button>
+                  )}
+                  {confirmarSobrescrita && (
+                    <div className="bg-amber-50 border border-amber-300 rounded-lg p-3 space-y-2">
+                      <p className="text-xs font-bold text-amber-800">⚠️ Atenção: sobrescrita de dados</p>
+                      <p className="text-xs text-amber-700">O relatório já possui dados preenchidos. Aplicar a importação irá <strong>sobrescrever</strong> os campos existentes (exceto os marcados como Concluído). Deseja continuar?</p>
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline" onClick={() => setConfirmarSobrescrita(false)} className="flex-1 border-amber-300 text-amber-700">Cancelar</Button>
+                        <Button size="sm" onClick={() => { setConfirmarSobrescrita(false); aplicarNoRelatorio(); }} className="flex-1 bg-amber-600 hover:bg-amber-700">Sim, sobrescrever</Button>
+                      </div>
+                    </div>
                   )}
                   {!campos?.length && temDados && <p className="text-xs text-amber-600 text-center">⚠️ Faça upload do modelo de relatório primeiro.</p>}
                   {resultado.linhas_orcamento?.length > 0 && (
