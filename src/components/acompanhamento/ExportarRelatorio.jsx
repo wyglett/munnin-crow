@@ -5,10 +5,10 @@ import { base44 } from "@/api/base44Client";
 
 const fmt = (v) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0);
 
-function renderValorCampo(campo) {
+function buildValorTexto(campo) {
   if (!campo) return "";
 
-  // Item 1 - dados gerais
+  // Item 1 — dados gerais
   if (campo.dados_item1) {
     const d = campo.dados_item1;
     return [
@@ -20,18 +20,18 @@ function renderValorCampo(campo) {
       d.nome_fantasia && `Nome Fantasia: ${d.nome_fantasia}`,
       d.cnpj && `CNPJ: ${d.cnpj}`,
       d.modelo_analise && `Modelo de Análise: ${d.modelo_analise}`,
-    ].filter(Boolean).join("\n");
+    ].filter(Boolean).join(" | ");
   }
 
   // Tabela equipe
   if (campo.itens_tabela && campo.itens_tabela[0]?.nome !== undefined) {
-    return campo.itens_tabela.map((m, i) =>
-      `${i + 1}. ${m.nome} — ${m.responsabilidade || ""}\n   ${m.formacao || ""}`
-    ).join("\n");
+    return campo.itens_tabela
+      .map((m, i) => `${i + 1}. ${m.nome}${m.responsabilidade ? " — " + m.responsabilidade : ""}${m.formacao ? " | " + m.formacao : ""}`)
+      .join("\n");
   }
 
   // Tabela atividades
-  if (campo.itens_tabela && campo.itens_tabela[0]?.titulo !== undefined) {
+  if (campo.itens_tabela && campo.itens_tabela[0]?.titulo !== undefined && campo.itens_tabela[0]?.entregas === undefined) {
     return campo.itens_tabela.map((a, i) => `${i + 1}. ${a.titulo}`).join("\n");
   }
 
@@ -39,7 +39,9 @@ function renderValorCampo(campo) {
   if (campo.itens_tabela && campo.itens_tabela[0]?.entregas !== undefined) {
     return campo.itens_tabela.map(obj =>
       `OE ${obj.objetivo_num || ""}:\n` +
-      (obj.entregas || []).map((e, ei) => `  Entrega ${ei + 1}: ${e.descricao} — ${e.percentagem || 0}%`).join("\n")
+      (obj.entregas || []).map((e, ei) =>
+        `  Entrega ${ei + 1}: ${e.descricao || "(sem descrição)"} — ${e.percentagem || 0}%`
+      ).join("\n")
     ).join("\n");
   }
 
@@ -48,7 +50,7 @@ function renderValorCampo(campo) {
     return campo.cronograma_oes.map(obj =>
       `OE ${obj.objetivo_num || ""}:\n` +
       (obj.acoes || []).map(a =>
-        `  ${a.descricao}: ${(a.meses || []).join(", ") || "—"}`
+        `  ${a.descricao || "(sem descrição)"}: ${(a.meses || []).join(", ") || "—"}`
       ).join("\n")
     ).join("\n");
   }
@@ -63,11 +65,43 @@ export default function ExportarRelatorio({ projeto, campos }) {
     if (!campos?.length) return;
     setLoading(true);
 
-    // Monta o conteúdo do relatório como HTML estilizado
-    const linhas = campos
-      .filter(c => !c._suprimido)
-      .map(c => {
-        const valor = renderValorCampo(c);
+    const templateUrl = projeto.relatorio_template_url;
+
+    if (templateUrl) {
+      // Usa IA para preencher o PDF modelo com os dados dos campos
+      const dadosCampos = campos.map(c => ({
+        secao: c.secao || "",
+        pergunta: c.pergunta || "",
+        valor: buildValorTexto(c),
+      })).filter(c => c.valor);
+
+      const r = await base44.integrations.Core.InvokeLLM({
+        prompt: `Você receberá um documento PDF modelo de relatório de prestação de contas e os dados preenchidos pelo usuário. 
+Gere um HTML completo que reproduz a estrutura do documento modelo, mas com os campos preenchidos com os dados fornecidos abaixo.
+Mantenha a formatação visual próxima ao original (tabelas, seções, títulos numerados).
+Use estilos inline para impressão (font-family Arial, margens, bordas de tabela).
+
+Dados preenchidos pelo usuário:
+${dadosCampos.map(c => `[${c.secao}] ${c.pergunta}:\n${c.valor}`).join("\n\n---\n\n")}
+
+Retorne APENAS o HTML completo, começando com <!DOCTYPE html>.`,
+        file_urls: [templateUrl],
+      });
+
+      const htmlContent = typeof r === "string" ? r : "";
+      const blob = new Blob([htmlContent], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `relatorio_${(projeto.titulo || "projeto").replace(/\s+/g, "_")}.html`;
+      document.body.appendChild(a);
+      a.click();
+      URL.revokeObjectURL(url);
+      a.remove();
+    } else {
+      // Fallback: gera HTML estruturado sem modelo
+      const linhas = campos.map(c => {
+        const valor = buildValorTexto(c);
         if (!valor) return "";
         return `
           <div style="margin-bottom:24px; page-break-inside:avoid;">
@@ -77,7 +111,7 @@ export default function ExportarRelatorio({ projeto, campos }) {
           </div>`;
       }).filter(Boolean).join("");
 
-    const html = `<!DOCTYPE html>
+      const html = `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"/>
@@ -98,16 +132,16 @@ export default function ExportarRelatorio({ projeto, campos }) {
 </body>
 </html>`;
 
-    // Upload e download
-    const blob = new Blob([html], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `relatorio_${projeto.titulo?.replace(/\s+/g, "_") || "projeto"}.html`;
-    document.body.appendChild(a);
-    a.click();
-    URL.revokeObjectURL(url);
-    a.remove();
+      const blob = new Blob([html], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `relatorio_${(projeto.titulo || "projeto").replace(/\s+/g, "_")}.html`;
+      document.body.appendChild(a);
+      a.click();
+      URL.revokeObjectURL(url);
+      a.remove();
+    }
 
     setLoading(false);
   };
@@ -122,7 +156,7 @@ export default function ExportarRelatorio({ projeto, campos }) {
       className="border-green-300 text-green-700 hover:bg-green-50"
     >
       {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
-      {loading ? "Exportando..." : "Exportar Relatório"}
+      {loading ? "Gerando..." : "Exportar Relatório"}
     </Button>
   );
 }
