@@ -443,9 +443,9 @@ function TabelaEntregas({ campo, onChange, camposAtividades }) {
       </div>
       {aberto && (
         <div className="border-t border-gray-100 pt-3 pb-4 px-4 space-y-3">
-          {atividadesRef.length > 0 && objetivos.length === 0 && (
+          {atividadesRef.length > 0 && (
             <Button type="button" size="sm" variant="outline" onClick={sincronizar} className="text-indigo-700 border-indigo-300">
-              <RefreshCw className="w-3.5 h-3.5 mr-1" /> Importar objetivos do Item 4
+              <RefreshCw className="w-3.5 h-3.5 mr-1" /> Sincronizar OEs com Item 4 ({atividadesRef.length})
             </Button>
           )}
           <div className="overflow-x-auto">
