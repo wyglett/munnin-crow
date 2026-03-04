@@ -1128,7 +1128,7 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
           if (isEquipe(campo)) return <TabelaEquipe key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} />;
           if (isJustificativaMudanca(campo)) return <CampoJustificativa key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} placeholder="Descreva as razões da mudança..." instrucaoIA="Melhore o texto para justificar de forma técnica e objetiva a razão da mudança de objetivos:" />;
           if (isAtividades(campo)) return <ListaAtividades key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} />;
-          if (isDescricaoEntregas(campo)) return null; // quadro duplicado suprimido (5.1)
+          if (isDescricaoEntregas(campo)) return <CampoJustificativa key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} placeholder="Descreva detalhadamente as entregas realizadas neste período..." instrucaoIA="Melhore o texto para descrever de forma técnica e objetiva as entregas realizadas:" />;
           if (isEntregas(campo)) return <TabelaEntregas key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} camposAtividades={camposAtividades} />;
           if (isResultadosAlcancados(campo)) return <CampoTextoComImagem key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} instrucaoIA="Melhore o texto para descrever os resultados e impactos alcançados pelo projeto:" />;
           // Item 7.1 ANTES do item 7 para evitar captura errada
