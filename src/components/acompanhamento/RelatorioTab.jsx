@@ -1102,7 +1102,13 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
 
       <div className="space-y-3">
         {campos.map((campo, idx) => {
-          if (isItem1(campo)) return <Item1Identificacao key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} />;
+          // Item 1 — quadro único, suprimir duplicatas e sub-itens
+          if (isItem1(campo)) {
+            if (item1Renderizado) return null;
+            item1Renderizado = true;
+            return <Item1Identificacao key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} />;
+          }
+          if (isSubItem1(campo)) return null; // suprimir sub-quadros repetidos do item 1
           if (isItem81(campo)) return <CampoDescricaoFinanceira key={campo.id} gastos={gastos} campo={campo} onChange={novo => updateCampo(idx, novo)} projetoDescricao={projeto.descricao_projeto || projeto.titulo} />;
           if (isExecucaoFinanceira(campo)) return <TabelaExecucaoFinanceira key={campo.id} gastos={gastos} orcamentoLinhas={orcamentoLinhas} campo={campo} />;
           if (isEquipe(campo)) return <TabelaEquipe key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} />;
@@ -1112,7 +1118,7 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
           if (isEntregas(campo)) return <TabelaEntregas key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} camposAtividades={camposAtividades} />;
           if (isDescricaoEntregas(campo)) return <CampoJustificativa key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} placeholder="Descreva o que foi realizado em cada entrega..." instrucaoIA="Melhore o texto para descrever de forma técnica e objetiva as entregas realizadas:" />;
           if (isResultadosAlcancados(campo)) return <CampoTextoComImagem key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} instrucaoIA="Melhore o texto para descrever os resultados e impactos alcançados pelo projeto:" />;
-          if (isCronogramaItem7(campo)) return <CronogramaItem7 key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} camposEntregas={camposEntregas} />;
+          if (isCronogramaItem7(campo)) return <CronogramaItem7 key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} camposAtividades={camposAtividades} />;
           if (isJustificativaCronograma(campo)) return <CampoJustificativa key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} placeholder="Justifique alterações no cronograma..." instrucaoIA="Melhore o texto para justificar de forma técnica e objetiva as alterações no cronograma:" />;
           return <CampoRelatorio key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} />;
         })}
