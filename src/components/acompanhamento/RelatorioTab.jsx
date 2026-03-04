@@ -657,11 +657,11 @@ function CronogramaItem7({ campo, onChange, camposEntregas }) {
                       ))}
                     </tr>
                   ))}
-                  <tr className="bg-gray-50">
+                  <tr className="bg-gray-50/50">
                     <td className="border border-gray-200 p-0.5"></td>
-                    <td className="border border-gray-200 p-0.5">
-                      <button type="button" onClick={() => addEntregaAno(ano, oi)} className="text-xs text-indigo-400 hover:text-indigo-600 flex items-center gap-0.5 pl-1">
-                        <Plus className="w-3 h-3" /> adicionar entrega
+                    <td className="border border-gray-200 p-0.5 pl-2">
+                      <button type="button" onClick={() => addEntregaAno(ano, oi)} className="text-xs text-indigo-400 hover:text-indigo-600 flex items-center gap-0.5">
+                        <Plus className="w-3 h-3" /> entrega
                       </button>
                     </td>
                     {meses.map(m => <td key={m} className="border border-gray-200 p-0.5"></td>)}
