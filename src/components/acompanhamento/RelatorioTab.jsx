@@ -10,7 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Upload, Loader2, FileText, ChevronDown, ChevronRight,
-  CheckCircle2, Unlock, Sparkles, RefreshCw, BookOpen, Plus, Trash2, Image
+  CheckCircle2, Unlock, Sparkles, RefreshCw, BookOpen, Plus, Trash2, Image as ImageIcon
 } from "lucide-react";
 
 const fmt = (v) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0);
@@ -24,8 +24,6 @@ const CATEGORIAS_LABEL = {
   contrapartida: "Contrapartida",
   doaci: "DOACI",
 };
-
-const MESES = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
 
 const PERCENTAGENS = [
   { value: "0", label: "0% — Não iniciado" },
@@ -54,7 +52,6 @@ function isSecao8(campo) {
   return /^8(\s|$|-|\.|\s*[-–])/.test(campo.secao || "") &&
     (s.includes("recurso") || s.includes("financ") || s.includes("execução"));
 }
-
 function isItem81(campo) {
   const p = (campo.pergunta || "").toLowerCase();
   const s = (campo.secao || "").toLowerCase();
@@ -62,92 +59,88 @@ function isItem81(campo) {
   if (isSecao8(campo) && p.includes("justif")) return true;
   return false;
 }
-
 function isExecucaoFinanceira(campo) {
   if (isItem81(campo)) return false;
   const s = (campo.secao || "").toLowerCase();
   const p = (campo.pergunta || "").toLowerCase();
-  const ehSecao8 = isSecao8(campo);
-  const ehTabelaItens = campo.tipo_resposta === "tabela_itens" &&
-    (s.includes("financ") || s.includes("recurso") || p.includes("financ"));
-  return ehSecao8 || ehTabelaItens;
+  return isSecao8(campo) || (campo.tipo_resposta === "tabela_itens" && (s.includes("financ") || p.includes("financ")));
 }
-
+function isItem1(campo) {
+  const s = (campo.secao || "").toLowerCase();
+  const p = (campo.pergunta || "").toLowerCase();
+  return s.startsWith("1") && (s.includes("identifica") || s.includes("dado") || p.includes("projeto") || p.includes("edital") || p.includes("coordenador") || p.includes("razão") || p.includes("cnpj"));
+}
 function isEquipe(campo) {
   const s = (campo.secao || "").toLowerCase();
   const p = (campo.pergunta || "").toLowerCase();
-  return (s.includes("2") || p.includes("equipe") || p.includes("bolsista")) &&
-    (p.includes("equipe") || s.includes("equipe") || p.includes("bolsista") || s.includes("bolsist"));
+  return (p.includes("equipe") || s.includes("equipe") || p.includes("bolsista") || s.includes("bolsist")) &&
+    !s.startsWith("1");
 }
-
 function isAtividades(campo) {
   const p = (campo.pergunta || "").toLowerCase();
   const s = (campo.secao || "").toLowerCase();
-  // item 4 — atividades (mas não 4.1)
   const numMatch = s.match(/^(\d+)/);
   const num = numMatch ? numMatch[1] : "";
   if (num === "4" && !s.includes("4.1") && !p.includes("mudança") && !p.includes("alteração")) return true;
   return (p.includes("atividade") || s.includes("atividade")) &&
     !p.includes("mudança") && !p.includes("alteração") && !p.includes("cronograma");
 }
-
-function isJustificativaMudancaObjetivos(campo) {
+function isJustificativaMudanca(campo) {
   const p = (campo.pergunta || "").toLowerCase();
   const s = (campo.secao || "").toLowerCase();
-  return s.includes("4.1") || p.includes("4.1") || 
-    ((p.includes("mudança") || p.includes("alteração") || p.includes("justif")) && 
+  return s.includes("4.1") || p.includes("4.1") ||
+    ((p.includes("mudança") || p.includes("alteração") || p.includes("justif")) &&
      (p.includes("objetivo") || s.includes("4")));
 }
-
 function isEntregas(campo) {
   const p = (campo.pergunta || "").toLowerCase();
   const s = (campo.secao || "").toLowerCase();
   const numMatch = s.match(/^(\d+)/);
   const num = numMatch ? numMatch[1] : "";
-  if (num === "5" && !s.includes("5.1")) return true;
-  return (p.includes("entrega") || s.includes("entrega")) && !s.includes("5.1");
+  if (num === "5" && !s.includes("5.1") && !s.includes("5.2")) return true;
+  return (p.includes("entrega") || s.includes("entrega")) && !s.includes("5.1") && !s.includes("5.2");
 }
-
 function isDescricaoEntregas(campo) {
   const p = (campo.pergunta || "").toLowerCase();
   const s = (campo.secao || "").toLowerCase();
-  return s.includes("5.1") || p.includes("5.1") ||
+  return s.includes("5.1") || p.includes("5.1") || s.includes("5.2") || p.includes("5.2") ||
     ((p.includes("descri") || p.includes("detalhamento")) && (p.includes("entrega") || s.includes("5")));
 }
-
 function isResultadosAlcancados(campo) {
+  const s = (campo.secao || "").toLowerCase();
+  const p = (campo.pergunta || "").toLowerCase();
+  const numMatch = s.match(/^(\d+)/);
+  if (numMatch && numMatch[1] === "6") return true;
+  return p.includes("resultado") && (p.includes("alcançado") || p.includes("impacto"));
+}
+function isCronogramaItem7(campo) {
   const p = (campo.pergunta || "").toLowerCase();
   const s = (campo.secao || "").toLowerCase();
-  const numMatch = s.match(/^(\d+)/);
-  const num = numMatch ? numMatch[1] : "";
-  if (num === "6") return true;
-  return p.includes("resultado") && (p.includes("alcançado") || p.includes("impacto") || p.includes("venda") || p.includes("marketing"));
+  return (s.includes("7") || p.includes("cronograma")) && (p.includes("cronograma") || s.includes("cronograma"));
 }
-
+function isJustificativaCronograma(campo) {
+  const s = (campo.secao || "").toLowerCase();
+  return s.includes("7.1") || (s.includes("7") && (campo.pergunta || "").toLowerCase().includes("justif"));
+}
 function isObjetivos(campo) {
   const p = (campo.pergunta || "").toLowerCase();
   const s = (campo.secao || "").toLowerCase();
   return (p.includes("objetivo") || s.includes("objetivo")) && !isAtividades(campo);
 }
-
 function isCronograma(campo) {
   const p = (campo.pergunta || "").toLowerCase();
   const s = (campo.secao || "").toLowerCase();
-  return p.includes("cronograma") || s.includes("cronograma");
+  return (p.includes("cronograma") || s.includes("cronograma")) && !isCronogramaItem7(campo);
 }
 
-// ─── Botão de IA para melhorar texto ─────────────────────────────────────────
+// ─── Botão melhorar IA ────────────────────────────────────────────────────────
 function BotaoMelhorarIA({ texto, onMelhorado, instrucao }) {
   const [loading, setLoading] = useState(false);
   const melhorar = async () => {
     if (!texto?.trim()) return;
     setLoading(true);
     const r = await base44.integrations.Core.InvokeLLM({
-      prompt: `${instrucao || "Melhore o texto a seguir para deixá-lo mais técnico, claro, formal, direto e objetivo, sem alterar o sentido:"}
-
-"${texto}"
-
-Retorne apenas o texto melhorado, sem comentários adicionais.`
+      prompt: `${instrucao || "Melhore o texto a seguir para deixá-lo mais técnico, claro, formal, direto e objetivo, sem alterar o sentido:"}\n\n"${texto}"\n\nRetorne apenas o texto melhorado, sem comentários.`
     });
     onMelhorado(typeof r === "string" ? r : texto);
     setLoading(false);
@@ -160,41 +153,125 @@ Retorne apenas o texto melhorado, sem comentários adicionais.`
   );
 }
 
+// ─── Item 1 — Identificação do Projeto ───────────────────────────────────────
+function Item1Identificacao({ campo, onChange }) {
+  const [aberto, setAberto] = useState(true);
+  const dados = campo.dados_item1 || {};
+  const set = (key, val) => onChange({ ...campo, dados_item1: { ...dados, [key]: val } });
+
+  return (
+    <div className="border rounded-xl overflow-hidden bg-white">
+      <div className="flex items-start gap-3 p-4 cursor-pointer hover:bg-gray-50/50" onClick={() => setAberto(v => !v)}>
+        <div className="flex-1 min-w-0">
+          {campo.secao && <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider mb-0.5">{campo.secao}</p>}
+          <p className="text-sm font-semibold text-gray-800">{campo.pergunta}</p>
+        </div>
+        <div className="flex items-center gap-2">
+          {aberto ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
+        </div>
+      </div>
+      {aberto && (
+        <div className="px-4 pb-4 border-t border-gray-100 pt-3 grid grid-cols-1 gap-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-[10px] font-bold text-gray-500 uppercase">Projeto / Edital</label>
+              <Input value={dados.edital || ""} onChange={e => set("edital", e.target.value)} className="mt-0.5 text-sm" placeholder="Ex: FAPES 003/2024" />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold text-gray-500 uppercase">Nº Termo de Outorga</label>
+              <Input value={dados.termo_outorga || ""} onChange={e => set("termo_outorga", e.target.value)} className="mt-0.5 text-sm" placeholder="Inserir manualmente" />
+            </div>
+          </div>
+          <div>
+            <label className="text-[10px] font-bold text-gray-500 uppercase">Título do Projeto</label>
+            <Input value={dados.titulo_projeto || ""} onChange={e => set("titulo_projeto", e.target.value)} className="mt-0.5 text-sm" placeholder="Título conforme aprovado" />
+          </div>
+          <div>
+            <label className="text-[10px] font-bold text-gray-500 uppercase">Coordenador</label>
+            <Input value={dados.coordenador || ""} onChange={e => set("coordenador", e.target.value)} className="mt-0.5 text-sm" placeholder="Nome do coordenador" />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-[10px] font-bold text-gray-500 uppercase">Razão Social (Instituição Executora)</label>
+              <Input value={dados.razao_social || ""} onChange={e => set("razao_social", e.target.value)} className="mt-0.5 text-sm" placeholder="Razão social" />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold text-gray-500 uppercase">Nome Fantasia</label>
+              <Input value={dados.nome_fantasia || ""} onChange={e => set("nome_fantasia", e.target.value)} className="mt-0.5 text-sm" placeholder="Inserir manualmente" />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-[10px] font-bold text-gray-500 uppercase">CNPJ</label>
+              <div className="flex gap-2 mt-0.5">
+                <Input value={dados.cnpj || ""} onChange={e => set("cnpj", e.target.value)} className="text-sm flex-1" placeholder="XX.XXX.XXX/XXXX-XX" />
+                {dados.razao_social && !dados.cnpj && (
+                  <BuscarCNPJ razaoSocial={dados.razao_social} onEncontrado={v => set("cnpj", v)} />
+                )}
+              </div>
+            </div>
+            <div>
+              <label className="text-[10px] font-bold text-gray-500 uppercase">Modelo de Análise</label>
+              <Select value={dados.modelo_analise || ""} onValueChange={val => set("modelo_analise", val)}>
+                <SelectTrigger className="mt-0.5 h-9 text-sm">
+                  <SelectValue placeholder="Selecione..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="parcial">Parcial</SelectItem>
+                  <SelectItem value="final">Final</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function BuscarCNPJ({ razaoSocial, onEncontrado }) {
+  const [loading, setLoading] = useState(false);
+  const buscar = async () => {
+    setLoading(true);
+    const r = await base44.integrations.Core.InvokeLLM({
+      prompt: `Busque o CNPJ da empresa com razão social: "${razaoSocial}". Retorne apenas o número do CNPJ no formato XX.XXX.XXX/XXXX-XX. Se não encontrar, retorne "não encontrado".`,
+      add_context_from_internet: true,
+      response_json_schema: { type: "object", properties: { cnpj: { type: "string" } } }
+    });
+    setLoading(false);
+    if (r?.cnpj && !r.cnpj.toLowerCase().includes("não")) onEncontrado(r.cnpj);
+    else alert("CNPJ não encontrado automaticamente. Insira manualmente.");
+  };
+  return (
+    <Button type="button" size="sm" onClick={buscar} disabled={loading} variant="outline" className="text-xs flex-shrink-0">
+      {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+    </Button>
+  );
+}
+
 // ─── Campo simples ────────────────────────────────────────────────────────────
 function CampoRelatorio({ campo, onChange }) {
   const [aberto, setAberto] = useState(false);
-
   return (
     <div className={`border rounded-xl overflow-hidden transition-all ${campo.concluido ? "border-green-200 bg-green-50/30" : "border-gray-200 bg-white"}`}>
-      <div className="flex items-start gap-3 p-4 cursor-pointer hover:bg-gray-50/50 transition-colors" onClick={() => !campo.concluido && setAberto(v => !v)}>
+      <div className="flex items-start gap-3 p-4 cursor-pointer hover:bg-gray-50/50" onClick={() => !campo.concluido && setAberto(v => !v)}>
         <div className="flex-1 min-w-0">
           {campo.secao && <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider mb-0.5">{campo.secao}</p>}
           <p className="text-sm font-semibold text-gray-800">{campo.pergunta}</p>
           {campo.concluido && campo.resposta && <p className="text-xs text-gray-500 mt-1 truncate">{campo.resposta}</p>}
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          {campo.concluido
-            ? <Badge className="bg-green-100 text-green-700 text-xs flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Concluído</Badge>
-            : <Badge className="bg-gray-100 text-gray-500 text-xs">Pendente</Badge>}
+          {campo.concluido ? <Badge className="bg-green-100 text-green-700 text-xs"><CheckCircle2 className="w-3 h-3 inline mr-1" />Concluído</Badge> : <Badge className="bg-gray-100 text-gray-500 text-xs">Pendente</Badge>}
           {!campo.concluido && (aberto ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />)}
-          {campo.concluido && (
-            <button type="button" onClick={e => { e.stopPropagation(); onChange({ ...campo, concluido: false }); }} className="text-gray-400 hover:text-amber-500">
-              <Unlock className="w-4 h-4" />
-            </button>
-          )}
+          {campo.concluido && <button type="button" onClick={e => { e.stopPropagation(); onChange({ ...campo, concluido: false }); }} className="text-gray-400 hover:text-amber-500"><Unlock className="w-4 h-4" /></button>}
         </div>
       </div>
       {aberto && !campo.concluido && (
         <div className="px-4 pb-4 space-y-3 border-t border-gray-100 pt-3">
-          {campo.tipo_resposta === "numero" ? (
-            <Input type="number" value={campo.resposta || ""} onChange={e => onChange({ ...campo, resposta: e.target.value })} />
-          ) : campo.tipo_resposta === "data" ? (
-            <Input type="date" value={campo.resposta || ""} onChange={e => onChange({ ...campo, resposta: e.target.value })} />
-          ) : campo.tipo_resposta === "texto_curto" ? (
-            <Input value={campo.resposta || ""} onChange={e => onChange({ ...campo, resposta: e.target.value })} placeholder="Resposta curta..." />
-          ) : (
-            <Textarea value={campo.resposta || ""} onChange={e => onChange({ ...campo, resposta: e.target.value })} placeholder="Descreva detalhadamente..." className="min-h-[100px]" />
-          )}
+          {campo.tipo_resposta === "numero" ? <Input type="number" value={campo.resposta || ""} onChange={e => onChange({ ...campo, resposta: e.target.value })} />
+            : campo.tipo_resposta === "data" ? <Input type="date" value={campo.resposta || ""} onChange={e => onChange({ ...campo, resposta: e.target.value })} />
+            : campo.tipo_resposta === "texto_curto" ? <Input value={campo.resposta || ""} onChange={e => onChange({ ...campo, resposta: e.target.value })} placeholder="Resposta curta..." />
+            : <Textarea value={campo.resposta || ""} onChange={e => onChange({ ...campo, resposta: e.target.value })} placeholder="Descreva detalhadamente..." className="min-h-[100px]" />}
           <div className="flex justify-end">
             <Button type="button" size="sm" onClick={() => { onChange({ ...campo, concluido: true }); setAberto(false); }} className="bg-green-600 hover:bg-green-700">
               <CheckCircle2 className="w-4 h-4 mr-1" /> Concluir campo
@@ -206,82 +283,48 @@ function CampoRelatorio({ campo, onChange }) {
   );
 }
 
-// ─── Item 2 — Equipe do Projeto ───────────────────────────────────────────────
+// ─── Item 2 — Equipe ──────────────────────────────────────────────────────────
 function TabelaEquipe({ campo, onChange }) {
   const [aberto, setAberto] = useState(true);
   const linhas = campo.itens_tabela || [];
-
-  const addLinha = () => {
-    onChange({ ...campo, itens_tabela: [...linhas, { id: `eq-${Date.now()}`, nome: "", responsabilidade: "", formacao: "" }] });
-  };
-  const updateLinha = (i, key, val) => {
-    onChange({ ...campo, itens_tabela: linhas.map((l, idx) => idx === i ? { ...l, [key]: val } : l) });
-  };
-  const removeLinha = (i) => {
-    onChange({ ...campo, itens_tabela: linhas.filter((_, idx) => idx !== i) });
-  };
-
+  const add = () => onChange({ ...campo, itens_tabela: [...linhas, { id: `eq-${Date.now()}`, nome: "", responsabilidade: "", formacao: "" }] });
+  const upd = (i, k, v) => onChange({ ...campo, itens_tabela: linhas.map((l, idx) => idx === i ? { ...l, [k]: v } : l) });
+  const rem = (i) => onChange({ ...campo, itens_tabela: linhas.filter((_, idx) => idx !== i) });
   return (
     <div className="border rounded-xl overflow-hidden bg-white">
       <div className="flex items-start gap-3 p-4 cursor-pointer hover:bg-gray-50/50" onClick={() => setAberto(v => !v)}>
         <div className="flex-1 min-w-0">
           {campo.secao && <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider mb-0.5">{campo.secao}</p>}
           <p className="text-sm font-semibold text-gray-800">{campo.pergunta}</p>
-          <p className="text-xs text-gray-400 mt-0.5">Nome Completo · Responsabilidade na Execução · Formação Acadêmica e Experiência</p>
+          <p className="text-xs text-gray-400 mt-0.5">Nome Completo · Responsabilidade · Formação e Experiência</p>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge className="bg-gray-100 text-gray-600 text-xs">{linhas.length} membro(s)</Badge>
-          {aberto ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
-        </div>
+        <Badge className="bg-gray-100 text-gray-600 text-xs">{linhas.length} membro(s)</Badge>
+        {aberto ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
       </div>
       {aberto && (
         <div className="px-4 pb-4 border-t border-gray-100 pt-3 space-y-3">
-          <div className="space-y-3">
-            {linhas.map((l, i) => (
-              <div key={l.id || i} className="border border-gray-200 rounded-lg p-3 space-y-2 relative">
-                <button onClick={() => removeLinha(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600"><Trash2 className="w-3.5 h-3.5" /></button>
-                <div>
-                  <label className="text-[10px] font-bold text-gray-500 uppercase">Nome Completo</label>
-                  <Input value={l.nome || ""} onChange={e => updateLinha(i, "nome", e.target.value)} className="mt-0.5 text-sm" placeholder="Nome completo do membro" />
-                </div>
-                <div>
-                  <label className="text-[10px] font-bold text-gray-500 uppercase">Responsabilidade na Execução</label>
-                  <Input value={l.responsabilidade || ""} onChange={e => updateLinha(i, "responsabilidade", e.target.value)} className="mt-0.5 text-sm" placeholder="Ex: Coordenador técnico, Desenvolvedor..." />
-                </div>
-                <div>
-                  <label className="text-[10px] font-bold text-gray-500 uppercase">Formação Acadêmica e Experiência</label>
-                  <Textarea value={l.formacao || ""} onChange={e => updateLinha(i, "formacao", e.target.value)} className="mt-0.5 text-sm min-h-[60px]" placeholder="Ex: Graduado em Ciência da Computação, 5 anos de experiência em desenvolvimento..." />
-                </div>
-              </div>
-            ))}
-          </div>
-          <Button type="button" size="sm" variant="outline" onClick={addLinha}>
-            <Plus className="w-3.5 h-3.5 mr-1" /> Adicionar Membro
-          </Button>
+          {linhas.map((l, i) => (
+            <div key={l.id || i} className="border border-gray-200 rounded-lg p-3 space-y-2 relative">
+              <button onClick={() => rem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600"><Trash2 className="w-3.5 h-3.5" /></button>
+              <div><label className="text-[10px] font-bold text-gray-500 uppercase">Nome Completo</label><Input value={l.nome || ""} onChange={e => upd(i, "nome", e.target.value)} className="mt-0.5 text-sm" /></div>
+              <div><label className="text-[10px] font-bold text-gray-500 uppercase">Responsabilidade na Execução</label><Input value={l.responsabilidade || ""} onChange={e => upd(i, "responsabilidade", e.target.value)} className="mt-0.5 text-sm" /></div>
+              <div><label className="text-[10px] font-bold text-gray-500 uppercase">Formação Acadêmica e Experiência</label><Textarea value={l.formacao || ""} onChange={e => upd(i, "formacao", e.target.value)} className="mt-0.5 text-sm min-h-[60px]" /></div>
+            </div>
+          ))}
+          <Button type="button" size="sm" variant="outline" onClick={add}><Plus className="w-3.5 h-3.5 mr-1" /> Adicionar Membro</Button>
         </div>
       )}
     </div>
   );
 }
 
-// ─── Item 3 — Texto descritivo (item 2.5 do anexo) ───────────────────────────
-// Usa CampoRelatorio padrão (campo de texto)
-
-// ─── Item 4 — Lista de atividades (apenas título) ────────────────────────────
+// ─── Item 4 — Lista de atividades ─────────────────────────────────────────────
 function ListaAtividades({ campo, onChange }) {
   const [aberto, setAberto] = useState(true);
   const linhas = campo.itens_tabela || [];
-
-  const addLinha = () => {
-    onChange({ ...campo, itens_tabela: [...linhas, { id: `atv-${Date.now()}`, titulo: "" }] });
-  };
-  const updateLinha = (i, val) => {
-    onChange({ ...campo, itens_tabela: linhas.map((l, idx) => idx === i ? { ...l, titulo: val } : l) });
-  };
-  const removeLinha = (i) => {
-    onChange({ ...campo, itens_tabela: linhas.filter((_, idx) => idx !== i) });
-  };
-
+  const add = () => onChange({ ...campo, itens_tabela: [...linhas, { id: `atv-${Date.now()}`, titulo: "" }] });
+  const upd = (i, v) => onChange({ ...campo, itens_tabela: linhas.map((l, idx) => idx === i ? { ...l, titulo: v } : l) });
+  const rem = (i) => onChange({ ...campo, itens_tabela: linhas.filter((_, idx) => idx !== i) });
   return (
     <div className="border rounded-xl overflow-hidden bg-white">
       <div className="flex items-start gap-3 p-4 cursor-pointer hover:bg-gray-50/50" onClick={() => setAberto(v => !v)}>
@@ -289,33 +332,28 @@ function ListaAtividades({ campo, onChange }) {
           {campo.secao && <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider mb-0.5">{campo.secao}</p>}
           <p className="text-sm font-semibold text-gray-800">{campo.pergunta}</p>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge className="bg-gray-100 text-gray-600 text-xs">{linhas.length} atividade(s)</Badge>
-          {aberto ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
-        </div>
+        <Badge className="bg-gray-100 text-gray-600 text-xs">{linhas.length} atividade(s)</Badge>
+        {aberto ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
       </div>
       {aberto && (
         <div className="px-4 pb-4 border-t border-gray-100 pt-3 space-y-2">
           {linhas.map((l, i) => (
             <div key={l.id || i} className="flex items-center gap-2">
-              <span className="text-xs text-gray-400 font-mono w-5 flex-shrink-0">{i + 1}.</span>
-              <Input value={l.titulo || ""} onChange={e => updateLinha(i, e.target.value)} className="text-sm flex-1" placeholder="Título da atividade" />
-              <button onClick={() => removeLinha(i)} className="text-red-400 hover:text-red-600 flex-shrink-0"><Trash2 className="w-3.5 h-3.5" /></button>
+              <span className="text-xs text-gray-400 font-mono w-6 flex-shrink-0">{i + 1}.</span>
+              <Input value={l.titulo || ""} onChange={e => upd(i, e.target.value)} className="text-sm flex-1" placeholder="Título da atividade" />
+              <button onClick={() => rem(i)} className="text-red-400 hover:text-red-600 flex-shrink-0"><Trash2 className="w-3.5 h-3.5" /></button>
             </div>
           ))}
-          <Button type="button" size="sm" variant="outline" onClick={addLinha} className="mt-1">
-            <Plus className="w-3.5 h-3.5 mr-1" /> Adicionar Atividade
-          </Button>
+          <Button type="button" size="sm" variant="outline" onClick={add} className="mt-1"><Plus className="w-3.5 h-3.5 mr-1" /> Adicionar Atividade</Button>
         </div>
       )}
     </div>
   );
 }
 
-// ─── Item 4.1 — Justificativa de mudança de objetivos ────────────────────────
-function CampoJustificativaMudanca({ campo, onChange }) {
+// ─── Campo justificativa com IA ───────────────────────────────────────────────
+function CampoJustificativa({ campo, onChange, placeholder, instrucaoIA }) {
   const [aberto, setAberto] = useState(false);
-
   return (
     <div className={`border rounded-xl overflow-hidden transition-all ${campo.concluido ? "border-green-200 bg-green-50/30" : "border-gray-200 bg-white"}`}>
       <div className="flex items-start gap-3 p-4 cursor-pointer hover:bg-gray-50/50" onClick={() => !campo.concluido && setAberto(v => !v)}>
@@ -325,27 +363,16 @@ function CampoJustificativaMudanca({ campo, onChange }) {
           {!aberto && campo.resposta && <p className="text-xs text-gray-500 mt-1 line-clamp-2 italic">{campo.resposta}</p>}
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          {campo.concluido
-            ? <Badge className="bg-green-100 text-green-700 text-xs"><CheckCircle2 className="w-3 h-3 inline mr-1" />Concluído</Badge>
-            : <Badge className="bg-gray-100 text-gray-500 text-xs">Pendente</Badge>}
+          {campo.concluido ? <Badge className="bg-green-100 text-green-700 text-xs"><CheckCircle2 className="w-3 h-3 inline mr-1" />Concluído</Badge> : <Badge className="bg-gray-100 text-gray-500 text-xs">Pendente</Badge>}
           {campo.concluido && <button type="button" onClick={e => { e.stopPropagation(); onChange({ ...campo, concluido: false }); }} className="text-gray-400 hover:text-amber-500"><Unlock className="w-4 h-4" /></button>}
           {!campo.concluido && (aberto ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />)}
         </div>
       </div>
       {aberto && !campo.concluido && (
         <div className="px-4 pb-4 border-t border-gray-100 pt-3 space-y-3">
-          <Textarea
-            value={campo.resposta || ""}
-            onChange={e => onChange({ ...campo, resposta: e.target.value })}
-            placeholder="Descreva as razões da mudança de objetivo(s)..."
-            className="min-h-[120px] text-sm"
-          />
+          <Textarea value={campo.resposta || ""} onChange={e => onChange({ ...campo, resposta: e.target.value })} placeholder={placeholder || "Descreva..."} className="min-h-[120px] text-sm" />
           <div className="flex items-center justify-between">
-            <BotaoMelhorarIA
-              texto={campo.resposta}
-              onMelhorado={txt => onChange({ ...campo, resposta: txt })}
-              instrucao="Melhore o texto a seguir para justificar de forma técnica, clara, formal, direta e objetiva a razão da mudança de objetivos em um relatório de projeto financiado por órgão público:"
-            />
+            <BotaoMelhorarIA texto={campo.resposta} onMelhorado={txt => onChange({ ...campo, resposta: txt })} instrucao={instrucaoIA} />
             <Button type="button" size="sm" onClick={() => { onChange({ ...campo, concluido: true }); setAberto(false); }} className="bg-green-600 hover:bg-green-700" disabled={!campo.resposta}>
               <CheckCircle2 className="w-4 h-4 mr-1" /> Concluir
             </Button>
@@ -356,55 +383,48 @@ function CampoJustificativaMudanca({ campo, onChange }) {
   );
 }
 
-// ─── Item 5 — Entregas por objetivo com % de execução ─────────────────────────
+// ─── Item 5 — Plano de Entregas (estrutura do anexo) ──────────────────────────
+// Estrutura: objetivo principal com N sublinhas de entregas, cada uma com %
 function TabelaEntregas({ campo, onChange, camposAtividades }) {
   const [aberto, setAberto] = useState(true);
-
-  // Pega atividades do item 4 para montar as linhas de objetivo
+  const objetivos = campo.itens_tabela || [];
   const atividadesRef = camposAtividades?.flatMap(c => c.itens_tabela || []) || [];
-  const linhas = campo.itens_tabela || [];
 
-  // Sincroniza linhas com objetivos (adiciona novas, mantém existentes)
-  const sincronizarLinhas = () => {
-    const novas = atividadesRef.map((atv, i) => {
-      const existente = linhas.find(l => l.objetivo_ref === atv.id || l.objetivo_num === i + 1);
-      return existente || {
-        id: `ent-${Date.now()}-${i}`,
-        objetivo_num: i + 1,
-        objetivo_ref: atv.id,
-        objetivo_titulo: atv.titulo || `Objetivo ${i + 1}`,
-        entregas_sub: [],
-        percentagem: "0",
-      };
+  const sincronizar = () => {
+    const novos = atividadesRef.map((atv, i) => {
+      const exist = objetivos.find(o => o.objetivo_ref === atv.id || o.objetivo_num === i + 1);
+      return exist || { id: `ent-${Date.now()}-${i}`, objetivo_num: i + 1, objetivo_ref: atv.id, objetivo_titulo: atv.titulo || `OE ${i + 1}`, entregas: [{ id: `e-${Date.now()}-${i}-0`, descricao: "", percentagem: "0" }] };
     });
-    onChange({ ...campo, itens_tabela: novas });
+    onChange({ ...campo, itens_tabela: novos });
   };
 
-  const updateLinha = (i, key, val) => {
-    onChange({ ...campo, itens_tabela: linhas.map((l, idx) => idx === i ? { ...l, [key]: val } : l) });
+  const updObj = (oi, key, val) => {
+    onChange({ ...campo, itens_tabela: objetivos.map((o, idx) => idx === oi ? { ...o, [key]: val } : o) });
+  };
+  const addEntrega = (oi) => {
+    const obj = objetivos[oi];
+    const ents = obj.entregas || [];
+    updObj(oi, "entregas", [...ents, { id: `e-${Date.now()}`, descricao: "", percentagem: "0" }]);
+  };
+  const updEntrega = (oi, ei, key, val) => {
+    const obj = objetivos[oi];
+    updObj(oi, "entregas", (obj.entregas || []).map((e, idx) => idx === ei ? { ...e, [key]: val } : e));
+  };
+  const remEntrega = (oi, ei) => {
+    const obj = objetivos[oi];
+    updObj(oi, "entregas", (obj.entregas || []).filter((_, idx) => idx !== ei));
+  };
+  const addObjetivo = () => {
+    onChange({ ...campo, itens_tabela: [...objetivos, { id: `ent-${Date.now()}`, objetivo_num: objetivos.length + 1, objetivo_titulo: "", entregas: [{ id: `e-${Date.now()}`, descricao: "", percentagem: "0" }] }] });
+  };
+  const remObjetivo = (oi) => {
+    onChange({ ...campo, itens_tabela: objetivos.filter((_, idx) => idx !== oi) });
   };
 
-  const addSubEntrega = (i) => {
-    const linha = linhas[i];
-    const subs = linha.entregas_sub || [];
-    updateLinha(i, "entregas_sub", [...subs, { id: `sub-${Date.now()}`, descricao: "", percentagem: "0" }]);
-  };
-
-  const updateSub = (i, si, key, val) => {
-    const linha = linhas[i];
-    const subs = (linha.entregas_sub || []).map((s, idx) => idx === si ? { ...s, [key]: val } : s);
-    updateLinha(i, "entregas_sub", subs);
-  };
-
-  const removeSub = (i, si) => {
-    const linha = linhas[i];
-    updateLinha(i, "entregas_sub", (linha.entregas_sub || []).filter((_, idx) => idx !== si));
-  };
-
-  // Calcula média aritmética das % de execução de todas as linhas principais
-  const todasLinhas = linhas.filter(l => !isNaN(Number(l.percentagem)));
-  const media = todasLinhas.length > 0
-    ? (todasLinhas.reduce((s, l) => s + Number(l.percentagem || 0), 0) / todasLinhas.length).toFixed(1)
+  // Média de todas as entregas
+  const todasEntregas = objetivos.flatMap(o => o.entregas || []);
+  const media = todasEntregas.length > 0
+    ? (todasEntregas.reduce((s, e) => s + Number(e.percentagem || 0), 0) / todasEntregas.length).toFixed(1)
     : "0";
 
   return (
@@ -414,99 +434,86 @@ function TabelaEntregas({ campo, onChange, camposAtividades }) {
           {campo.secao && <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider mb-0.5">{campo.secao}</p>}
           <p className="text-sm font-semibold text-gray-800">{campo.pergunta}</p>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge className="bg-blue-100 text-blue-700 text-xs font-bold">{media}% execução</Badge>
-          {aberto ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
-        </div>
+        <Badge className="bg-blue-100 text-blue-700 text-xs font-bold">{media}% execução</Badge>
+        {aberto ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
       </div>
       {aberto && (
         <div className="border-t border-gray-100 pt-3 pb-4 px-4 space-y-3">
-          {atividadesRef.length > 0 && linhas.length === 0 && (
-            <Button type="button" size="sm" variant="outline" onClick={sincronizarLinhas} className="text-indigo-700 border-indigo-300">
+          {atividadesRef.length > 0 && objetivos.length === 0 && (
+            <Button type="button" size="sm" variant="outline" onClick={sincronizar} className="text-indigo-700 border-indigo-300">
               <RefreshCw className="w-3.5 h-3.5 mr-1" /> Importar objetivos do Item 4
             </Button>
           )}
           <div className="overflow-x-auto">
             <table className="w-full text-sm border-collapse">
               <thead>
-                <tr className="bg-gray-50 text-xs text-gray-600 uppercase">
-                  <th className="text-center p-2 border border-gray-200 w-10">Nº</th>
-                  <th className="text-left p-2 border border-gray-200">Entrega Pactuada para Atingir os Objetivos Específicos (Item 4)</th>
-                  <th className="text-center p-2 border border-gray-200 w-48">% Execução</th>
-                  <th className="p-2 border border-gray-200 w-8"></th>
+                <tr className="bg-gray-100 text-xs text-gray-700 uppercase font-bold">
+                  <th className="p-2 border border-gray-300 text-center w-12">Nº OE</th>
+                  <th className="p-2 border border-gray-300 text-left">Entrega Pactuada para Atingir os Objetivos Específicos do Projeto (Quadro 4)</th>
+                  <th className="p-2 border border-gray-300 text-center w-44">% de Execução</th>
+                  <th className="p-2 border border-gray-300 w-8"></th>
                 </tr>
               </thead>
               <tbody>
-                {linhas.map((l, i) => (
-                  <React.Fragment key={l.id || i}>
-                    <tr className="hover:bg-gray-50">
-                      <td className="p-2 border border-gray-200 text-center font-bold text-gray-600">{l.objetivo_num || i + 1}</td>
-                      <td className="p-2 border border-gray-200">
-                        <Input value={l.objetivo_titulo || ""} onChange={e => updateLinha(i, "objetivo_titulo", e.target.value)} className="border-0 text-sm h-8" placeholder="Descreva a entrega..." />
-                      </td>
-                      <td className="p-2 border border-gray-200">
-                        <Select value={l.percentagem || "0"} onValueChange={val => updateLinha(i, "percentagem", val)}>
-                          <SelectTrigger className="h-8 text-xs">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {PERCENTAGENS.map(p => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
-                      </td>
-                      <td className="p-2 border border-gray-200 text-center">
-                        <button type="button" onClick={() => addSubEntrega(i)} title="Adicionar subentrega" className="text-indigo-400 hover:text-indigo-600 mr-1"><Plus className="w-3.5 h-3.5" /></button>
-                      </td>
-                    </tr>
-                    {/* Sub-entregas */}
-                    {(l.entregas_sub || []).map((sub, si) => (
-                      <tr key={sub.id || si} className="bg-indigo-50/30">
-                        <td className="p-1.5 border border-gray-200 text-center text-xs text-gray-400">{l.objetivo_num || i + 1}.{si + 1}</td>
-                        <td className="p-1.5 border border-gray-200">
-                          <Input value={sub.descricao || ""} onChange={e => updateSub(i, si, "descricao", e.target.value)} className="border-0 text-xs h-7 bg-transparent" placeholder="Detalhe da entrega..." />
+                {objetivos.map((obj, oi) => (
+                  <React.Fragment key={obj.id || oi}>
+                    {/* Linha do objetivo — número na célula mesclada visualmente */}
+                    {(obj.entregas || [{ descricao: "", percentagem: "0" }]).map((ent, ei) => (
+                      <tr key={ent.id || ei} className={ei === 0 ? "bg-gray-50" : "bg-white"}>
+                        {ei === 0 && (
+                          <td rowSpan={(obj.entregas || []).length || 1} className="border border-gray-300 text-center font-bold text-gray-700 align-middle text-sm">
+                            <div className="flex flex-col items-center gap-1">
+                              <span>{obj.objetivo_num || oi + 1}</span>
+                              <button type="button" onClick={() => remObjetivo(oi)} className="text-red-300 hover:text-red-500"><Trash2 className="w-3 h-3" /></button>
+                            </div>
+                          </td>
+                        )}
+                        <td className="p-1 border border-gray-200">
+                          <Input value={ent.descricao || ""} onChange={e => updEntrega(oi, ei, "descricao", e.target.value)} className="border-0 text-sm h-8 bg-transparent" placeholder={ei === 0 ? `Entrega 01 do OE ${obj.objetivo_num || oi + 1}` : `Entrega 0${ei + 1}`} />
                         </td>
-                        <td className="p-1.5 border border-gray-200">
-                          <Select value={sub.percentagem || "0"} onValueChange={val => updateSub(i, si, "percentagem", val)}>
-                            <SelectTrigger className="h-7 text-xs">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {PERCENTAGENS.map(p => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
-                            </SelectContent>
+                        <td className="p-1 border border-gray-200">
+                          <Select value={ent.percentagem || "0"} onValueChange={val => updEntrega(oi, ei, "percentagem", val)}>
+                            <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+                            <SelectContent>{PERCENTAGENS.map(p => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}</SelectContent>
                           </Select>
                         </td>
-                        <td className="p-1.5 border border-gray-200 text-center">
-                          <button onClick={() => removeSub(i, si)} className="text-red-400 hover:text-red-600"><Trash2 className="w-3 h-3" /></button>
+                        <td className="p-1 border border-gray-200 text-center">
+                          {ei === (obj.entregas || []).length - 1
+                            ? <button type="button" onClick={() => addEntrega(oi)} className="text-indigo-400 hover:text-indigo-600"><Plus className="w-3.5 h-3.5" /></button>
+                            : <button type="button" onClick={() => remEntrega(oi, ei)} className="text-red-300 hover:text-red-500"><Trash2 className="w-3 h-3" /></button>}
                         </td>
                       </tr>
                     ))}
+                    {/* Linha "..." separadora */}
+                    <tr className="bg-gray-50">
+                      <td className="border border-gray-200 p-1"></td>
+                      <td className="border border-gray-200 p-1 text-xs text-gray-400 pl-3">...</td>
+                      <td className="border border-gray-200 p-1"></td>
+                      <td className="border border-gray-200 p-1"></td>
+                    </tr>
                   </React.Fragment>
                 ))}
-                {/* Linha de total */}
-                {linhas.length > 0 && (
+                {/* Total */}
+                {objetivos.length > 0 && (
                   <tr className="bg-blue-50 font-bold">
-                    <td colSpan={2} className="p-2 border border-gray-200 text-sm text-right text-blue-800 text-xs">
-                      Percentagem Total de Execução do Projeto (Média Aritmética das Percentagens de Execução)
-                    </td>
-                    <td className="p-2 border border-gray-200 text-center font-bold text-blue-800">{media}%</td>
-                    <td className="p-2 border border-gray-200"></td>
+                    <td colSpan={2} className="p-2 border border-gray-300 text-right text-xs text-blue-800 uppercase">Percentagem Total de Execução do Projeto (Média Aritmética das Percentagens de Execução)</td>
+                    <td className="p-2 border border-gray-300 text-center font-bold text-blue-800">{media}%</td>
+                    <td className="border border-gray-200"></td>
                   </tr>
                 )}
               </tbody>
             </table>
           </div>
-          {linhas.length === 0 && atividadesRef.length === 0 && (
-            <Button type="button" size="sm" variant="outline" onClick={() => onChange({ ...campo, itens_tabela: [...linhas, { id: `ent-${Date.now()}`, objetivo_num: 1, objetivo_titulo: "", entregas_sub: [], percentagem: "0" }] })}>
-              <Plus className="w-3.5 h-3.5 mr-1" /> Adicionar Entrega
-            </Button>
-          )}
+          <Button type="button" size="sm" variant="outline" onClick={addObjetivo}>
+            <Plus className="w-3.5 h-3.5 mr-1" /> Adicionar Objetivo
+          </Button>
         </div>
       )}
     </div>
   );
 }
 
-// ─── Item 5.1 / Item 6 — Texto com imagem + IA ─────────────────────────────
+// ─── Item 5.1 / 6 — Texto + imagens + IA ─────────────────────────────────────
 function CampoTextoComImagem({ campo, onChange, instrucaoIA }) {
   const [aberto, setAberto] = useState(false);
   const [uploadingImg, setUploadingImg] = useState(false);
@@ -522,14 +529,6 @@ function CampoTextoComImagem({ campo, onChange, instrucaoIA }) {
     e.target.value = "";
   };
 
-  const updateLegenda = (i, val) => {
-    onChange({ ...campo, imagens: imagens.map((img, idx) => idx === i ? { ...img, legenda: val } : img) });
-  };
-
-  const removeImagem = (i) => {
-    onChange({ ...campo, imagens: imagens.filter((_, idx) => idx !== i) });
-  };
-
   return (
     <div className={`border rounded-xl overflow-hidden transition-all ${campo.concluido ? "border-green-200 bg-green-50/30" : "border-gray-200 bg-white"}`}>
       <div className="flex items-start gap-3 p-4 cursor-pointer hover:bg-gray-50/50" onClick={() => !campo.concluido && setAberto(v => !v)}>
@@ -539,30 +538,19 @@ function CampoTextoComImagem({ campo, onChange, instrucaoIA }) {
           {!aberto && campo.resposta && <p className="text-xs text-gray-500 mt-1 line-clamp-2 italic">{campo.resposta}</p>}
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          {imagens.length > 0 && <Badge className="bg-blue-100 text-blue-700 text-xs">{imagens.length} imagem(ns)</Badge>}
-          {campo.concluido
-            ? <Badge className="bg-green-100 text-green-700 text-xs"><CheckCircle2 className="w-3 h-3 inline mr-1" />Concluído</Badge>
-            : <Badge className="bg-gray-100 text-gray-500 text-xs">Pendente</Badge>}
+          {imagens.length > 0 && <Badge className="bg-blue-100 text-blue-700 text-xs">{imagens.length} img</Badge>}
+          {campo.concluido ? <Badge className="bg-green-100 text-green-700 text-xs"><CheckCircle2 className="w-3 h-3 inline mr-1" />Concluído</Badge> : <Badge className="bg-gray-100 text-gray-500 text-xs">Pendente</Badge>}
           {campo.concluido && <button type="button" onClick={e => { e.stopPropagation(); onChange({ ...campo, concluido: false }); }} className="text-gray-400 hover:text-amber-500"><Unlock className="w-4 h-4" /></button>}
           {!campo.concluido && (aberto ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />)}
         </div>
       </div>
       {aberto && !campo.concluido && (
         <div className="px-4 pb-4 border-t border-gray-100 pt-3 space-y-3">
-          <Textarea
-            value={campo.resposta || ""}
-            onChange={e => onChange({ ...campo, resposta: e.target.value })}
-            placeholder="Descreva detalhadamente..."
-            className="min-h-[120px] text-sm"
-          />
+          <Textarea value={campo.resposta || ""} onChange={e => onChange({ ...campo, resposta: e.target.value })} placeholder="Descreva detalhadamente..." className="min-h-[120px] text-sm" />
           <div className="flex items-center gap-2 flex-wrap">
-            <BotaoMelhorarIA
-              texto={campo.resposta}
-              onMelhorado={txt => onChange({ ...campo, resposta: txt })}
-              instrucao={instrucaoIA}
-            />
+            <BotaoMelhorarIA texto={campo.resposta} onMelhorado={txt => onChange({ ...campo, resposta: txt })} instrucao={instrucaoIA} />
             <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-600 hover:bg-gray-50">
-              {uploadingImg ? <Loader2 className="w-3 h-3 animate-spin" /> : <Image className="w-3 h-3" />}
+              {uploadingImg ? <Loader2 className="w-3 h-3 animate-spin" /> : <ImageIcon className="w-3 h-3" />}
               {uploadingImg ? "Enviando..." : "Adicionar Imagem"}
               <input type="file" className="hidden" accept="image/*" onChange={uploadImagem} disabled={uploadingImg} />
             </label>
@@ -572,8 +560,8 @@ function CampoTextoComImagem({ campo, onChange, instrucaoIA }) {
               {imagens.map((img, i) => (
                 <div key={i} className="relative border rounded-lg overflow-hidden">
                   <img src={img.url} alt="" className="w-full h-32 object-cover" />
-                  <button onClick={() => removeImagem(i)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">✕</button>
-                  <Input value={img.legenda || ""} onChange={e => updateLegenda(i, e.target.value)} className="border-0 border-t rounded-none text-xs" placeholder="Legenda da imagem..." />
+                  <button onClick={() => onChange({ ...campo, imagens: imagens.filter((_, idx) => idx !== i) })} className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">✕</button>
+                  <Input value={img.legenda || ""} onChange={e => onChange({ ...campo, imagens: imagens.map((im, idx) => idx === i ? { ...im, legenda: e.target.value } : im) })} className="border-0 border-t rounded-none text-xs" placeholder="Legenda..." />
                 </div>
               ))}
             </div>
@@ -589,36 +577,128 @@ function CampoTextoComImagem({ campo, onChange, instrucaoIA }) {
   );
 }
 
-// ─── Tabela de Cronograma ─────────────────────────────────────────────────────
-function TabelaCronograma({ campo, onChange, campos }) {
+// ─── Item 7 — Cronograma com M1-M12 (e M13-M24 se projeto > 1 ano) ───────────
+function CronogramaItem7({ campo, onChange, camposEntregas }) {
   const [aberto, setAberto] = useState(true);
-  const mesesSelecionados = campo.meses_selecionados || [];
-  const linhas = campo.itens_tabela || [];
+  const dados = campo.cronograma_item7 || { ano1: null, ano2: null };
+  // ano1: { objetivos: [{objetivo_num, entregas: [{descricao, meses:[]}]}] }
 
-  const toggleMes = (m) => {
-    const novos = mesesSelecionados.includes(m)
-      ? mesesSelecionados.filter(x => x !== m)
-      : [...mesesSelecionados, m].sort((a, b) => a - b);
-    onChange({ ...campo, meses_selecionados: novos });
+  const duracao = campo.duracao_anos || 1; // 1 ou 2
+
+  const getMeses = (ano) => {
+    const base = ano === 1 ? 1 : 13;
+    return Array.from({ length: 12 }, (_, i) => `M${base + i}`);
   };
 
-  const addLinha = (descricao = "") => {
-    onChange({ ...campo, itens_tabela: [...linhas, { id: `crono-${Date.now()}`, descricao, meses: [] }] });
+  const initAno = (ano) => {
+    // Tenta pegar entregas do Item 5
+    const entrefCampos = camposEntregas?.flatMap(c => c.itens_tabela || []) || [];
+    const objetivosBase = entrefCampos.length > 0
+      ? entrefCampos.map((obj, oi) => ({
+          objetivo_num: obj.objetivo_num || oi + 1,
+          entregas: (obj.entregas || [{ descricao: "" }]).map(e => ({ id: `c7-${Date.now()}-${Math.random()}`, descricao: e.descricao || "", meses: [] }))
+        }))
+      : [{ objetivo_num: 1, entregas: [{ id: `c7-${Date.now()}`, descricao: "", meses: [] }] }];
+    const key = ano === 1 ? "ano1" : "ano2";
+    onChange({ ...campo, cronograma_item7: { ...dados, [key]: { objetivos: objetivosBase } } });
   };
 
-  const updateLinha = (i, key, val) => {
-    onChange({ ...campo, itens_tabela: linhas.map((l, idx) => idx === i ? { ...l, [key]: val } : l) });
+  const updEntregaMes = (ano, oi, ei, mes) => {
+    const key = ano === 1 ? "ano1" : "ano2";
+    const anoData = { ...dados[key] };
+    const objs = anoData.objetivos.map((obj, idx) => {
+      if (idx !== oi) return obj;
+      const ents = obj.entregas.map((ent, eidx) => {
+        if (eidx !== ei) return ent;
+        const meses = ent.meses || [];
+        return { ...ent, meses: meses.includes(mes) ? meses.filter(m => m !== mes) : [...meses, mes] };
+      });
+      return { ...obj, entregas: ents };
+    });
+    onChange({ ...campo, cronograma_item7: { ...dados, [key]: { objetivos: objs } } });
   };
 
-  const toggleMesLinha = (i, m) => {
-    const l = linhas[i];
-    const mesesLinha = l.meses || [];
-    const novos = mesesLinha.includes(m) ? mesesLinha.filter(x => x !== m) : [...mesesLinha, m];
-    updateLinha(i, "meses", novos);
+  const updEntregaDesc = (ano, oi, ei, val) => {
+    const key = ano === 1 ? "ano1" : "ano2";
+    const anoData = { ...dados[key] };
+    const objs = anoData.objetivos.map((obj, idx) => {
+      if (idx !== oi) return obj;
+      return { ...obj, entregas: obj.entregas.map((ent, eidx) => eidx === ei ? { ...ent, descricao: val } : ent) };
+    });
+    onChange({ ...campo, cronograma_item7: { ...dados, [key]: { objetivos: objs } } });
   };
 
-  const removeLinha = (i) => {
-    onChange({ ...campo, itens_tabela: linhas.filter((_, idx) => idx !== i) });
+  const addEntregaAno = (ano, oi) => {
+    const key = ano === 1 ? "ano1" : "ano2";
+    const objs = dados[key].objetivos.map((obj, idx) => idx === oi ? { ...obj, entregas: [...obj.entregas, { id: `c7-${Date.now()}`, descricao: "", meses: [] }] } : obj);
+    onChange({ ...campo, cronograma_item7: { ...dados, [key]: { objetivos: objs } } });
+  };
+
+  const renderTabela = (ano) => {
+    const key = ano === 1 ? "ano1" : "ano2";
+    const anoData = dados[key];
+    const meses = getMeses(ano);
+    const titulo = ano === 1 ? "Entregas Pactuadas para Atingir os Objetivos Específicos do Projeto (Ano 01)" : "Entregas Pactuadas para Atingir os Objetivos Específicos do Projeto (Ano 02)";
+
+    if (!anoData) {
+      return (
+        <div key={`ano${ano}`} className="space-y-2">
+          <div className="bg-gray-100 rounded p-2 text-xs font-bold text-gray-700 uppercase text-center">{titulo}</div>
+          <Button type="button" size="sm" variant="outline" onClick={() => initAno(ano)} className="text-indigo-700 border-indigo-300">
+            <Plus className="w-3.5 h-3.5 mr-1" /> Inicializar Ano {ano === 1 ? "01" : "02"}
+          </Button>
+        </div>
+      );
+    }
+
+    return (
+      <div key={`ano${ano}`} className="space-y-2">
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs border-collapse">
+            <thead>
+              <tr className="bg-gray-200 text-gray-700 font-bold uppercase">
+                <th className="p-2 border border-gray-300 text-center w-10">OE</th>
+                <th className="p-2 border border-gray-300 text-left">{titulo}</th>
+                {meses.map(m => <th key={m} className="p-1.5 border border-gray-300 text-center w-10">{m}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {anoData.objetivos.map((obj, oi) => (
+                <React.Fragment key={oi}>
+                  {(obj.entregas || []).map((ent, ei) => (
+                    <tr key={ent.id || ei} className={ei % 2 === 0 ? "bg-white" : "bg-gray-50/50"}>
+                      {ei === 0 && (
+                        <td rowSpan={obj.entregas.length} className="border border-gray-300 text-center font-bold text-gray-700 align-middle">{obj.objetivo_num}</td>
+                      )}
+                      <td className="p-0.5 border border-gray-200">
+                        <Input value={ent.descricao || ""} onChange={e => updEntregaDesc(ano, oi, ei, e.target.value)} className="border-0 text-xs h-6 bg-transparent" placeholder={`Entrega 0${ei + 1}`} />
+                      </td>
+                      {meses.map(m => (
+                        <td key={m} className="p-0.5 border border-gray-200 text-center">
+                          <button type="button" onClick={() => updEntregaMes(ano, oi, ei, m)}
+                            className={`w-4 h-4 rounded mx-auto block transition-all ${(ent.meses || []).includes(m) ? "bg-indigo-600" : "border border-gray-300 hover:border-indigo-400"}`}>
+                            {(ent.meses || []).includes(m) && <span className="text-white text-[8px]">✓</span>}
+                          </button>
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                  <tr className="bg-gray-50">
+                    <td className="border border-gray-200 p-0.5"></td>
+                    <td className="border border-gray-200 p-0.5">
+                      <button type="button" onClick={() => addEntregaAno(ano, oi)} className="text-xs text-indigo-400 hover:text-indigo-600 flex items-center gap-0.5 pl-1">
+                        <Plus className="w-3 h-3" /> adicionar entrega
+                      </button>
+                    </td>
+                    {meses.map(m => <td key={m} className="border border-gray-200 p-0.5"></td>)}
+                  </tr>
+                </React.Fragment>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -629,61 +709,17 @@ function TabelaCronograma({ campo, onChange, campos }) {
           <p className="text-sm font-semibold text-gray-800">{campo.pergunta}</p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge className="bg-gray-100 text-gray-600 text-xs">{mesesSelecionados.length} meses</Badge>
+          <div className="flex gap-1">
+            <button type="button" onClick={e => { e.stopPropagation(); onChange({ ...campo, duracao_anos: 1 }); }} className={`px-2 py-0.5 rounded text-xs border ${duracao === 1 ? "bg-indigo-600 text-white border-indigo-600" : "border-gray-300 text-gray-600"}`}>1 Ano</button>
+            <button type="button" onClick={e => { e.stopPropagation(); onChange({ ...campo, duracao_anos: 2 }); }} className={`px-2 py-0.5 rounded text-xs border ${duracao === 2 ? "bg-indigo-600 text-white border-indigo-600" : "border-gray-300 text-gray-600"}`}>2 Anos</button>
+          </div>
           {aberto ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
         </div>
       </div>
       {aberto && (
         <div className="px-4 pb-4 border-t border-gray-100 pt-3 space-y-4">
-          <div>
-            <p className="text-xs text-gray-500 mb-2 font-medium">Meses do cronograma:</p>
-            <div className="flex flex-wrap gap-1.5">
-              {MESES.map((m, i) => (
-                <button key={i} type="button" onClick={() => toggleMes(i)}
-                  className={`px-2.5 py-1 rounded text-xs font-medium border transition-all ${mesesSelecionados.includes(i) ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-gray-600 border-gray-300 hover:border-indigo-400"}`}>
-                  {m}
-                </button>
-              ))}
-            </div>
-          </div>
-          {mesesSelecionados.length > 0 && (
-            <div className="overflow-x-auto">
-              <table className="w-full text-xs border-collapse">
-                <thead>
-                  <tr className="bg-gray-50 text-gray-600 uppercase">
-                    <th className="text-left p-2 border border-gray-200 min-w-[160px]">Atividade</th>
-                    {mesesSelecionados.map(m => (
-                      <th key={m} className="p-2 border border-gray-200 text-center w-10">{MESES[m]}</th>
-                    ))}
-                    <th className="p-2 border border-gray-200 w-8"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {linhas.map((l, i) => (
-                    <tr key={l.id || i} className="hover:bg-gray-50">
-                      <td className="p-1 border border-gray-200">
-                        <Input value={l.descricao || ""} onChange={e => updateLinha(i, "descricao", e.target.value)} className="border-0 text-xs h-7" placeholder="Atividade" />
-                      </td>
-                      {mesesSelecionados.map(m => (
-                        <td key={m} className="p-1 border border-gray-200 text-center">
-                          <button type="button" onClick={() => toggleMesLinha(i, m)}
-                            className={`w-5 h-5 rounded mx-auto block transition-all ${(l.meses || []).includes(m) ? "bg-indigo-600" : "border border-gray-300 hover:border-indigo-400"}`}>
-                            {(l.meses || []).includes(m) && <span className="text-white text-[10px]">✓</span>}
-                          </button>
-                        </td>
-                      ))}
-                      <td className="p-1 border border-gray-200 text-center">
-                        <button onClick={() => removeLinha(i)} className="text-red-400 hover:text-red-600"><Trash2 className="w-3 h-3" /></button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-          <Button type="button" size="sm" variant="outline" onClick={() => addLinha()}>
-            <Plus className="w-3.5 h-3.5 mr-1" /> Adicionar Linha
-          </Button>
+          {renderTabela(1)}
+          {duracao === 2 && renderTabela(2)}
         </div>
       )}
     </div>
@@ -696,7 +732,6 @@ function TabelaExecucaoFinanceira({ gastos, campo }) {
   const categoriaFiltro = detectarCategoriaDocampo(campo);
   const itensFiltrados = categoriaFiltro ? gastos.filter(g => g.categoria === categoriaFiltro) : gastos;
   const totalFiltrado = itensFiltrados.reduce((s, g) => s + (Number(g.valor) || 0), 0);
-
   if (itensFiltrados.length === 0) {
     return (
       <div className="border rounded-xl overflow-hidden bg-white">
@@ -704,140 +739,95 @@ function TabelaExecucaoFinanceira({ gastos, campo }) {
           <div className="flex-1 min-w-0">
             {campo.secao && <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider mb-0.5">{campo.secao}</p>}
             <p className="text-sm font-semibold text-gray-800">{campo.pergunta}</p>
-            <p className="text-xs text-gray-400 mt-1 italic">Nenhum item cadastrado nesta categoria.</p>
+            <p className="text-xs text-gray-400 mt-1 italic">Nenhum item nesta categoria.</p>
           </div>
-          <Badge className="bg-indigo-100 text-indigo-700 text-xs flex items-center gap-1"><RefreshCw className="w-3 h-3" /> Auto</Badge>
+          <Badge className="bg-indigo-100 text-indigo-700 text-xs"><RefreshCw className="w-3 h-3 inline mr-1" />Auto</Badge>
         </div>
       </div>
     );
   }
-
   return (
     <div className="border rounded-xl overflow-hidden bg-white">
       <div className="flex items-start gap-3 p-4 cursor-pointer hover:bg-gray-50/50" onClick={() => setAberto(v => !v)}>
         <div className="flex-1 min-w-0">
           {campo.secao && <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider mb-0.5">{campo.secao}</p>}
           <p className="text-sm font-semibold text-gray-800">{campo.pergunta}</p>
-          <p className="text-xs text-indigo-600 mt-0.5">Preenchido automaticamente ({itensFiltrados.length} item{itensFiltrados.length > 1 ? "s" : ""})</p>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge className="bg-indigo-100 text-indigo-700 text-xs flex items-center gap-1"><RefreshCw className="w-3 h-3" /> Auto</Badge>
-          {aberto ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
-        </div>
+        <Badge className="bg-indigo-100 text-indigo-700 text-xs"><RefreshCw className="w-3 h-3 inline mr-1" />Auto ({itensFiltrados.length})</Badge>
+        {aberto ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
       </div>
       {aberto && (
-        <div className="px-4 pb-4 border-t border-gray-100 pt-3">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
-              <thead>
-                <tr className="bg-gray-50 text-xs text-gray-600 uppercase">
-                  <th className="text-left p-2 border border-gray-200">Nome / Tipo</th>
-                  <th className="text-left p-2 border border-gray-200">Descrição</th>
-                  <th className="text-center p-2 border border-gray-200">Qtd</th>
-                  <th className="text-right p-2 border border-gray-200">Custo Total</th>
+        <div className="px-4 pb-4 border-t border-gray-100 pt-3 overflow-x-auto">
+          <table className="w-full text-sm border-collapse">
+            <thead><tr className="bg-gray-50 text-xs text-gray-600 uppercase">
+              <th className="text-left p-2 border border-gray-200">Nome / Tipo</th>
+              <th className="text-left p-2 border border-gray-200">Descrição</th>
+              <th className="text-center p-2 border border-gray-200">Qtd</th>
+              <th className="text-right p-2 border border-gray-200">Total</th>
+            </tr></thead>
+            <tbody>
+              {itensFiltrados.map((g, i) => (
+                <tr key={g.id || i} className="hover:bg-gray-50">
+                  <td className="p-2 border border-gray-200 font-medium">{g.fornecedor || g.descricao}</td>
+                  <td className="p-2 border border-gray-200 text-gray-600">{g.fornecedor ? g.descricao : "—"}</td>
+                  <td className="p-2 border border-gray-200 text-center">{g.quantidade || 1}</td>
+                  <td className="p-2 border border-gray-200 text-right font-medium">{fmt(g.valor)}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {itensFiltrados.map((g, i) => (
-                  <tr key={g.id || i} className="hover:bg-gray-50">
-                    <td className="p-2 border border-gray-200 font-medium">{g.fornecedor || g.descricao}</td>
-                    <td className="p-2 border border-gray-200 text-gray-600">{g.fornecedor ? g.descricao : "—"}</td>
-                    <td className="p-2 border border-gray-200 text-center text-gray-600">{g.quantidade || 1}</td>
-                    <td className="p-2 border border-gray-200 text-right font-medium">{fmt(g.valor)}</td>
-                  </tr>
-                ))}
-                <tr className="bg-gray-100 font-bold">
-                  <td colSpan={3} className="p-2 border border-gray-200 text-right text-xs uppercase text-gray-600">Total</td>
-                  <td className="p-2 border border-gray-200 text-right text-indigo-700">{fmt(totalFiltrado)}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+              ))}
+              <tr className="bg-gray-100 font-bold">
+                <td colSpan={3} className="p-2 border border-gray-200 text-right text-xs uppercase text-gray-600">Total</td>
+                <td className="p-2 border border-gray-200 text-right text-indigo-700">{fmt(totalFiltrado)}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       )}
     </div>
   );
 }
 
-// ─── Campo 8.1 — Justificativa narrativa ─────────────────────────────────────
+// ─── Campo 8.1 — Justificativa financeira ────────────────────────────────────
 function CampoDescricaoFinanceira({ gastos, campo, onChange, projetoDescricao }) {
   const [gerando, setGerando] = useState(false);
   const [aberto, setAberto] = useState(false);
-
   const gerarTexto = useCallback(async () => {
     if (gastos.length === 0) return;
     setGerando(true);
-    const grupos = Object.entries(CATEGORIAS_LABEL)
-      .map(([key, label]) => ({ key, label, items: gastos.filter(g => g.categoria === key) }))
-      .filter(g => g.items.length > 0);
-    const resumo = grupos.map(g => {
-      const itens = g.items.map(x => `  - ${x.descricao}${x.fornecedor ? ` (${x.fornecedor})` : ""}: ${fmt(x.valor)}${x.observacao ? ` — ${x.observacao}` : ""}`).join("\n");
-      return `### ${g.label}\n${itens}`;
-    }).join("\n\n");
+    const grupos = Object.entries(CATEGORIAS_LABEL).map(([key, label]) => ({ key, label, items: gastos.filter(g => g.categoria === key) })).filter(g => g.items.length > 0);
+    const resumo = grupos.map(g => `### ${g.label}\n${g.items.map(x => `  - ${x.descricao}${x.fornecedor ? ` (${x.fornecedor})` : ""}: ${fmt(x.valor)}`).join("\n")}`).join("\n\n");
     const r = await base44.integrations.Core.InvokeLLM({
-      prompt: `Redija a seção 8.1 de um relatório de prestação de contas de projeto de inovação financiado por órgão público.
-
-MODELO:
-Materiais Permanentes:
-Foi adquirida uma Smart TV da marca Philips, 50 polegadas, sistema Google TV, utilizada como recurso audiovisual em capacitações e eventos do Programa.
-
-Terceiros:
-Nos serviços de terceiros, foi contratada a empresa XYZ para impressão de materiais, utilizados como apoio em evento, garantindo a comunicação institucional.
-
-REGRAS:
-- Categoria em linha separada com dois pontos
-- Um parágrafo curto por item (1-3 linhas), iniciando com "Foi adquirido/contratado..."
-- Mencione fornecedor/marca e valor
-- Explique a finalidade no projeto
-- Parágrafos separados por linha em branco
-- Sem bullets, sem numeração, sem markdown
-- Tom formal e objetivo
-
-Projeto: ${projetoDescricao}
-Itens por categoria:\n${resumo}`
+      prompt: `Redija a seção 8.1 de relatório de prestação de contas. Tom formal, sem bullets, sem markdown. Projeto: ${projetoDescricao}\nItens:\n${resumo}`
     });
     onChange({ ...campo, resposta: typeof r === "string" ? r : JSON.stringify(r) });
     setGerando(false);
     setAberto(true);
   }, [gastos, campo, onChange, projetoDescricao]);
-
-  const preview = campo.resposta ? campo.resposta.slice(0, 120) + (campo.resposta.length > 120 ? "..." : "") : null;
-
+  const preview = campo.resposta ? campo.resposta.slice(0, 100) + "..." : null;
   return (
-    <div className={`border rounded-xl overflow-hidden transition-all ${campo.concluido ? "border-green-200 bg-green-50/30" : "border-amber-200 bg-amber-50/20"}`}>
+    <div className={`border rounded-xl overflow-hidden ${campo.concluido ? "border-green-200 bg-green-50/30" : "border-amber-200 bg-amber-50/20"}`}>
       <div className="flex items-start gap-3 p-4 cursor-pointer hover:bg-amber-50/30" onClick={() => !campo.concluido && setAberto(v => !v)}>
         <div className="flex-1 min-w-0">
           {campo.secao && <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wider mb-0.5">{campo.secao}</p>}
           <p className="text-sm font-semibold text-gray-800">{campo.pergunta}</p>
-          <p className="text-xs text-amber-700 mt-0.5">Gerada automaticamente pela IA a partir dos itens financeiros</p>
           {!aberto && preview && <p className="text-xs text-gray-500 mt-1 italic line-clamp-2">{preview}</p>}
-          {!aberto && !preview && <p className="text-xs text-gray-400 mt-1 italic">Clique para expandir...</p>}
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          {campo.concluido
-            ? <Badge className="bg-green-100 text-green-700 text-xs"><CheckCircle2 className="w-3 h-3 inline mr-1" />Concluído</Badge>
-            : <Badge className="bg-amber-100 text-amber-700 text-xs"><RefreshCw className="w-3 h-3 inline mr-1" />Auto</Badge>}
+          {campo.concluido ? <Badge className="bg-green-100 text-green-700 text-xs"><CheckCircle2 className="w-3 h-3 inline mr-1" />Concluído</Badge> : <Badge className="bg-amber-100 text-amber-700 text-xs"><RefreshCw className="w-3 h-3 inline mr-1" />Auto</Badge>}
           {!campo.concluido && (aberto ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />)}
-          {campo.concluido && (
-            <button type="button" onClick={e => { e.stopPropagation(); onChange({ ...campo, concluido: false }); }} className="text-gray-400 hover:text-amber-500">
-              <Unlock className="w-4 h-4" />
-            </button>
-          )}
+          {campo.concluido && <button type="button" onClick={e => { e.stopPropagation(); onChange({ ...campo, concluido: false }); }} className="text-gray-400 hover:text-amber-500"><Unlock className="w-4 h-4" /></button>}
         </div>
       </div>
       {aberto && !campo.concluido && (
         <div className="px-4 pb-4 border-t border-amber-100 pt-3 space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-500">{gastos.length} item(s) no financeiro</span>
-            <Button type="button" size="sm" variant="outline" onClick={gerarTexto} disabled={gerando || gastos.length === 0} className="text-amber-700 border-amber-300 hover:bg-amber-50">
-              {gerando ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Sparkles className="w-3 h-3 mr-1" />}
-              {gerando ? "Gerando..." : "Gerar / Atualizar com IA"}
+          <div className="flex justify-end">
+            <Button type="button" size="sm" variant="outline" onClick={gerarTexto} disabled={gerando || gastos.length === 0} className="text-amber-700 border-amber-300">
+              {gerando ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Sparkles className="w-3 h-3 mr-1" />}{gerando ? "Gerando..." : "Gerar com IA"}
             </Button>
           </div>
-          <Textarea value={campo.resposta || ""} onChange={e => onChange({ ...campo, resposta: e.target.value })} placeholder="Clique em 'Gerar com IA'..." className="min-h-[200px] text-sm leading-relaxed" />
+          <Textarea value={campo.resposta || ""} onChange={e => onChange({ ...campo, resposta: e.target.value })} className="min-h-[200px] text-sm" />
           <div className="flex justify-end">
             <Button type="button" size="sm" onClick={() => { onChange({ ...campo, concluido: true }); setAberto(false); }} className="bg-green-600 hover:bg-green-700" disabled={!campo.resposta}>
-              <CheckCircle2 className="w-4 h-4 mr-1" /> Concluir campo
+              <CheckCircle2 className="w-4 h-4 mr-1" /> Concluir
             </Button>
           </div>
         </div>
@@ -846,15 +836,15 @@ Itens por categoria:\n${resumo}`
   );
 }
 
-// ─── Import de projeto aprovado ───────────────────────────────────────────────
+// ─── Importar do Projeto Aprovado ─────────────────────────────────────────────
 function ImportProjetoAprovado({ projeto, onSave, campos, onSalvarCampos }) {
   const [open, setOpen] = useState(false);
   const [url, setUrl] = useState(projeto.template_relatorio_url || "");
   const [uploading, setUploading] = useState(false);
   const [extraindo, setExtraindo] = useState(false);
   const [resultado, setResultado] = useState(null);
-  const [aplicandoRelatorio, setAplicandoRelatorio] = useState(false);
-  const [aplicadoRelatorio, setAplicadoRelatorio] = useState(false);
+  const [aplicando, setAplicando] = useState(false);
+  const [aplicado, setAplicado] = useState(false);
 
   const handleUpload = async (e) => {
     const file = e.target.files[0];
@@ -866,121 +856,105 @@ function ImportProjetoAprovado({ projeto, onSave, campos, onSalvarCampos }) {
     setUploading(false);
   };
 
-  const extrairDoProjeto = async () => {
+  const extrair = async () => {
     const fileUrl = url || projeto.template_relatorio_url;
     if (!fileUrl) return;
     setExtraindo(true);
     const r = await base44.integrations.Core.InvokeLLM({
-      prompt: `Analise este documento de projeto aprovado. Extraia detalhadamente: 
-1) objetivos (texto descritivo)
-2) atividades do item 5.2 (lista completa dos títulos das atividades, na ordem em que aparecem)
-3) equipe (nome completo, função/responsabilidade, formação/experiência de cada membro)
-4) cronograma por fase/etapa
-5) linhas de orçamento
-6) entregas/resultados esperados`,
+      prompt: `Analise este documento de projeto aprovado (Anexo). Extraia:
+1) Da área/seção 1 (identificação): edital (campo "Edital"), titulo_projeto (campo "Título"), coordenador (campo "Coordenador"), razao_social (campo "Instituição executora" ou similar), numero_termo_outorga (campo "Termo de Outorga" ou similar)
+2) objetivos_especificos: texto descritivo dos objetivos específicos (item 2.5 ou similar)
+3) atividades: lista completa de títulos das atividades do item 5.2 (na ordem)
+4) equipe: lista com nome completo, função/responsabilidade, formação/experiência de cada membro
+5) entregas: lista de entregas (cada entrega como texto simples) agrupadas por objetivo específico (OE). Retornar como array de objetos {objetivo_num, objetivo_titulo, entregas: [string]}
+6) linhas_orcamento: categoria, descrição, valor
+7) cronograma: array de {atividade, inicio, fim}`,
       file_urls: [fileUrl],
       response_json_schema: {
         type: "object",
         properties: {
-          objetivos: { type: "string" },
+          edital: { type: "string" },
+          titulo_projeto: { type: "string" },
+          coordenador: { type: "string" },
+          razao_social: { type: "string" },
+          numero_termo_outorga: { type: "string" },
+          objetivos_especificos: { type: "string" },
           atividades: { type: "array", items: { type: "string" } },
-          entregas: { type: "array", items: { type: "string" } },
           equipe: { type: "array", items: { type: "object", properties: { nome: { type: "string" }, funcao: { type: "string" }, formacao: { type: "string" } } } },
-          cronograma: { type: "array", items: { type: "object", properties: { atividade: { type: "string" }, inicio: { type: "string" }, fim: { type: "string" } } } },
+          entregas_por_objetivo: { type: "array", items: { type: "object", properties: { objetivo_num: { type: "number" }, objetivo_titulo: { type: "string" }, entregas: { type: "array", items: { type: "string" } } } } },
           linhas_orcamento: { type: "array", items: { type: "object", properties: { categoria: { type: "string" }, descricao: { type: "string" }, valor_aprovado: { type: "number" } } } },
+          cronograma: { type: "array", items: { type: "object", properties: { atividade: { type: "string" }, inicio: { type: "string" }, fim: { type: "string" } } } },
         }
       }
     });
     setResultado(r);
-    setAplicadoRelatorio(false);
+    setAplicado(false);
     setExtraindo(false);
   };
 
   const aplicarNoOrcamento = async () => {
     if (!resultado?.linhas_orcamento?.length) return;
     const catMap = { "material permanente": "material_permanente", "material de consumo": "material_consumo", "terceiros": "terceiros", "diárias": "diarias", "diarias": "diarias", "passagens": "passagens", "contrapartida": "contrapartida", "doaci": "doaci" };
-    const novasLinhas = resultado.linhas_orcamento.map((l, i) => ({
-      id: `import-${Date.now()}-${i}`,
-      categoria: catMap[l.categoria?.toLowerCase()] || "terceiros",
-      subcategoria: l.descricao || "",
-      descricao: l.descricao || "",
-      valor_aprovado: Number(l.valor_aprovado) || 0
-    }));
-    await onSave({ orcamento_linhas: [...(projeto.orcamento_linhas || []), ...novasLinhas] });
+    const novas = resultado.linhas_orcamento.map((l, i) => ({ id: `imp-${Date.now()}-${i}`, categoria: catMap[l.categoria?.toLowerCase()] || "terceiros", subcategoria: l.descricao || "", descricao: l.descricao || "", valor_aprovado: Number(l.valor_aprovado) || 0 }));
+    await onSave({ orcamento_linhas: [...(projeto.orcamento_linhas || []), ...novas] });
   };
 
   const aplicarNoRelatorio = async () => {
     if (!resultado || !campos?.length) return;
-    setAplicandoRelatorio(true);
+    setAplicando(true);
     const novosCampos = campos.map(campo => {
       if (campo.concluido) return campo;
-      const p = (campo.pergunta || "").toLowerCase();
-      const s = (campo.secao || "").toLowerCase();
 
+      // Item 1 — Identificação
+      if (isItem1(campo)) {
+        return {
+          ...campo,
+          dados_item1: {
+            ...(campo.dados_item1 || {}),
+            edital: resultado.edital || "",
+            titulo_projeto: resultado.titulo_projeto || "",
+            coordenador: resultado.coordenador || "",
+            razao_social: resultado.razao_social || "",
+            termo_outorga: resultado.numero_termo_outorga || "",
+          }
+        };
+      }
       // Equipe (Item 2)
       if (isEquipe(campo) && resultado.equipe?.length) {
-        return {
-          ...campo,
-          itens_tabela: resultado.equipe.map((m, i) => ({
-            id: `eq-import-${Date.now()}-${i}`,
-            nome: m.nome || "",
-            responsabilidade: m.funcao || "",
-            formacao: m.formacao || ""
-          }))
-        };
+        return { ...campo, itens_tabela: resultado.equipe.map((m, i) => ({ id: `eq-${Date.now()}-${i}`, nome: m.nome || "", responsabilidade: m.funcao || "", formacao: m.formacao || "" })) };
       }
-
-      // Objetivos (texto, item 3)
-      if ((p.includes("objetivo") || s.includes("objetivo")) && resultado.objetivos && !isAtividades(campo)) {
-        return { ...campo, resposta: resultado.objetivos };
+      // Objetivos específicos (Item 3 — texto)
+      if (isObjetivos(campo) && resultado.objetivos_especificos) {
+        return { ...campo, resposta: resultado.objetivos_especificos };
       }
-
       // Atividades (Item 4)
       if (isAtividades(campo) && resultado.atividades?.length) {
-        return {
-          ...campo,
-          itens_tabela: resultado.atividades.map((a, i) => ({
-            id: `atv-import-${Date.now()}-${i}`,
-            titulo: a
-          }))
-        };
+        return { ...campo, itens_tabela: resultado.atividades.map((a, i) => ({ id: `atv-${Date.now()}-${i}`, titulo: a })) };
       }
-
       // Entregas (Item 5)
-      if (isEntregas(campo) && resultado.entregas?.length) {
+      if (isEntregas(campo) && resultado.entregas_por_objetivo?.length) {
         return {
           ...campo,
-          itens_tabela: resultado.entregas.map((e, i) => ({
-            id: `ent-import-${Date.now()}-${i}`,
-            objetivo_num: i + 1,
-            objetivo_titulo: e,
-            entregas_sub: [],
-            percentagem: "0"
+          itens_tabela: resultado.entregas_por_objetivo.map((obj, oi) => ({
+            id: `ent-${Date.now()}-${oi}`,
+            objetivo_num: obj.objetivo_num || oi + 1,
+            objetivo_titulo: obj.objetivo_titulo || "",
+            entregas: (obj.entregas || []).map((e, ei) => ({ id: `e-${Date.now()}-${oi}-${ei}`, descricao: e, percentagem: "0" }))
           }))
         };
       }
-
       // Cronograma
       if (isCronograma(campo) && resultado.cronograma?.length) {
-        return {
-          ...campo,
-          itens_tabela: resultado.cronograma.map((c, i) => ({
-            id: `crono-import-${Date.now()}-${i}`,
-            descricao: c.atividade || "",
-            meses: []
-          }))
-        };
+        return { ...campo, itens_tabela: resultado.cronograma.map((c, i) => ({ id: `crono-${Date.now()}-${i}`, descricao: c.atividade || "", meses: [] })) };
       }
-
       return campo;
     });
-
     await onSalvarCampos(novosCampos);
-    setAplicandoRelatorio(false);
-    setAplicadoRelatorio(true);
+    setAplicando(false);
+    setAplicado(true);
   };
 
-  const temDados = resultado && (resultado.objetivos || resultado.atividades?.length || resultado.equipe?.length || resultado.cronograma?.length || resultado.entregas?.length);
+  const temDados = resultado && (resultado.titulo_projeto || resultado.atividades?.length || resultado.equipe?.length || resultado.entregas_por_objetivo?.length);
 
   return (
     <>
@@ -990,10 +964,10 @@ function ImportProjetoAprovado({ projeto, onSave, campos, onSalvarCampos }) {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader><DialogTitle className="flex items-center gap-2"><BookOpen className="w-5 h-5 text-purple-600" /> Importar do Projeto Aprovado</DialogTitle></DialogHeader>
-          <p className="text-sm text-gray-500">Faça upload do PDF do projeto aprovado. A IA extrai atividades, cronograma, equipe e orçamento automaticamente.</p>
+          <p className="text-sm text-gray-500">Faça upload do PDF do projeto aprovado. A IA extrai identificação, equipe, atividades, entregas e orçamento automaticamente.</p>
           <div className="space-y-4">
             <label className="cursor-pointer">
-              <div className="inline-flex items-center gap-2 px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-all">
+              <div className="inline-flex items-center gap-2 px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium">
                 {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
                 {uploading ? "Enviando..." : "Upload do PDF do Projeto Aprovado"}
               </div>
@@ -1003,42 +977,31 @@ function ImportProjetoAprovado({ projeto, onSave, campos, onSalvarCampos }) {
               <>
                 <div className="flex items-center gap-2 text-xs text-green-700 bg-green-50 rounded p-2">
                   <FileText className="w-4 h-4" />
-                  <a href={url || projeto.template_relatorio_url} target="_blank" rel="noopener noreferrer" className="hover:underline">Arquivo carregado — clique para visualizar</a>
+                  <a href={url || projeto.template_relatorio_url} target="_blank" rel="noopener noreferrer" className="hover:underline">Arquivo carregado</a>
                 </div>
-                <Button onClick={extrairDoProjeto} disabled={extraindo} className="bg-purple-600 hover:bg-purple-700">
+                <Button onClick={extrair} disabled={extraindo} className="bg-purple-600 hover:bg-purple-700">
                   {extraindo ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Extraindo...</> : <><Sparkles className="w-4 h-4 mr-2" />Extrair Informações com IA</>}
                 </Button>
               </>
             )}
             {resultado && (
               <div className="space-y-3">
-                {resultado.objetivos && <div className="bg-gray-50 rounded-lg p-3"><p className="text-xs font-bold text-gray-600 mb-1">OBJETIVOS</p><p className="text-sm text-gray-700">{resultado.objetivos}</p></div>}
-                {resultado.equipe?.length > 0 && (
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <p className="text-xs font-bold text-gray-600 mb-1">EQUIPE ({resultado.equipe.length})</p>
-                    {resultado.equipe.map((m, i) => <div key={i} className="text-xs text-gray-700"><span className="font-medium">{m.nome}</span> — {m.funcao}</div>)}
+                {(resultado.edital || resultado.titulo_projeto) && (
+                  <div className="bg-gray-50 rounded-lg p-3 space-y-1">
+                    <p className="text-xs font-bold text-gray-600">IDENTIFICAÇÃO (ITEM 1)</p>
+                    {resultado.edital && <p className="text-xs text-gray-700"><span className="font-medium">Edital:</span> {resultado.edital}</p>}
+                    {resultado.titulo_projeto && <p className="text-xs text-gray-700"><span className="font-medium">Título:</span> {resultado.titulo_projeto}</p>}
+                    {resultado.coordenador && <p className="text-xs text-gray-700"><span className="font-medium">Coordenador:</span> {resultado.coordenador}</p>}
+                    {resultado.razao_social && <p className="text-xs text-gray-700"><span className="font-medium">Instituição:</span> {resultado.razao_social}</p>}
                   </div>
                 )}
-                {resultado.atividades?.length > 0 && (
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <p className="text-xs font-bold text-gray-600 mb-1">ATIVIDADES (Item 4) — {resultado.atividades.length}</p>
-                    {resultado.atividades.slice(0, 5).map((a, i) => <div key={i} className="text-xs">• {a}</div>)}
-                    {resultado.atividades.length > 5 && <div className="text-xs text-gray-400">...e mais {resultado.atividades.length - 5}</div>}
-                  </div>
-                )}
-                {resultado.entregas?.length > 0 && (
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <p className="text-xs font-bold text-gray-600 mb-1">ENTREGAS (Item 5) — {resultado.entregas.length}</p>
-                    {resultado.entregas.slice(0, 4).map((e, i) => <div key={i} className="text-xs">• {e}</div>)}
-                    {resultado.entregas.length > 4 && <div className="text-xs text-gray-400">...e mais {resultado.entregas.length - 4}</div>}
-                  </div>
-                )}
+                {resultado.equipe?.length > 0 && <div className="bg-gray-50 rounded-lg p-3"><p className="text-xs font-bold text-gray-600 mb-1">EQUIPE ({resultado.equipe.length})</p>{resultado.equipe.map((m, i) => <div key={i} className="text-xs text-gray-700"><span className="font-medium">{m.nome}</span> — {m.funcao}</div>)}</div>}
+                {resultado.atividades?.length > 0 && <div className="bg-gray-50 rounded-lg p-3"><p className="text-xs font-bold text-gray-600 mb-1">ATIVIDADES ({resultado.atividades.length})</p>{resultado.atividades.slice(0, 5).map((a, i) => <div key={i} className="text-xs">• {a}</div>)}{resultado.atividades.length > 5 && <div className="text-xs text-gray-400">...e mais {resultado.atividades.length - 5}</div>}</div>}
+                {resultado.entregas_por_objetivo?.length > 0 && <div className="bg-gray-50 rounded-lg p-3"><p className="text-xs font-bold text-gray-600 mb-1">ENTREGAS POR OBJETIVO ({resultado.entregas_por_objetivo.length} OEs)</p>{resultado.entregas_por_objetivo.slice(0, 3).map((obj, i) => <div key={i} className="text-xs text-gray-700">OE {obj.objetivo_num}: {obj.entregas?.length || 0} entrega(s)</div>)}</div>}
                 <div className="border-t pt-3 space-y-2">
                   {temDados && (
-                    <Button size="sm" onClick={aplicarNoRelatorio} disabled={aplicandoRelatorio || aplicadoRelatorio || !campos?.length} className="w-full bg-purple-600 hover:bg-purple-700">
-                      {aplicandoRelatorio ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Aplicando...</> :
-                       aplicadoRelatorio ? <><CheckCircle2 className="w-4 h-4 mr-2" />Aplicado no Relatório!</> :
-                       <><Sparkles className="w-4 h-4 mr-2" />Aplicar no Relatório (equipe, atividades, entregas, cronograma)</>}
+                    <Button size="sm" onClick={aplicarNoRelatorio} disabled={aplicando || aplicado || !campos?.length} className="w-full bg-purple-600 hover:bg-purple-700">
+                      {aplicando ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Aplicando...</> : aplicado ? <><CheckCircle2 className="w-4 h-4 mr-2" />Aplicado!</> : <><Sparkles className="w-4 h-4 mr-2" />Aplicar no Relatório</>}
                     </Button>
                   )}
                   {!campos?.length && temDados && <p className="text-xs text-amber-600 text-center">⚠️ Faça upload do modelo de relatório primeiro.</p>}
@@ -1067,9 +1030,7 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
   const [campos, setCampos] = useState(projeto.relatorio_campos || []);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    setCampos(projeto.relatorio_campos || []);
-  }, [projeto.id]);
+  useEffect(() => { setCampos(projeto.relatorio_campos || []); }, [projeto.id]);
 
   const salvar = async (novosCampos) => {
     setCampos(novosCampos);
@@ -1093,47 +1054,29 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
     setUploadingPdf(false);
     setExtraindo(true);
     const r = await base44.integrations.Core.InvokeLLM({
-      prompt: `Analise este PDF modelo de relatório/prestação de contas. Identifique todos os campos/seções que precisam ser preenchidos.
-Para cada campo, retorne: secao (título da seção com número), pergunta (o que precisa ser preenchido), tipo_resposta ("texto_longo", "texto_curto", "numero", "data", ou "tabela_itens" se for tabela).
-Ordene pelos campos na ordem do documento.`,
+      prompt: `Analise este PDF modelo de relatório. Identifique todos os campos/seções. Para cada campo: secao (título com número), pergunta, tipo_resposta ("texto_longo", "texto_curto", "numero", "data", "tabela_itens"). Ordene pela ordem do documento.`,
       file_urls: [file_url],
-      response_json_schema: {
-        type: "object",
-        properties: {
-          campos: { type: "array", items: { type: "object", properties: { secao: { type: "string" }, pergunta: { type: "string" }, tipo_resposta: { type: "string" } } } }
-        }
-      }
+      response_json_schema: { type: "object", properties: { campos: { type: "array", items: { type: "object", properties: { secao: { type: "string" }, pergunta: { type: "string" }, tipo_resposta: { type: "string" } } } } } }
     });
-    if (r.campos) {
-      salvar(r.campos.map((c, i) => ({ id: `campo-${Date.now()}-${i}`, secao: c.secao || "", pergunta: c.pergunta || `Campo ${i + 1}`, tipo_resposta: c.tipo_resposta || "texto_longo", resposta: "", concluido: false })));
-    }
+    if (r.campos) salvar(r.campos.map((c, i) => ({ id: `campo-${Date.now()}-${i}`, secao: c.secao || "", pergunta: c.pergunta || `Campo ${i + 1}`, tipo_resposta: c.tipo_resposta || "texto_longo", resposta: "", concluido: false })));
     setExtraindo(false);
   };
 
-  // Regera 8.1 automaticamente quando entra novo item financeiro
+  // Regera 8.1 ao adicionar gasto
   const prevGastosCount = useRef(gastos.length);
   useEffect(() => {
     const novoCount = gastos.length;
     if (novoCount <= prevGastosCount.current) { prevGastosCount.current = novoCount; return; }
     prevGastosCount.current = novoCount;
-    if (gastos.length === 0 || campos.length === 0) return;
+    if (!gastos.length || !campos.length) return;
     const idx81 = campos.findIndex(c => isItem81(c));
-    if (idx81 === -1) return;
-    const campo81 = campos[idx81];
-    if (campo81.concluido) return;
+    if (idx81 === -1 || campos[idx81].concluido) return;
     (async () => {
-      const grupos = Object.entries(CATEGORIAS_LABEL)
-        .map(([key, label]) => ({ key, label, items: gastos.filter(g => g.categoria === key) }))
-        .filter(g => g.items.length > 0);
-      const resumo = grupos.map(g => {
-        const itens = g.items.map(x => `  - ${x.descricao}${x.fornecedor ? ` (${x.fornecedor})` : ""}: ${fmt(x.valor)}`).join("\n");
-        return `### ${g.label}\n${itens}`;
-      }).join("\n\n");
-      const r = await base44.integrations.Core.InvokeLLM({
-        prompt: `Redija a seção 8.1 de um relatório de prestação de contas de projeto de inovação financiado por órgão público. Tom formal, sem bullets, sem markdown. Projeto: ${projeto.descricao_projeto || projeto.titulo}\nItens:\n${resumo}`
-      });
+      const grupos = Object.entries(CATEGORIAS_LABEL).map(([k, l]) => ({ label: l, items: gastos.filter(g => g.categoria === k) })).filter(g => g.items.length > 0);
+      const resumo = grupos.map(g => `### ${g.label}\n${g.items.map(x => `  - ${x.descricao}: ${fmt(x.valor)}`).join("\n")}`).join("\n\n");
+      const r = await base44.integrations.Core.InvokeLLM({ prompt: `Redija seção 8.1 do relatório de prestação de contas. Tom formal, sem markdown. Projeto: ${projeto.descricao_projeto || projeto.titulo}\nItens:\n${resumo}` });
       const novos = [...campos];
-      novos[idx81] = { ...campo81, resposta: typeof r === "string" ? r : JSON.stringify(r) };
+      novos[idx81] = { ...campos[idx81], resposta: typeof r === "string" ? r : JSON.stringify(r) };
       salvar(novos);
     })();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1143,12 +1086,13 @@ Ordene pelos campos na ordem do documento.`,
   const pct = campos.length > 0 ? (concluidos / campos.length) * 100 : 0;
   const orcamentoLinhas = projeto.orcamento_linhas || [];
   const camposAtividades = campos.filter(c => isAtividades(c));
+  const camposEntregas = campos.filter(c => isEntregas(c));
 
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap gap-2 justify-between items-center">
         <label className="cursor-pointer">
-          <div className="inline-flex items-center gap-2 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-all">
+          <div className="inline-flex items-center gap-2 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium">
             {uploadingPdf || extraindo ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
             {uploadingPdf ? "Enviando..." : extraindo ? "Extraindo campos..." : "Upload do Modelo PDF"}
           </div>
@@ -1167,7 +1111,7 @@ Ordene pelos campos na ordem do documento.`,
       {campos.length > 0 && (
         <div className="bg-white rounded-xl border p-4">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-semibold text-gray-700">Progresso do Formulário</span>
+            <span className="text-sm font-semibold text-gray-700">Progresso</span>
             <span className="text-sm text-indigo-600 font-bold">{concluidos}/{campos.length}</span>
           </div>
           <Progress value={pct} className="h-2" />
@@ -1185,34 +1129,18 @@ Ordene pelos campos na ordem do documento.`,
 
       <div className="space-y-3">
         {campos.map((campo, idx) => {
-          if (isItem81(campo)) {
-            return <CampoDescricaoFinanceira key={campo.id} gastos={gastos} campo={campo} onChange={(novo) => updateCampo(idx, novo)} projetoDescricao={projeto.descricao_projeto || projeto.titulo} />;
-          }
-          if (isExecucaoFinanceira(campo)) {
-            return <TabelaExecucaoFinanceira key={campo.id} gastos={gastos} orcamentoLinhas={orcamentoLinhas} campo={campo} onChange={(novo) => updateCampo(idx, novo)} />;
-          }
-          if (isCronograma(campo)) {
-            return <TabelaCronograma key={campo.id} campo={campo} onChange={(novo) => updateCampo(idx, novo)} campos={campos} />;
-          }
-          if (isEquipe(campo)) {
-            return <TabelaEquipe key={campo.id} campo={campo} onChange={(novo) => updateCampo(idx, novo)} />;
-          }
-          if (isAtividades(campo)) {
-            return <ListaAtividades key={campo.id} campo={campo} onChange={(novo) => updateCampo(idx, novo)} />;
-          }
-          if (isJustificativaMudancaObjetivos(campo)) {
-            return <CampoJustificativaMudanca key={campo.id} campo={campo} onChange={(novo) => updateCampo(idx, novo)} />;
-          }
-          if (isEntregas(campo)) {
-            return <TabelaEntregas key={campo.id} campo={campo} onChange={(novo) => updateCampo(idx, novo)} camposAtividades={camposAtividades} />;
-          }
-          if (isDescricaoEntregas(campo)) {
-            return <CampoTextoComImagem key={campo.id} campo={campo} onChange={(novo) => updateCampo(idx, novo)} instrucaoIA="Melhore o texto a seguir para descrever de forma técnica, clara e objetiva as entregas realizadas no projeto:" />;
-          }
-          if (isResultadosAlcancados(campo)) {
-            return <CampoTextoComImagem key={campo.id} campo={campo} onChange={(novo) => updateCampo(idx, novo)} instrucaoIA="Melhore o texto a seguir para descrever de forma técnica e objetiva os resultados e impactos alcançados pelo projeto:" />;
-          }
-          return <CampoRelatorio key={campo.id} campo={campo} onChange={(novo) => updateCampo(idx, novo)} />;
+          if (isItem1(campo)) return <Item1Identificacao key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} />;
+          if (isItem81(campo)) return <CampoDescricaoFinanceira key={campo.id} gastos={gastos} campo={campo} onChange={novo => updateCampo(idx, novo)} projetoDescricao={projeto.descricao_projeto || projeto.titulo} />;
+          if (isExecucaoFinanceira(campo)) return <TabelaExecucaoFinanceira key={campo.id} gastos={gastos} orcamentoLinhas={orcamentoLinhas} campo={campo} />;
+          if (isEquipe(campo)) return <TabelaEquipe key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} />;
+          if (isAtividades(campo)) return <ListaAtividades key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} />;
+          if (isJustificativaMudanca(campo)) return <CampoJustificativa key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} placeholder="Descreva as razões da mudança..." instrucaoIA="Melhore o texto para justificar de forma técnica e objetiva a razão da mudança de objetivos:" />;
+          if (isEntregas(campo)) return <TabelaEntregas key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} camposAtividades={camposAtividades} />;
+          if (isDescricaoEntregas(campo)) return <CampoJustificativa key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} placeholder="Descreva o que foi realizado em cada entrega..." instrucaoIA="Melhore o texto para descrever de forma técnica e objetiva as entregas realizadas:" />;
+          if (isResultadosAlcancados(campo)) return <CampoTextoComImagem key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} instrucaoIA="Melhore o texto para descrever os resultados e impactos alcançados pelo projeto:" />;
+          if (isCronogramaItem7(campo)) return <CronogramaItem7 key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} camposEntregas={camposEntregas} />;
+          if (isJustificativaCronograma(campo)) return <CampoJustificativa key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} placeholder="Justifique alterações no cronograma..." instrucaoIA="Melhore o texto para justificar de forma técnica e objetiva as alterações no cronograma:" />;
+          return <CampoRelatorio key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} />;
         })}
       </div>
     </div>
