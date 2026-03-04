@@ -1079,8 +1079,9 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
     setExtraindo(false);
   };
 
-  // Regera 8.1 ao adicionar gasto
+  // Regera 8.1 ao adicionar gasto (com debounce de 5s para evitar rate limit)
   const prevGastosCount = useRef(gastos.length);
+  const debounceTimer = useRef(null);
   useEffect(() => {
     const novoCount = gastos.length;
     if (novoCount <= prevGastosCount.current) { prevGastosCount.current = novoCount; return; }
@@ -1088,14 +1089,16 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
     if (!gastos.length || !campos.length) return;
     const idx81 = campos.findIndex(c => isItem81(c));
     if (idx81 === -1 || campos[idx81].concluido) return;
-    (async () => {
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(async () => {
       const grupos = Object.entries(CATEGORIAS_LABEL).map(([k, l]) => ({ label: l, items: gastos.filter(g => g.categoria === k) })).filter(g => g.items.length > 0);
       const resumo = grupos.map(g => `### ${g.label}\n${g.items.map(x => `  - ${x.descricao}: ${fmt(x.valor)}`).join("\n")}`).join("\n\n");
       const r = await base44.integrations.Core.InvokeLLM({ prompt: `Redija seção 8.1 do relatório de prestação de contas. Tom formal, sem markdown. Projeto: ${projeto.descricao_projeto || projeto.titulo}\nItens:\n${resumo}` });
       const novos = [...campos];
       novos[idx81] = { ...campos[idx81], resposta: typeof r === "string" ? r : JSON.stringify(r) };
       salvar(novos);
-    })();
+    }, 5000);
+    return () => { if (debounceTimer.current) clearTimeout(debounceTimer.current); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gastos.length]);
 
