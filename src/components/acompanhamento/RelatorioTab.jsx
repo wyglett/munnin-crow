@@ -1097,6 +1097,7 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
           <input type="file" className="hidden" accept=".pdf" onChange={uploadTemplate} disabled={uploadingPdf || extraindo} />
         </label>
         <ImportProjetoAprovado projeto={projeto} onSave={onSave} campos={campos} onSalvarCampos={salvar} />
+        <ExportarRelatorio projeto={projeto} campos={campos} />
       </div>
 
       {projeto.relatorio_template_url && (
