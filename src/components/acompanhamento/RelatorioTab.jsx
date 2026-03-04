@@ -130,11 +130,15 @@ function isResultadosAlcancados(campo) {
 function isCronogramaItem7(campo) {
   const p = (campo.pergunta || "").toLowerCase();
   const s = (campo.secao || "").toLowerCase();
-  return (s.includes("7") || p.includes("cronograma")) && (p.includes("cronograma") || s.includes("cronograma"));
+  // Só o item 7 principal (não 7.1)
+  if (s.includes("7.1") || p.includes("7.1")) return false;
+  return (s.match(/^7(\s|$|-|\.|\s*[-–])/) || p.includes("cronograma")) && (p.includes("cronograma") || s.includes("cronograma"));
 }
 function isJustificativaCronograma(campo) {
   const s = (campo.secao || "").toLowerCase();
-  return s.includes("7.1") || (s.includes("7") && (campo.pergunta || "").toLowerCase().includes("justif"));
+  const p = (campo.pergunta || "").toLowerCase();
+  return s.includes("7.1") || p.includes("7.1") ||
+    (s.match(/^7(\s|$|-|\.|\s*[-–])/) && (p.includes("justif") || p.includes("alteração") || p.includes("mudança")));
 }
 function isObjetivos(campo) {
   const p = (campo.pergunta || "").toLowerCase();
