@@ -160,11 +160,6 @@ function isObjetivos(campo) {
   const s = (campo.secao || "").toLowerCase();
   return (p.includes("objetivo") || s.includes("objetivo")) && !isAtividades(campo);
 }
-function isCronograma(campo) {
-  const p = (campo.pergunta || "").toLowerCase();
-  const s = (campo.secao || "").toLowerCase();
-  return (p.includes("cronograma") || s.includes("cronograma")) && !isCronogramaItem7(campo);
-}
 
 // ─── Botão melhorar IA ────────────────────────────────────────────────────────
 function BotaoMelhorarIA({ texto, onMelhorado, instrucao }) {
