@@ -68,7 +68,14 @@ function isExecucaoFinanceira(campo) {
 }
 function isItem1(campo) {
   const s = (campo.secao || "").toLowerCase();
-  return s.match(/^1(\s|$|-|\.|\s*[-–])/) && (s.includes("identifica") || s.includes("dado") || s.includes("projeto") || s.includes("geral"));
+  // Só o item 1 principal (não sub-itens como 1.1, 1.2...)
+  if (/^1\.[1-9]/.test(campo.secao || "")) return false;
+  return !!s.match(/^1(\s|$|-|\.|\s*[-–])/) && (s.includes("identifica") || s.includes("dado") || s.includes("projeto") || s.includes("geral"));
+}
+function isSubItem1(campo) {
+  // Sub-itens do item 1 (1.1, 1.2 etc.) que devem ser suprimidos — tratados pelo quadro único
+  const s = campo.secao || "";
+  return /^1\.[1-9]/.test(s);
 }
 function isEquipe(campo) {
   const s = (campo.secao || "").toLowerCase();
