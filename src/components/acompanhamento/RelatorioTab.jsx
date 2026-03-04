@@ -1107,6 +1107,7 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
           if (isItem81(campo)) return <CampoDescricaoFinanceira key={campo.id} gastos={gastos} campo={campo} onChange={novo => updateCampo(idx, novo)} projetoDescricao={projeto.descricao_projeto || projeto.titulo} />;
           if (isExecucaoFinanceira(campo)) return <TabelaExecucaoFinanceira key={campo.id} gastos={gastos} orcamentoLinhas={orcamentoLinhas} campo={campo} />;
           if (isEquipe(campo)) return <TabelaEquipe key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} />;
+          if (isJustificativaMudancaEquipe(campo)) return <CampoJustificativa key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} placeholder="Justifique as mudanças na equipe do projeto..." instrucaoIA="Melhore o texto para justificar de forma técnica e objetiva as alterações na equipe do projeto:" />;
           if (isAtividades(campo)) return <ListaAtividades key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} />;
           if (isJustificativaMudanca(campo)) return <CampoJustificativa key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} placeholder="Descreva as razões da mudança..." instrucaoIA="Melhore o texto para justificar de forma técnica e objetiva a razão da mudança de objetivos:" />;
           if (isEntregas(campo)) return <TabelaEntregas key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} camposAtividades={camposAtividades} />;
