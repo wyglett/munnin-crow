@@ -207,6 +207,10 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
             </div>
           </TabsContent>
 
+          <TabsContent value="informativos">
+            <InformativosTab />
+          </TabsContent>
+
           <TabsContent value="usuarios" className="space-y-4">
             <Card>
               <CardHeader><CardTitle className="text-base">Convidar Novo Usuário</CardTitle></CardHeader>
