@@ -934,10 +934,7 @@ function ImportProjetoAprovado({ projeto, onSave, campos, onSalvarCampos }) {
           }))
         };
       }
-      // Cronograma
-      if (isCronograma(campo) && resultado.cronograma?.length) {
-        return { ...campo, itens_tabela: resultado.cronograma.map((c, i) => ({ id: `crono-${Date.now()}-${i}`, descricao: c.atividade || "", meses: [] })) };
-      }
+
       return campo;
     });
     await onSalvarCampos(novosCampos);
