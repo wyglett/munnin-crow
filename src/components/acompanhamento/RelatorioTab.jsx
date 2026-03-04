@@ -1058,6 +1058,8 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
   const orcamentoLinhas = projeto.orcamento_linhas || [];
   const camposAtividades = campos.filter(c => isAtividades(c));
   const camposEntregas = campos.filter(c => isEntregas(c));
+  // Rastrear se já renderizamos o quadro único do item 1
+  let item1Renderizado = false;
 
   return (
     <div className="space-y-5">
