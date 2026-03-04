@@ -145,7 +145,9 @@ function isCronogramaItem7(campo) {
   const s = (campo.secao || "").toLowerCase();
   // Só o item 7 principal (não 7.1)
   if (s.includes("7.1") || p.includes("7.1")) return false;
-  return (s.match(/^7(\s|$|-|\.|\s*[-–])/) || p.includes("cronograma")) && (p.includes("cronograma") || s.includes("cronograma"));
+  // Detecta qualquer campo da seção 7 que trate de cronograma físico
+  if (s.match(/^7(\s|$|-|\.|\s*[-–])/)) return true;
+  return p.includes("cronograma") && (p.includes("físico") || p.includes("mês") || p.includes("execução por mês") || p.includes("atividade"));
 }
 function isJustificativaCronograma(campo) {
   const s = (campo.secao || "").toLowerCase();
