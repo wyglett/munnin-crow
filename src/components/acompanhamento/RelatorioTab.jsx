@@ -1140,10 +1140,6 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
           if (isDescricaoEntregas(campo)) return <CampoJustificativa key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} placeholder="Descreva detalhadamente as entregas realizadas neste período..." instrucaoIA="Melhore o texto para descrever de forma técnica e objetiva as entregas realizadas:" />;
           if (isEntregas(campo)) return <TabelaEntregas key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} camposAtividades={camposAtividades} />;
           if (isResultadosAlcancados(campo)) return <CampoTextoComImagem key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} instrucaoIA="Melhore o texto para descrever os resultados e impactos alcançados pelo projeto:" />;
-          // 7.1 OBRIGATORIAMENTE antes do 7 para não ser capturado como cronograma principal
-          if (isJustificativaCronograma(campo)) return <CampoJustificativa key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} placeholder="Justifique alterações no cronograma..." instrucaoIA="Melhore o texto para justificar de forma técnica e objetiva as alterações no cronograma:" />;
-          // Item 7: apenas seleção de meses, sem % de execução
-          if (isCronogramaItem7(campo)) return <CronogramaItem7 key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} camposEntregas={camposEntregas} />;
           return <CampoRelatorio key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} />;
         })}
       </div>
