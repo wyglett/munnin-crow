@@ -111,8 +111,21 @@ function isEntregas(campo) {
   const s = (campo.secao || "").toLowerCase();
   const numMatch = s.match(/^(\d+)/);
   const num = numMatch ? numMatch[1] : "";
-  if (num === "5" && !s.includes("5.1") && !s.includes("5.2")) return true;
-  return (p.includes("entrega") || s.includes("entrega")) && !s.includes("5.1") && !s.includes("5.2");
+  // Só o quadro com "entregas pactuadas", não o que é apenas a linha de percentagem total
+  if (num === "5" && !s.includes("5.1") && !s.includes("5.2")) {
+    // Se a pergunta é APENAS sobre percentagem total, não é o quadro principal de entregas
+    if (p.includes("percentagem total") && !p.includes("entrega")) return false;
+    return true;
+  }
+  return (p.includes("entrega") || s.includes("entrega")) && !s.includes("5.1") && !s.includes("5.2") &&
+    !(p.includes("percentagem total") && !p.includes("entrega"));
+}
+function isPercentagemTotal(campo) {
+  const p = (campo.pergunta || "").toLowerCase();
+  const s = (campo.secao || "").toLowerCase();
+  const numMatch = s.match(/^(\d+)/);
+  const num = numMatch ? numMatch[1] : "";
+  return num === "5" && p.includes("percentagem total") && !p.includes("entrega");
 }
 function isDescricaoEntregas(campo) {
   const p = (campo.pergunta || "").toLowerCase();
