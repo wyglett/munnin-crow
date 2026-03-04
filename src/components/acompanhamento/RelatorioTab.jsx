@@ -385,8 +385,8 @@ function CampoJustificativa({ campo, onChange, placeholder, instrucaoIA }) {
   );
 }
 
-// ─── Item 5 — Plano de Entregas (estrutura do anexo) ──────────────────────────
-// Estrutura: objetivo principal com N sublinhas de entregas, cada uma com %
+// ─── Item 5 — Plano de Entregas ───────────────────────────────────────────────
+// Estrutura: OE (número) | Entrega 1 - % | Entrega 2 - % | ... (sublinhas ao lado)
 function TabelaEntregas({ campo, onChange, camposAtividades }) {
   const [aberto, setAberto] = useState(true);
   const objetivos = campo.itens_tabela || [];
@@ -400,34 +400,15 @@ function TabelaEntregas({ campo, onChange, camposAtividades }) {
     onChange({ ...campo, itens_tabela: novos });
   };
 
-  const updObj = (oi, key, val) => {
-    onChange({ ...campo, itens_tabela: objetivos.map((o, idx) => idx === oi ? { ...o, [key]: val } : o) });
-  };
-  const addEntrega = (oi) => {
-    const obj = objetivos[oi];
-    const ents = obj.entregas || [];
-    updObj(oi, "entregas", [...ents, { id: `e-${Date.now()}`, descricao: "", percentagem: "0" }]);
-  };
-  const updEntrega = (oi, ei, key, val) => {
-    const obj = objetivos[oi];
-    updObj(oi, "entregas", (obj.entregas || []).map((e, idx) => idx === ei ? { ...e, [key]: val } : e));
-  };
-  const remEntrega = (oi, ei) => {
-    const obj = objetivos[oi];
-    updObj(oi, "entregas", (obj.entregas || []).filter((_, idx) => idx !== ei));
-  };
-  const addObjetivo = () => {
-    onChange({ ...campo, itens_tabela: [...objetivos, { id: `ent-${Date.now()}`, objetivo_num: objetivos.length + 1, objetivo_titulo: "", entregas: [{ id: `e-${Date.now()}`, descricao: "", percentagem: "0" }] }] });
-  };
-  const remObjetivo = (oi) => {
-    onChange({ ...campo, itens_tabela: objetivos.filter((_, idx) => idx !== oi) });
-  };
+  const updObj = (oi, key, val) => onChange({ ...campo, itens_tabela: objetivos.map((o, idx) => idx === oi ? { ...o, [key]: val } : o) });
+  const addEntrega = (oi) => { const obj = objetivos[oi]; updObj(oi, "entregas", [...(obj.entregas || []), { id: `e-${Date.now()}`, descricao: "", percentagem: "0" }]); };
+  const updEntrega = (oi, ei, key, val) => { const obj = objetivos[oi]; updObj(oi, "entregas", (obj.entregas || []).map((e, idx) => idx === ei ? { ...e, [key]: val } : e)); };
+  const remEntrega = (oi, ei) => { const obj = objetivos[oi]; updObj(oi, "entregas", (obj.entregas || []).filter((_, idx) => idx !== ei)); };
+  const addObjetivo = () => onChange({ ...campo, itens_tabela: [...objetivos, { id: `ent-${Date.now()}`, objetivo_num: objetivos.length + 1, objetivo_titulo: "", entregas: [{ id: `e-${Date.now()}`, descricao: "", percentagem: "0" }] }] });
+  const remObjetivo = (oi) => onChange({ ...campo, itens_tabela: objetivos.filter((_, idx) => idx !== oi) });
 
-  // Média de todas as entregas
   const todasEntregas = objetivos.flatMap(o => o.entregas || []);
-  const media = todasEntregas.length > 0
-    ? (todasEntregas.reduce((s, e) => s + Number(e.percentagem || 0), 0) / todasEntregas.length).toFixed(1)
-    : "0";
+  const media = todasEntregas.length > 0 ? (todasEntregas.reduce((s, e) => s + Number(e.percentagem || 0), 0) / todasEntregas.length).toFixed(1) : "0";
 
   return (
     <div className="border rounded-xl overflow-hidden bg-white">
@@ -450,7 +431,7 @@ function TabelaEntregas({ campo, onChange, camposAtividades }) {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-gray-100 text-xs text-gray-700 uppercase font-bold">
-                  <th className="p-2 border border-gray-300 text-center w-12">Nº OE</th>
+                  <th className="p-2 border border-gray-300 text-center w-10">Nº OE</th>
                   <th className="p-2 border border-gray-300 text-left">Entrega Pactuada para Atingir os Objetivos Específicos do Projeto (Quadro 4)</th>
                   <th className="p-2 border border-gray-300 text-center w-44">% de Execução</th>
                   <th className="p-2 border border-gray-300 w-8"></th>
@@ -459,19 +440,18 @@ function TabelaEntregas({ campo, onChange, camposAtividades }) {
               <tbody>
                 {objetivos.map((obj, oi) => (
                   <React.Fragment key={obj.id || oi}>
-                    {/* Linha do objetivo — número na célula mesclada visualmente */}
-                    {(obj.entregas || [{ descricao: "", percentagem: "0" }]).map((ent, ei) => (
-                      <tr key={ent.id || ei} className={ei === 0 ? "bg-gray-50" : "bg-white"}>
+                    {(obj.entregas || []).map((ent, ei) => (
+                      <tr key={ent.id || ei} className="hover:bg-gray-50">
                         {ei === 0 && (
-                          <td rowSpan={(obj.entregas || []).length || 1} className="border border-gray-300 text-center font-bold text-gray-700 align-middle text-sm">
-                            <div className="flex flex-col items-center gap-1">
+                          <td rowSpan={(obj.entregas || []).length} className="border border-gray-300 text-center font-bold text-gray-700 align-middle">
+                            <div className="flex flex-col items-center gap-1 p-1">
                               <span>{obj.objetivo_num || oi + 1}</span>
                               <button type="button" onClick={() => remObjetivo(oi)} className="text-red-300 hover:text-red-500"><Trash2 className="w-3 h-3" /></button>
                             </div>
                           </td>
                         )}
                         <td className="p-1 border border-gray-200">
-                          <Input value={ent.descricao || ""} onChange={e => updEntrega(oi, ei, "descricao", e.target.value)} className="border-0 text-sm h-8 bg-transparent" placeholder={ei === 0 ? `Entrega 01 do OE ${obj.objetivo_num || oi + 1}` : `Entrega 0${ei + 1}`} />
+                          <Input value={ent.descricao || ""} onChange={e => updEntrega(oi, ei, "descricao", e.target.value)} className="border-0 text-sm h-8 bg-transparent" placeholder={`Entrega ${ei + 1}`} />
                         </td>
                         <td className="p-1 border border-gray-200">
                           <Select value={ent.percentagem || "0"} onValueChange={val => updEntrega(oi, ei, "percentagem", val)}>
@@ -486,16 +466,8 @@ function TabelaEntregas({ campo, onChange, camposAtividades }) {
                         </td>
                       </tr>
                     ))}
-                    {/* Linha "..." separadora */}
-                    <tr className="bg-gray-50">
-                      <td className="border border-gray-200 p-1"></td>
-                      <td className="border border-gray-200 p-1 text-xs text-gray-400 pl-3">...</td>
-                      <td className="border border-gray-200 p-1"></td>
-                      <td className="border border-gray-200 p-1"></td>
-                    </tr>
                   </React.Fragment>
                 ))}
-                {/* Total */}
                 {objetivos.length > 0 && (
                   <tr className="bg-blue-50 font-bold">
                     <td colSpan={2} className="p-2 border border-gray-300 text-right text-xs text-blue-800 uppercase">Percentagem Total de Execução do Projeto (Média Aritmética das Percentagens de Execução)</td>
