@@ -844,6 +844,7 @@ function ImportProjetoAprovado({ projeto, onSave, campos, onSalvarCampos }) {
   const [resultado, setResultado] = useState(null);
   const [aplicando, setAplicando] = useState(false);
   const [aplicado, setAplicado] = useState(false);
+  const [confirmarSobrescrita, setConfirmarSobrescrita] = useState(false);
 
   const handleUpload = async (e) => {
     const file = e.target.files[0];
