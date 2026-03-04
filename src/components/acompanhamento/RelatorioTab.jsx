@@ -41,8 +41,6 @@ function detectarCategoriaDocampo(campo) {
   if (texto.includes("passagem") && !texto.includes("terceiro")) return "passagens";
   if ((texto.includes("diária") || texto.includes("diaria")) && !texto.includes("terceiro")) return "diarias";
   if (texto.includes("terceiro") || texto.match(/servi[çc]o(s)? de/)) return "terceiros";
-  if (texto.includes("passagem")) return "passagens";
-  if (texto.includes("diária") || texto.includes("diaria")) return "diarias";
   if (texto.includes("contrapartida") || texto.includes("outras despesas")) return "contrapartida";
   if (texto.includes("doaci")) return "doaci";
   return null;
