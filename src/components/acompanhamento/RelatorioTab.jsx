@@ -1117,15 +1117,17 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
           if (isSubItem1(campo)) return null; // suprimir sub-quadros repetidos do item 1
           if (isItem81(campo)) return <CampoDescricaoFinanceira key={campo.id} gastos={gastos} campo={campo} onChange={novo => updateCampo(idx, novo)} projetoDescricao={projeto.descricao_projeto || projeto.titulo} />;
           if (isExecucaoFinanceira(campo)) return <TabelaExecucaoFinanceira key={campo.id} gastos={gastos} orcamentoLinhas={orcamentoLinhas} campo={campo} />;
-          if (isEquipe(campo)) return <TabelaEquipe key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} />;
+          // Sub-itens específicos ANTES dos itens pai para evitar captura errada
           if (isJustificativaMudancaEquipe(campo)) return <CampoJustificativa key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} placeholder="Justifique as mudanças na equipe do projeto..." instrucaoIA="Melhore o texto para justificar de forma técnica e objetiva as alterações na equipe do projeto:" />;
-          if (isAtividades(campo)) return <ListaAtividades key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} />;
+          if (isEquipe(campo)) return <TabelaEquipe key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} />;
           if (isJustificativaMudanca(campo)) return <CampoJustificativa key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} placeholder="Descreva as razões da mudança..." instrucaoIA="Melhore o texto para justificar de forma técnica e objetiva a razão da mudança de objetivos:" />;
+          if (isAtividades(campo)) return <ListaAtividades key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} />;
+          if (isDescricaoEntregas(campo)) return null; // quadro duplicado suprimido (5.1)
           if (isEntregas(campo)) return <TabelaEntregas key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} camposAtividades={camposAtividades} />;
-          if (isDescricaoEntregas(campo)) return null; // quadro duplicado suprimido
           if (isResultadosAlcancados(campo)) return <CampoTextoComImagem key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} instrucaoIA="Melhore o texto para descrever os resultados e impactos alcançados pelo projeto:" />;
-          if (isCronogramaItem7(campo)) return <CronogramaItem7 key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} camposAtividades={camposAtividades} />;
+          // Item 7.1 ANTES do item 7 para evitar captura errada
           if (isJustificativaCronograma(campo)) return <CampoJustificativa key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} placeholder="Justifique alterações no cronograma..." instrucaoIA="Melhore o texto para justificar de forma técnica e objetiva as alterações no cronograma:" />;
+          if (isCronogramaItem7(campo)) return <CronogramaItem7 key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} camposAtividades={camposAtividades} />;
           return <CampoRelatorio key={campo.id} campo={campo} onChange={novo => updateCampo(idx, novo)} />;
         })}
       </div>
