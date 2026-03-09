@@ -1,307 +1,307 @@
 import React, { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { CheckCircle2, Circle, Lock, Star, Trophy, Zap, ChevronRight } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Trophy, Star, CheckCircle2, Circle, Zap, Sparkles, Lock, Users, TrendingUp, Feather } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
-// ─── Definição das trilhas ────────────────────────────────────────────────────
+// ─── Trilhas ──────────────────────────────────────────────────────────────────
 
-const TAREFAS_EMPREENDEDOR = [
-  { id: "primeira_proposta", titulo: "Primeira Proposta", desc: "Crie sua primeira proposta para um edital", pontos: 100, emoji: "📋", auto: true },
-  { id: "tiraduvidas", titulo: "Consultor Digital", desc: "Use o Tira-Dúvidas IA pela primeira vez", pontos: 50, emoji: "🤖", manual: true, link: "TiraDuvidas" },
-  { id: "orientacao", titulo: "Aluno Dedicado", desc: "Leia uma orientação da plataforma", pontos: 30, emoji: "📚", manual: true, link: "Orientacoes" },
-  { id: "comunidade", titulo: "Voz Ativa", desc: "Participe do fórum da comunidade", pontos: 30, emoji: "💬", auto: true },
-  { id: "acompanhamento", titulo: "Projeto em Voo", desc: "Inicie um projeto de acompanhamento", pontos: 150, emoji: "🚀", auto: true },
-  { id: "primeiro_gasto", titulo: "Financeiro Organizado", desc: "Registre seu primeiro gasto no projeto", pontos: 75, emoji: "💰", auto: true },
-  { id: "relatorio", titulo: "Prestação Concluída", desc: "Exporte um relatório de prestação de contas", pontos: 200, emoji: "📊", manual: true, link: "Acompanhamento" },
-  { id: "consultor_contratado", titulo: "Com Apoio Especializado", desc: "Contrate um consultor para seu projeto", pontos: 100, emoji: "🤝", auto: true },
+const TRILHA_EMPREENDEDOR = [
+  { id: "proposta_criada", titulo: "Criar primeira proposta", descricao: "Crie uma proposta para um edital de fomento", pontos: 40, icone: "📝", tipo: "auto", link: "MinhasPropostas" },
+  { id: "comunidade_participou", titulo: "Participar da Comunidade", descricao: "Envie sua primeira mensagem na comunidade", pontos: 20, icone: "💬", tipo: "auto", link: "Comunidade" },
+  { id: "tiraduvidas_ia", titulo: "Usar o Tira-Dúvidas IA", descricao: "Faça uma pergunta ao assistente especializado", pontos: 25, icone: "🤖", tipo: "selfReport", link: "TiraDuvidas" },
+  { id: "orientacao_lida", titulo: "Estudar uma Orientação", descricao: "Leia um material de orientação da plataforma", pontos: 15, icone: "📚", tipo: "selfReport", link: "Orientacoes" },
+  { id: "proposta_submetida", titulo: "Submeter uma proposta", descricao: "Submeta uma proposta oficialmente a um edital", pontos: 60, icone: "🚀", tipo: "auto", link: "MinhasPropostas" },
+  { id: "projeto_criado", titulo: "Criar projeto de acompanhamento", descricao: "Registre um projeto aprovado na plataforma", pontos: 60, icone: "📊", tipo: "auto", link: "Acompanhamento" },
+  { id: "gasto_registrado", titulo: "Registrar um gasto no projeto", descricao: "Controle os gastos do seu projeto aprovado", pontos: 30, icone: "💰", tipo: "selfReport", link: "Acompanhamento" },
+  { id: "consultor_contratado", titulo: "Contratar um consultor", descricao: "Tenha um consultor aprovado em seu projeto", pontos: 50, icone: "🤝", tipo: "auto", link: "Acompanhamento" },
+  { id: "relatorio_iniciado", titulo: "Iniciar relatório de prestação de contas", descricao: "Faça upload do modelo e inicie o preenchimento", pontos: 80, icone: "📋", tipo: "auto", link: "Acompanhamento" },
 ];
 
-const TAREFAS_CONSULTOR = [
-  { id: "comunidade", titulo: "Mentor Visível", desc: "Interaja no fórum da comunidade", pontos: 30, emoji: "💬", auto: true },
-  { id: "proposta_tutoria", titulo: "Primeira Oferta", desc: "Envie proposta para uma solicitação de tutoria", pontos: 100, emoji: "✉️", auto: true },
-  { id: "orientacao_criada", titulo: "Compartilhador de Conhecimento", desc: "Crie uma orientação para a plataforma", pontos: 75, emoji: "📚", manual: true, link: "Orientacoes" },
-  { id: "tutoria_ativa", titulo: "Tutoria em Andamento", desc: "Tenha uma tutoria aprovada e ativa", pontos: 100, emoji: "🎓", auto: true },
-  { id: "acompanhamento_consultado", titulo: "Corvo Guardião", desc: "Acesse o painel de acompanhamento de um projeto", pontos: 50, emoji: "🔭", manual: true, link: "Acompanhamento" },
-  { id: "tutoria_concluida", titulo: "Missão Cumprida", desc: "Conclua uma tutoria com aprovação do empreendedor", pontos: 200, emoji: "🏆", auto: true },
+const TRILHA_CONSULTOR = [
+  { id: "comunidade_participou", titulo: "Participar da Comunidade", descricao: "Envie sua primeira mensagem na comunidade", pontos: 20, icone: "💬", tipo: "auto", link: "Comunidade" },
+  { id: "orientacao_criada", titulo: "Criar uma Orientação", descricao: "Publique um material educacional para empreendedores", pontos: 40, icone: "📚", tipo: "auto", link: "Orientacoes" },
+  { id: "proposta_tutoria", titulo: "Enviar proposta de tutoria", descricao: "Candidate-se a uma solicitação de tutoria aberta", pontos: 50, icone: "📤", tipo: "selfReport", link: "ConsultorDashboard" },
+  { id: "tutoria_aprovada", titulo: "Ter tutoria aprovada", descricao: "Tenha uma proposta de tutoria aceita por um empreendedor", pontos: 100, icone: "✅", tipo: "auto", link: "ConsultorDashboard" },
+  { id: "projeto_acompanhando", titulo: "Acompanhar projeto como consultor", descricao: "Tenha acesso ao módulo de acompanhamento de um projeto", pontos: 60, icone: "📊", tipo: "auto", link: "Acompanhamento" },
+  { id: "gasto_revisado", titulo: "Revisar gastos do projeto", descricao: "Analise os gastos registrados no projeto assistido", pontos: 30, icone: "🗂️", tipo: "selfReport", link: "Acompanhamento" },
+  { id: "relatorio_apoiado", titulo: "Apoiar relatório de prestação de contas", descricao: "Contribua no preenchimento do relatório de um projeto", pontos: 80, icone: "📋", tipo: "selfReport", link: "Acompanhamento" },
 ];
+
+const TOTAL_EMPREENDEDOR = TRILHA_EMPREENDEDOR.reduce((s, t) => s + t.pontos, 0);
+const TOTAL_CONSULTOR = TRILHA_CONSULTOR.reduce((s, t) => s + t.pontos, 0);
+
+// ─── Níveis ───────────────────────────────────────────────────────────────────
 
 const NIVEIS = [
-  { min: 0,   max: 99,   nome: "Filhote de Corvo",   cor: "#94a3b8", bg: "#f1f5f9" },
-  { min: 100, max: 299,  nome: "Corvo Explorador",   cor: "#6366f1", bg: "#eef2ff" },
-  { min: 300, max: 499,  nome: "Corvo Guardião",     cor: "#8b5cf6", bg: "#f5f3ff" },
-  { min: 500, max: 749,  nome: "Corvo Sábio",        cor: "#f59e0b", bg: "#fffbeb" },
-  { min: 750, max: 99999, nome: "Munnin — O Supremo",cor: "#dc2626", bg: "#fff1f2" },
+  { min: 0, max: 50, nome: "Filhote de Corvo", icone: "🥚", cor: "#94a3b8" },
+  { min: 51, max: 130, nome: "Corvo Aprendiz", icone: "🐦", cor: "#6366f1" },
+  { min: 131, max: 250, nome: "Corvo Experiente", icone: "🦅", cor: "#8b5cf6" },
+  { min: 251, max: 380, nome: "Mestre do Voo", icone: "🪶", cor: "#f59e0b" },
+  { min: 381, max: Infinity, nome: "Lenda do Corvo", icone: "⚜️", cor: "#dc2626" },
 ];
 
 function getNivel(pontos) {
   return NIVEIS.find(n => pontos >= n.min && pontos <= n.max) || NIVEIS[0];
 }
 
-// ─── Componente de tarefa ─────────────────────────────────────────────────────
+// ─── Utilitários ──────────────────────────────────────────────────────────────
 
-function TarefaCard({ tarefa, concluida, onConcluir, salvando }) {
+function calcularPontos(tarefas, trilha) {
+  return trilha.filter(t => tarefas.includes(t.id)).reduce((s, t) => s + t.pontos, 0);
+}
+
+// ─── Componente de tarefa ──────────────────────────────────────────────────────
+
+function TarefaItem({ tarefa, concluida, onMarcar, loading }) {
   return (
-    <div className={`rounded-xl border p-4 transition-all ${concluida ? "border-green-200 bg-green-50/50" : "border-gray-200 bg-white hover:border-indigo-200"}`}>
-      <div className="flex items-center gap-3">
-        <div className={`text-2xl flex-shrink-0 ${concluida ? "grayscale-0" : "opacity-80"}`}>{tarefa.emoji}</div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <p className={`text-sm font-bold ${concluida ? "text-green-700" : "text-gray-800"}`}>{tarefa.titulo}</p>
-            <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${concluida ? "bg-green-100 text-green-700" : "bg-indigo-50 text-indigo-600"}`}>
-              +{tarefa.pontos} pts
-            </span>
-          </div>
-          <p className="text-xs text-gray-500 mt-0.5">{tarefa.desc}</p>
+    <div className={`flex items-start gap-3 p-4 rounded-xl border transition-all ${concluida ? "border-green-200 bg-green-50/50" : "border-gray-200 bg-white hover:border-indigo-200"}`}>
+      <div className="text-2xl flex-shrink-0 mt-0.5">{tarefa.icone}</div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-start justify-between gap-2">
+          <p className={`text-sm font-semibold ${concluida ? "text-green-800 line-through" : "text-gray-800"}`}>{tarefa.titulo}</p>
+          <Badge className={`flex-shrink-0 text-xs font-bold ${concluida ? "bg-green-100 text-green-700" : "bg-indigo-100 text-indigo-700"}`}>
+            +{tarefa.pontos} pts
+          </Badge>
         </div>
-        {concluida ? (
-          <CheckCircle2 className="w-6 h-6 text-green-500 flex-shrink-0" />
-        ) : tarefa.manual ? (
-          <div className="flex items-center gap-2 flex-shrink-0">
-            {tarefa.link && (
-              <Link to={createPageUrl(tarefa.link)} className="text-xs text-indigo-600 hover:underline flex items-center gap-0.5">
-                Ir <ChevronRight className="w-3 h-3" />
-              </Link>
-            )}
-            <button
-              onClick={() => onConcluir(tarefa.id, tarefa.pontos)}
-              disabled={salvando}
-              className="text-xs px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-all disabled:opacity-50"
-            >
-              Marcar feito
-            </button>
+        <p className="text-xs text-gray-500 mt-0.5">{tarefa.descricao}</p>
+        {tarefa.tipo === "selfReport" && !concluida && (
+          <div className="flex items-center gap-2 mt-2">
+            <span className="text-[10px] text-amber-600 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full font-medium">Auto-declarado</span>
+            <Button size="sm" variant="outline" onClick={() => onMarcar(tarefa.id)} disabled={loading}
+              className="text-xs h-6 px-2 border-green-300 text-green-700 hover:bg-green-50">
+              ✓ Marcar como feito
+            </Button>
           </div>
-        ) : (
-          <Circle className="w-6 h-6 text-gray-300 flex-shrink-0" />
+        )}
+        {concluida && (
+          <div className="flex items-center gap-1 mt-1">
+            <CheckCircle2 className="w-3 h-3 text-green-500" />
+            <span className="text-xs text-green-600 font-medium">Concluído!</span>
+          </div>
         )}
       </div>
+      {!concluida && tarefa.link && (
+        <Link to={createPageUrl(tarefa.link)} className="flex-shrink-0">
+          <Button size="sm" variant="ghost" className="text-xs text-indigo-600 hover:bg-indigo-50 h-7">Ir →</Button>
+        </Link>
+      )}
     </div>
   );
 }
 
-// ─── Página principal ─────────────────────────────────────────────────────────
+// ─── Ranking ──────────────────────────────────────────────────────────────────
+
+function Ranking({ todosTrilhas, roleFilter }) {
+  const filtered = todosTrilhas
+    .filter(t => t.role === roleFilter)
+    .sort((a, b) => (b.pontos || 0) - (a.pontos || 0))
+    .slice(0, 20);
+
+  const medalhas = ["🥇", "🥈", "🥉"];
+
+  if (filtered.length === 0) {
+    return <div className="text-center py-12 text-gray-400 text-sm">Nenhum participante nesta trilha ainda. Seja o primeiro!</div>;
+  }
+
+  return (
+    <div className="space-y-2">
+      {filtered.map((t, i) => {
+        const nivel = getNivel(t.pontos || 0);
+        return (
+          <div key={t.id} className={`flex items-center gap-3 p-3 rounded-xl border ${i < 3 ? "border-yellow-200 bg-yellow-50/50" : "border-gray-200 bg-white"}`}>
+            <div className="w-8 text-center flex-shrink-0">
+              <span className="text-lg">{medalhas[i] || `#${i + 1}`}</span>
+            </div>
+            <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0" style={{ background: nivel.cor + "30" }}>
+              <span>{nivel.icone}</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-gray-800 truncate">{t.user_nome || t.user_email}</p>
+              <p className="text-xs text-gray-400">{nivel.nome}</p>
+            </div>
+            <div className="text-right flex-shrink-0">
+              <p className="text-sm font-bold text-indigo-700">{t.pontos || 0} pts</p>
+              <p className="text-xs text-gray-400">{t.tarefas_concluidas?.length || 0} tarefas</p>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ─── Componente principal ─────────────────────────────────────────────────────
 
 export default function VooDoCorvo() {
   const [user, setUser] = useState(null);
-  const queryClient = useQueryClient();
+  const [abaRanking, setAbaRanking] = useState("empreendedor");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => { base44.auth.me().then(setUser).catch(() => {}); }, []);
 
-  const email = user?.email;
-  const role = user?.role || "empreendedor";
-  const tarefas = role === "consultor" ? TAREFAS_CONSULTOR : TAREFAS_EMPREENDEDOR;
+  const role = user?.role === "consultor" ? "consultor" : "empreendedor";
+  const trilha = role === "consultor" ? TRILHA_CONSULTOR : TRILHA_EMPREENDEDOR;
+  const totalPossivel = role === "consultor" ? TOTAL_CONSULTOR : TOTAL_EMPREENDEDOR;
 
   // Dados para auto-detecção
-  const { data: propostas = [] } = useQuery({
-    queryKey: ["voo-propostas", email],
-    queryFn: () => base44.entities.Proposta.filter({ created_by: email }),
-    enabled: !!email,
-  });
-  const { data: acompanhamentos = [] } = useQuery({
-    queryKey: ["voo-acomp", email],
-    queryFn: () => base44.entities.AcompanhamentoProjeto.filter({ created_by: email }),
-    enabled: !!email,
-  });
-  const { data: gastos = [] } = useQuery({
-    queryKey: ["voo-gastos", email],
-    queryFn: () => base44.entities.GastoProjeto.filter({ created_by: email }),
-    enabled: !!email,
-  });
-  const { data: mensagens = [] } = useQuery({
-    queryKey: ["voo-msgs", email],
-    queryFn: () => base44.entities.MensagemChat.filter({ autor_email: email }),
-    enabled: !!email,
-  });
-  const { data: tutorias = [] } = useQuery({
-    queryKey: ["voo-tutorias", email],
-    queryFn: () => base44.entities.SolicitacaoTutoria.list(),
-    enabled: !!email && role === "consultor",
-  });
-  const { data: orientacoes = [] } = useQuery({
-    queryKey: ["voo-orientacoes", email],
-    queryFn: () => base44.entities.Orientacao.filter({ created_by: email }),
-    enabled: !!email && role === "consultor",
-  });
-  const { data: progressoList = [] } = useQuery({
-    queryKey: ["progresso-trilha", email],
-    queryFn: () => base44.entities.ProgressoTrilha.filter({ usuario_email: email }),
-    enabled: !!email,
-  });
-  const { data: todoProgresso = [] } = useQuery({
-    queryKey: ["progresso-all"],
-    queryFn: () => base44.entities.ProgressoTrilha.list("-pontos", 50),
-  });
+  const { data: propostas = [] } = useQuery({ queryKey: ["voo-propostas"], queryFn: () => user ? base44.entities.Proposta.filter({ created_by: user.email }) : [], enabled: !!user });
+  const { data: mensagens = [] } = useQuery({ queryKey: ["voo-msgs"], queryFn: () => user ? base44.entities.MensagemChat.filter({ autor_email: user.email }) : [], enabled: !!user });
+  const { data: projetos = [] } = useQuery({ queryKey: ["voo-projetos"], queryFn: () => user ? base44.entities.AcompanhamentoProjeto.filter({ created_by: user.email }) : [], enabled: !!user });
+  const { data: projetosConsultor = [] } = useQuery({ queryKey: ["voo-projetos-consultor"], queryFn: () => user ? base44.entities.AcompanhamentoProjeto.filter({ consultor_email: user.email }) : [], enabled: !!user && role === "consultor" });
+  const { data: orientacoesUser = [] } = useQuery({ queryKey: ["voo-orientacoes"], queryFn: () => user ? base44.entities.Orientacao.filter({ created_by: user.email }) : [], enabled: !!user && role === "consultor" });
+  const { data: todosTrilhas = [] } = useQuery({ queryKey: ["voo-todos"], queryFn: () => base44.entities.ProgressoTrilha.list("-pontos", 100) });
+  const { data: meuProgresso = [] } = useQuery({ queryKey: ["voo-meu"], queryFn: () => user ? base44.entities.ProgressoTrilha.filter({ created_by: user.email }) : [], enabled: !!user });
 
-  const progresso = progressoList[0];
+  const meu = meuProgresso[0] || null;
+  const tarefasConcluidas = meu?.tarefas_concluidas || [];
 
-  // Auto-detecção de tarefas concluídas
-  const autoDetect = (id) => {
+  // Auto-detectar tarefas
+  const tarefasAutoDetectadas = (() => {
+    const det = new Set(tarefasConcluidas);
     if (role === "empreendedor") {
-      if (id === "primeira_proposta") return propostas.length > 0;
-      if (id === "comunidade") return mensagens.length > 0;
-      if (id === "acompanhamento") return acompanhamentos.length > 0;
-      if (id === "primeiro_gasto") return gastos.length > 0;
-      if (id === "consultor_contratado") return acompanhamentos.some(a => a.consultor_status === "aprovado");
+      if (propostas.length > 0) det.add("proposta_criada");
+      if (mensagens.length > 0) det.add("comunidade_participou");
+      if (propostas.some(p => p.status === "submetida")) det.add("proposta_submetida");
+      if (projetos.length > 0) det.add("projeto_criado");
+      if (projetos.some(p => p.consultor_status === "aprovado")) det.add("consultor_contratado");
+      if (projetos.some(p => p.relatorio_campos?.length > 0)) det.add("relatorio_iniciado");
     } else {
-      if (id === "comunidade") return mensagens.length > 0;
-      if (id === "proposta_tutoria") return tutorias.some(t => t.propostas?.some(p => p.consultor_email === email));
-      if (id === "tutoria_ativa") return tutorias.some(t => t.consultor_email === email && t.status === "em_atendimento");
-      if (id === "tutoria_concluida") return tutorias.some(t => t.consultor_email === email && t.status === "concluida");
-      if (id === "orientacao_criada") return orientacoes.length > 0;
+      if (mensagens.length > 0) det.add("comunidade_participou");
+      if (orientacoesUser.length > 0) det.add("orientacao_criada");
+      if (projetosConsultor.some(p => p.consultor_status === "aprovado")) det.add("tutoria_aprovada");
+      if (projetosConsultor.length > 0) det.add("projeto_acompanhando");
     }
-    return false;
+    return [...det];
+  })();
+
+  const pontos = calcularPontos(tarefasAutoDetectadas, trilha);
+  const nivel = getNivel(pontos);
+  const pct = Math.min(100, Math.round((pontos / totalPossivel) * 100));
+
+  // Salvar progresso quando mudar
+  useEffect(() => {
+    if (!user || !meuProgresso) return;
+    const novo = tarefasAutoDetectadas.slice().sort().join(",");
+    const velho = (meu?.tarefas_concluidas || []).slice().sort().join(",");
+    if (novo === velho && meu?.pontos === pontos) return;
+
+    const save = async () => {
+      const dados = { user_email: user.email, user_nome: user.full_name || user.email, role, pontos, tarefas_concluidas: tarefasAutoDetectadas, ultimo_calculo: new Date().toISOString() };
+      if (meu) await base44.entities.ProgressoTrilha.update(meu.id, dados);
+      else await base44.entities.ProgressoTrilha.create(dados);
+    };
+    save();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tarefasAutoDetectadas.join(","), user?.email]);
+
+  const marcarSelfReport = async (tarefaId) => {
+    if (!user || tarefasAutoDetectadas.includes(tarefaId)) return;
+    setSaving(true);
+    const novos = [...tarefasAutoDetectadas, tarefaId];
+    const novosPontos = calcularPontos(novos, trilha);
+    const dados = { user_email: user.email, user_nome: user.full_name || user.email, role, pontos: novosPontos, tarefas_concluidas: novos, ultimo_calculo: new Date().toISOString() };
+    if (meu) await base44.entities.ProgressoTrilha.update(meu.id, dados);
+    else await base44.entities.ProgressoTrilha.create(dados);
+    // Force refetch
+    window.location.reload();
+    setSaving(false);
   };
 
-  const tarefasConcluidas = new Set([
-    ...(progresso?.tarefas_concluidas || []),
-    ...tarefas.filter(t => t.auto && autoDetect(t.id)).map(t => t.id),
-  ]);
+  const [aba, setAba] = useState("trilha");
 
-  const pontosTotal = tarefas
-    .filter(t => tarefasConcluidas.has(t.id))
-    .reduce((s, t) => s + t.pontos, 0);
+  if (!user) return <div className="flex items-center justify-center h-64 text-gray-400">Carregando...</div>;
 
-  const nivel = getNivel(pontosTotal);
-  const proximoNivel = NIVEIS.find(n => n.min > pontosTotal);
-  const pct = proximoNivel
-    ? ((pontosTotal - nivel.min) / (proximoNivel.min - nivel.min)) * 100
-    : 100;
-
-  // Mutation para marcar tarefa manualmente
-  const salvarProgresso = useMutation({
-    mutationFn: async ({ tarefaId, pontos }) => {
-      const novasConcluidas = [...tarefasConcluidas, tarefaId];
-      const novosPontos = tarefas.filter(t => novasConcluidas.has(t.id)).reduce((s, t) => s + t.pontos, 0);
-      const dados = {
-        usuario_email: email,
-        usuario_nome: user?.full_name || email,
-        role,
-        tarefas_concluidas: novasConcluidas,
-        pontos: novosPontos,
-      };
-      if (progresso?.id) {
-        return base44.entities.ProgressoTrilha.update(progresso.id, dados);
-      } else {
-        return base44.entities.ProgressoTrilha.create(dados);
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["progresso-trilha", email] });
-      queryClient.invalidateQueries({ queryKey: ["progresso-all"] });
-    },
-  });
-
-  // Sincroniza progresso automático
-  useEffect(() => {
-    if (!email || !user) return;
-    const autoIds = tarefas.filter(t => t.auto && autoDetect(t.id)).map(t => t.id);
-    const jaConcluidasManual = progresso?.tarefas_concluidas || [];
-    const novas = autoIds.filter(id => !jaConcluidasManual.includes(id));
-    if (novas.length === 0) return;
-    const novasConcluidas = [...new Set([...jaConcluidasManual, ...autoIds])];
-    const novosPontos = tarefas.filter(t => novasConcluidas.includes(t.id)).reduce((s, t) => s + t.pontos, 0);
-    const dados = { usuario_email: email, usuario_nome: user?.full_name || email, role, tarefas_concluidas: novasConcluidas, pontos: novosPontos };
-    if (progresso?.id) {
-      base44.entities.ProgressoTrilha.update(progresso.id, dados).then(() => {
-        queryClient.invalidateQueries({ queryKey: ["progresso-trilha", email] });
-        queryClient.invalidateQueries({ queryKey: ["progresso-all"] });
-      });
-    } else if (novasConcluidas.length > 0) {
-      base44.entities.ProgressoTrilha.create(dados).then(() => {
-        queryClient.invalidateQueries({ queryKey: ["progresso-trilha", email] });
-        queryClient.invalidateQueries({ queryKey: ["progresso-all"] });
-      });
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [email, propostas.length, acompanhamentos.length, gastos.length, mensagens.length, tutorias.length]);
-
-  const trilhaNome = role === "consultor" ? "Trilha do Consultor" : "Trilha do Empreendedor";
-  const concluidas = tarefas.filter(t => tarefasConcluidas.has(t.id)).length;
+  const proximo = NIVEIS.find(n => n.min > pontos);
 
   return (
-    <div className="min-h-screen" style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)" }}>
+    <div className="min-h-screen bg-slate-50">
       {/* Hero */}
-      <div className="px-6 pt-10 pb-8 text-center">
-        <div className="text-6xl mb-3">🦅</div>
-        <h1 className="text-4xl font-black text-white tracking-tight mb-1">O Voo do Corvo</h1>
-        <p className="text-indigo-300 text-sm font-medium">{trilhaNome} · Platforma Munnin Crow</p>
+      <div className="relative overflow-hidden" style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 60%, #0f172a 100%)" }}>
+        <div className="absolute inset-0 opacity-10">
+          {[...Array(20)].map((_, i) => (
+            <div key={i} className="absolute rounded-full" style={{ width: Math.random() * 200 + 50, height: Math.random() * 200 + 50, left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%`, background: "white", filter: "blur(40px)" }} />
+          ))}
+        </div>
+        <div className="relative max-w-4xl mx-auto px-6 py-10">
+          <div className="flex items-center gap-3 mb-2">
+            <Feather className="w-6 h-6 text-indigo-400" />
+            <span className="text-indigo-400 text-sm font-bold tracking-widest uppercase">Gamificação</span>
+          </div>
+          <h1 className="text-4xl font-black text-white mb-2">O Voo do Corvo</h1>
+          <p className="text-slate-400 mb-6 max-w-xl">Complete tarefas na plataforma, ganhe pontos e suba de nível. Descubra até onde o seu corvo pode voar.</p>
+
+          {/* Nível e pontos */}
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/10 max-w-lg">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="text-4xl">{nivel.icone}</div>
+              <div className="flex-1">
+                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">{role === "consultor" ? "Asa do Corvo — Consultor" : "Ninho do Corvo — Empreendedor"}</p>
+                <p className="text-xl font-bold text-white">{nivel.nome}</p>
+                <p className="text-sm text-indigo-300">{pontos} / {totalPossivel} pontos totais</p>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-black text-white">{pontos}</div>
+                <div className="text-xs text-slate-400">pontos</div>
+              </div>
+            </div>
+            <div className="w-full bg-white/10 rounded-full h-2.5 mb-2">
+              <div className="h-2.5 rounded-full transition-all duration-1000" style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${nivel.cor}, ${nivel.cor}dd)` }} />
+            </div>
+            <div className="flex justify-between text-xs text-slate-400">
+              <span>{pct}% do potencial máximo</span>
+              {proximo && <span>Próximo nível: {proximo.nome} {proximo.icone} (a partir de {proximo.min} pts)</span>}
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 pb-12 space-y-6">
-        {/* Card de nível */}
-        <div className="rounded-2xl p-6 text-center" style={{ background: nivel.bg, border: `2px solid ${nivel.cor}40` }}>
-          <div className="text-xs font-black uppercase tracking-widest mb-1" style={{ color: nivel.cor }}>Nível Atual</div>
-          <div className="text-2xl font-black mb-1" style={{ color: nivel.cor }}>{nivel.nome}</div>
-          <div className="text-5xl font-black text-gray-900 mb-4">{pontosTotal} pts</div>
-          <div className="bg-gray-200 rounded-full h-3 max-w-xs mx-auto overflow-hidden">
-            <div className="h-3 rounded-full transition-all duration-500" style={{ width: `${Math.min(pct, 100)}%`, background: nivel.cor }} />
-          </div>
-          {proximoNivel && (
-            <p className="text-xs mt-2" style={{ color: nivel.cor }}>
-              {proximoNivel.min - pontosTotal} pts até <strong>{proximoNivel.nome}</strong>
-            </p>
-          )}
-          <div className="mt-3 text-sm text-gray-600">
-            <span className="font-bold">{concluidas}</span> de <span className="font-bold">{tarefas.length}</span> tarefas concluídas
-          </div>
+      {/* Abas */}
+      <div className="max-w-4xl mx-auto px-6">
+        <div className="flex gap-2 -mt-4 mb-6 relative z-10">
+          {["trilha", "ranking"].map(a => (
+            <button key={a} onClick={() => setAba(a)}
+              className={`px-5 py-2 rounded-lg text-sm font-medium shadow-sm transition-all ${aba === a ? "bg-indigo-600 text-white" : "bg-white border text-gray-600 hover:bg-gray-50"}`}>
+              {a === "trilha" ? "🛤️ Minha Trilha" : "🏆 Ranking"}
+            </button>
+          ))}
         </div>
 
-        {/* Trilha */}
-        <div>
-          <div className="flex items-center gap-2 mb-3">
-            <Zap className="w-4 h-4 text-indigo-400" />
-            <h2 className="text-sm font-bold text-white uppercase tracking-wider">{trilhaNome}</h2>
-          </div>
-          <div className="space-y-2">
-            {tarefas.map(tarefa => (
-              <TarefaCard
-                key={tarefa.id}
-                tarefa={tarefa}
-                concluida={tarefasConcluidas.has(tarefa.id)}
-                onConcluir={(id, pontos) => salvarProgresso.mutate({ tarefaId: id, pontos })}
-                salvando={salvarProgresso.isPending}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Ranking */}
-        <div>
-          <div className="flex items-center gap-2 mb-3">
-            <Trophy className="w-4 h-4 text-yellow-400" />
-            <h2 className="text-sm font-bold text-white uppercase tracking-wider">Ranking Geral</h2>
-          </div>
-          <div className="bg-white/5 backdrop-blur rounded-2xl border border-white/10 overflow-hidden">
-            <div className="grid grid-cols-4 text-[10px] font-bold text-slate-500 uppercase px-4 py-3 border-b border-white/5">
-              <span>Pos.</span>
-              <span className="col-span-2">Usuário</span>
-              <span className="text-right">Pontos</span>
+        {aba === "trilha" && (
+          <div className="space-y-3 pb-10">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-bold text-gray-700">{tarefasAutoDetectadas.length} de {trilha.length} tarefas concluídas</p>
+              <Badge className="bg-indigo-100 text-indigo-700">
+                <Zap className="w-3 h-3 mr-1" />{pontos} pts acumulados
+              </Badge>
             </div>
-            {todoProgresso.length === 0 ? (
-              <div className="text-center py-8 text-slate-500 text-sm">Seja o primeiro a voar! 🦅</div>
-            ) : (
-              todoProgresso.map((p, i) => {
-                const isMe = p.usuario_email === email;
-                const nv = getNivel(p.pontos || 0);
-                const medals = ["🥇", "🥈", "🥉"];
-                return (
-                  <div key={p.id} className={`grid grid-cols-4 px-4 py-3 items-center border-b border-white/5 last:border-0 ${isMe ? "bg-indigo-600/20" : "hover:bg-white/5"}`}>
-                    <span className="text-base">{medals[i] || `${i + 1}º`}</span>
-                    <div className="col-span-2">
-                      <p className={`text-sm font-semibold ${isMe ? "text-indigo-300" : "text-white"}`}>
-                        {p.usuario_nome || p.usuario_email?.split("@")[0]}
-                        {isMe && <span className="text-xs ml-1 text-indigo-400">(você)</span>}
-                      </p>
-                      <p className="text-[10px] font-medium" style={{ color: nv.cor }}>{nv.nome}</p>
-                    </div>
-                    <span className="text-right font-black" style={{ color: nv.cor }}>{p.pontos || 0}</span>
-                  </div>
-                );
-              })
-            )}
+            {trilha.map(tarefa => (
+              <TarefaItem key={tarefa.id} tarefa={tarefa} concluida={tarefasAutoDetectadas.includes(tarefa.id)} onMarcar={marcarSelfReport} loading={saving} />
+            ))}
+            <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-700">
+              <p><strong>💡 Tarefas Auto-detectadas:</strong> verificadas automaticamente com base na sua atividade na plataforma.</p>
+              <p className="mt-1"><strong>📋 Tarefas Auto-declaradas:</strong> marcadas manualmente por você ao completar a ação.</p>
+            </div>
           </div>
-        </div>
+        )}
+
+        {aba === "ranking" && (
+          <div className="pb-10">
+            <div className="flex gap-2 mb-4">
+              {["empreendedor", "consultor"].map(r => (
+                <button key={r} onClick={() => setAbaRanking(r)}
+                  className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${abaRanking === r ? (r === "empreendedor" ? "bg-indigo-600 text-white" : "bg-emerald-600 text-white") : "bg-white border text-gray-600 hover:bg-gray-50"}`}>
+                  {r === "empreendedor" ? "🏢 Empreendedores" : "🎓 Consultores"}
+                </button>
+              ))}
+            </div>
+            <Ranking todosTrilhas={todosTrilhas} roleFilter={abaRanking} />
+          </div>
+        )}
       </div>
     </div>
   );
