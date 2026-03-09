@@ -60,6 +60,7 @@ import ProjetoDetalhe from './pages/ProjetoDetalhe';
 import PropostaDetalhe from './pages/PropostaDetalhe';
 import SobreNos from './pages/SobreNos';
 import TiraDuvidas from './pages/TiraDuvidas';
+import Planos from './pages/Planos';
 import __Layout from './Layout.jsx';
 
 
@@ -77,6 +78,7 @@ export const PAGES = {
     "PropostaDetalhe": PropostaDetalhe,
     "SobreNos": SobreNos,
     "TiraDuvidas": TiraDuvidas,
+    "Planos": Planos,
 }
 
 export const pagesConfig = {

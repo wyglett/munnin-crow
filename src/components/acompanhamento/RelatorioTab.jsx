@@ -10,7 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
-  Upload, Loader2, FileText, ChevronDown, ChevronRight,
+  Upload, Loader2, FileText, Download, ChevronDown, ChevronRight,
   CheckCircle2, Unlock, Sparkles, RefreshCw, BookOpen, Plus, Trash2, Image as ImageIcon, Calendar
 } from "lucide-react";
 import ExportarRelatorio from "./ExportarRelatorio";
@@ -1067,12 +1067,11 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
     if (!file) return;
     setUploadingPdf(true);
     const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    const isDocx = file.name.toLowerCase().match(/\.docx?$/);
-    await onSave({ relatorio_template_url: file_url, relatorio_template_tipo: isDocx ? "docx" : "pdf" });
+    await onSave({ relatorio_template_url: file_url });
     setUploadingPdf(false);
     setExtraindo(true);
     const r = await base44.integrations.Core.InvokeLLM({
-      prompt: `Analise este documento modelo de relatório de prestação de contas (pode ser PDF ou Word/DOCX). Identifique todos os campos/seções que o usuário deve preencher. Para cada campo retorne: secao (título da seção com número, ex: "1. Identificação"), pergunta (o que deve ser preenchido), tipo_resposta ("texto_longo", "texto_curto", "numero", "data", "tabela_itens"). Ordene pela ordem do documento.`,
+      prompt: `Analise este PDF modelo de relatório. Identifique todos os campos/seções. Para cada campo: secao (título com número), pergunta, tipo_resposta ("texto_longo", "texto_curto", "numero", "data", "tabela_itens"). Ordene pela ordem do documento.`,
       file_urls: [file_url],
       response_json_schema: { type: "object", properties: { campos: { type: "array", items: { type: "object", properties: { secao: { type: "string" }, pergunta: { type: "string" }, tipo_resposta: { type: "string" } } } } } }
     });
@@ -1117,9 +1116,9 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
         <label className="cursor-pointer">
           <div className="inline-flex items-center gap-2 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium">
             {uploadingPdf || extraindo ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-            {uploadingPdf ? "Enviando..." : extraindo ? "Extraindo campos..." : "Upload do Modelo (PDF ou Word)"}
+            {uploadingPdf ? "Enviando..." : extraindo ? "Extraindo campos..." : "Upload do Modelo PDF"}
           </div>
-          <input type="file" className="hidden" accept=".pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={uploadTemplate} disabled={uploadingPdf || extraindo} />
+          <input type="file" className="hidden" accept=".pdf" onChange={uploadTemplate} disabled={uploadingPdf || extraindo} />
         </label>
         <ImportProjetoAprovado projeto={projeto} onSave={onSave} campos={campos} onSalvarCampos={salvar} />
         <ExportarRelatorio projeto={projeto} campos={campos} />
