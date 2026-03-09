@@ -15,6 +15,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import EditalDocumentosAdmin from "../components/admin/EditalDocumentosAdmin";
 import InformativosTab from "../components/admin/InformativosTab";
+import ReceitasUsoTab from "../components/admin/ReceitasUsoTab";
 
 const ESTADO_LABELS = {
   ES: "Espírito Santo — FAPES", RJ: "Rio de Janeiro — FAPERJ",

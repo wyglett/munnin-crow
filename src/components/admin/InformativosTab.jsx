@@ -215,30 +215,109 @@ ${linhas}${nos}
 </svg>`;
 }
 
-// ─── Captura de tela via html2canvas da própria página atual ──────────────────
+// ─── Mockup visual por tela ───────────────────────────────────────────────────
 
-async function capturarTelaAtual() {
-  try {
-    const html2canvas = (await import("html2canvas")).default;
-    // Captura a área principal de conteúdo (main)
-    const main = document.querySelector("main") || document.body;
-    const canvas = await html2canvas(main, {
-      width: 1280,
-      height: Math.max(main.scrollHeight, 800),
-      windowWidth: 1280,
-      windowHeight: 900,
-      scale: 0.6,
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: "#f8fafc",
-      logging: false,
-      scrollY: 0,
-      scrollX: 0,
-    });
-    return canvas.toDataURL("image/jpeg", 0.82);
-  } catch (e) {
-    return null;
-  }
+const MOCKUP_GRADIENTS = {
+  home:              "linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)",
+  proposta:          "linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)",
+  tiraduvidas:       "linear-gradient(135deg, #0c4a6e 0%, #0369a1 100%)",
+  comunidade:        "linear-gradient(135deg, #7f1d1d 0%, #be123c 100%)",
+  orientacoes:       "linear-gradient(135deg, #1c1917 0%, #44403c 100%)",
+  acompanhamento:    "linear-gradient(135deg, #064e3b 0%, #065f46 100%)",
+  gastos:            "linear-gradient(135deg, #78350f 0%, #b45309 100%)",
+  relatorio:         "linear-gradient(135deg, #1e3a5f 0%, #1d4ed8 100%)",
+  consultor_connect: "linear-gradient(135deg, #134e4a 0%, #0f766e 100%)",
+  consultor_dash:    "linear-gradient(135deg, #14532d 0%, #16a34a 100%)",
+  admin_editais:     "linear-gradient(135deg, #450a0a 0%, #991b1b 100%)",
+  admin_ia:          "linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)",
+  admin_usuarios:    "linear-gradient(135deg, #2d1b69 0%, #553c9a 100%)",
+};
+
+function gerarMockupSVG(tela) {
+  const grad = MOCKUP_GRADIENTS[tela.id] || "linear-gradient(135deg,#0f172a,#1e1b4b)";
+  const corSecao = tela.secao === "Visão do Empreendedor" ? "#6366f1"
+    : tela.secao === "Visão do Consultor" ? "#10b981" : "#dc2626";
+
+  // Barra lateral simulada
+  const navItems = ["Editais","Propostas","Tira-dúvidas","Comunidade","Orientações","Acompanhamento"];
+
+  const navSvg = navItems.map((n, i) => `
+    <rect x="0" y="${60 + i * 36}" width="160" height="30" rx="6" fill="${i === 0 ? corSecao : "rgba(255,255,255,0.05)"}" />
+    <text x="48" y="${80 + i * 36}" font-size="11" fill="${i === 0 ? "white" : "rgba(255,255,255,0.5)"}" font-family="Segoe UI,sans-serif">${n}</text>
+    <rect x="12" y="${68 + i * 36}" width="14" height="14" rx="3" fill="${i === 0 ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.1)"}" />
+  `).join("");
+
+  const cardsColors = ["#6366f1","#8b5cf6","#0ea5e9","#10b981","#f59e0b"];
+  const cardsSvg = tela.funcionalidades.slice(0, 5).map((f, i) => `
+    <rect x="${170 + (i % 3) * 200}" y="${50 + Math.floor(i / 3) * 100}" width="185" height="85" rx="10" fill="white" />
+    <rect x="${170 + (i % 3) * 200}" y="${50 + Math.floor(i / 3) * 100}" width="185" height="6" rx="3" fill="${cardsColors[i % 5]}" />
+    <text x="${175 + (i % 3) * 200}" y="${72 + Math.floor(i / 3) * 100}" font-size="9" fill="#1e293b" font-family="Segoe UI,sans-serif" font-weight="700">${tela.titulo.slice(0, 22)}</text>
+    <rect x="${175 + (i % 3) * 200}" y="${80 + Math.floor(i / 3) * 100}" width="${120 + Math.random() * 50 | 0}" height="5" rx="2" fill="#e2e8f0" />
+    <rect x="${175 + (i % 3) * 200}" y="${92 + Math.floor(i / 3) * 100}" width="${80 + Math.random() * 60 | 0}" height="5" rx="2" fill="#e2e8f0" />
+    <rect x="${175 + (i % 3) * 200}" y="${104 + Math.floor(i / 3) * 100}" width="${60 + Math.random() * 40 | 0}" height="5" rx="2" fill="#e2e8f0" />
+  `).join("");
+
+  return `data:image/svg+xml;charset=utf-8,` + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      ${grad.includes("135deg") ? `<stop offset="0%" stop-color="${grad.match(/#[a-f0-9]{6}/gi)?.[0] || "#0f172a"}" />
+      <stop offset="100%" stop-color="${grad.match(/#[a-f0-9]{6}/gi)?.[1] || "#1e1b4b"}" />` : ""}
+    </linearGradient>
+  </defs>
+
+  <!-- Fundo geral -->
+  <rect width="900" height="560" fill="#f1f5f9"/>
+
+  <!-- Sidebar -->
+  <rect width="160" height="560" fill="url(#bg)"/>
+  <!-- Logo -->
+  <text x="80" y="36" text-anchor="middle" font-size="13" font-weight="900" fill="white" font-family="Segoe UI,sans-serif">🦅 Munnin Crow</text>
+  ${navSvg}
+  <!-- User avatar -->
+  <circle cx="80" cy="530" r="16" fill="rgba(255,255,255,0.15)"/>
+  <text x="80" y="534" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.7)" font-family="Segoe UI,sans-serif">Usuário</text>
+
+  <!-- Conteúdo principal -->
+  <rect x="160" width="740" height="560" fill="#f8fafc"/>
+
+  <!-- Header da página -->
+  <rect x="160" y="0" width="740" height="46" fill="white"/>
+  <rect x="160" y="0" width="740" height="3" fill="${corSecao}"/>
+  <text x="185" y="28" font-size="15" font-weight="800" fill="#0f172a" font-family="Segoe UI,sans-serif">${tela.titulo}</text>
+  <text x="185" y="42" font-size="9" fill="${corSecao}" font-family="Segoe UI,sans-serif" font-weight="600">${tela.subtitulo}</text>
+  <!-- Badge -->
+  <rect x="${830}" y="14" width="60" height="18" rx="9" fill="${corSecao}"/>
+  <text x="${860}" y="27" text-anchor="middle" font-size="8" fill="white" font-family="Segoe UI,sans-serif" font-weight="700">${tela.secao.split(" ")[1] || tela.secao}</text>
+
+  <!-- Cards de funcionalidades -->
+  ${cardsSvg}
+
+  <!-- Barra de ação inferior -->
+  <rect x="160" y="270" width="740" height="1" fill="#e2e8f0"/>
+  <rect x="175" y="288" width="120" height="32" rx="8" fill="${corSecao}"/>
+  <text x="235" y="308" text-anchor="middle" font-size="10" fill="white" font-family="Segoe UI,sans-serif" font-weight="700">✨ Ação Principal</text>
+  <rect x="305" y="288" width="90" height="32" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="350" y="308" text-anchor="middle" font-size="10" fill="#475569" font-family="Segoe UI,sans-serif">Filtrar</text>
+
+  <!-- Tabela / lista simulada -->
+  <rect x="175" y="340" width="710" height="28" rx="6" fill="${corSecao}20"/>
+  <text x="190" y="358" font-size="9" fill="${corSecao}" font-family="Segoe UI,sans-serif" font-weight="700">ITEM</text>
+  <text x="450" y="358" font-size="9" fill="${corSecao}" font-family="Segoe UI,sans-serif" font-weight="700">STATUS</text>
+  <text x="650" y="358" font-size="9" fill="${corSecao}" font-family="Segoe UI,sans-serif" font-weight="700">AÇÃO</text>
+  ${[0,1,2,3,4].map(i => `
+  <rect x="175" y="${375 + i * 32}" width="710" height="28" rx="4" fill="white"/>
+  <rect x="175" y="${375 + i * 32}" width="3" height="28" rx="1" fill="${cardsColors[i % 5]}"/>
+  <rect x="190" y="${381 + i * 32}" width="${160 + (i*17) % 80}" height="7" rx="3" fill="#e2e8f0"/>
+  <rect x="190" y="${392 + i * 32}" width="${80 + (i*13) % 50}" height="5" rx="2" fill="#f1f5f9"/>
+  <rect x="440" y="${382 + i * 32}" width="70" height="16" rx="8" fill="${cardsColors[i % 5]}20"/>
+  <text x="475" y="${394 + i * 32}" text-anchor="middle" font-size="8" fill="${cardsColors[i % 5]}" font-family="Segoe UI,sans-serif" font-weight="700">Ativo</text>
+  <rect x="640" y="${383 + i * 32}" width="55" height="14" rx="4" fill="${corSecao}"/>
+  <text x="667" y="${394 + i * 32}" text-anchor="middle" font-size="8" fill="white" font-family="Segoe UI,sans-serif" font-weight="700">Acessar</text>
+  `).join("")}
+
+  <!-- Marca d'água -->
+  <text x="885" y="555" text-anchor="end" font-size="9" fill="#cbd5e1" font-family="Segoe UI,sans-serif">Munnin Crow © ${new Date().getFullYear()}</text>
+</svg>`);
 }
 
 // ─── Divulgação a Investidores ────────────────────────────────────────────────
@@ -252,17 +331,11 @@ function DivulgacaoInvestidores() {
     setEstado("capturando");
     const novasCapturas = {};
 
-    // Captura a tela atual uma única vez como representação da plataforma
-    setProgresso({ atual: 1, total: TELAS.length, label: "Capturando tela atual..." });
-    const capturaAtual = await capturarTelaAtual();
-
-    // Usa a captura da tela atual para todas as telas que não têm captura específica
     for (let i = 0; i < TELAS.length; i++) {
       const tela = TELAS[i];
       setProgresso({ atual: i + 1, total: TELAS.length, label: tela.titulo });
-      // Usa a captura atual para cada tela (melhor que iframes que falham por CORS)
-      if (capturaAtual) novasCapturas[tela.id] = capturaAtual;
-      await new Promise(r => setTimeout(r, 50)); // pequena pausa para atualizar UI
+      await new Promise(r => setTimeout(r, 30)); // tick de UI
+      novasCapturas[tela.id] = gerarMockupSVG(tela);
     }
 
     setCapturas(novasCapturas);
