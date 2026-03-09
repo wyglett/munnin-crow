@@ -170,7 +170,7 @@ Retorne APENAS o HTML completo, começando com <!DOCTYPE html>.`,
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `relatorio_${(projeto.titulo || "projeto").replace(/\s+/g, "_")}.html`;
+      a.download = `relatorio_${(projeto.titulo || "projeto").replace(/\s+/g, "_")}_fallback.html`;
       document.body.appendChild(a);
       a.click();
       URL.revokeObjectURL(url);
