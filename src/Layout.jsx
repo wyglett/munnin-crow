@@ -14,6 +14,7 @@ const getNavItems = (role) => {
       { name: "Comunidade", label: "Comunidade", icon: MessageSquare },
       { name: "Orientacoes", label: "Minhas Orientações", icon: BookOpen },
       { name: "Planos", label: "Planos", icon: CreditCard },
+      { name: "VooDoCorvo", label: "O Voo do Corvo", icon: Feather },
     ];
   }
   return [
@@ -24,6 +25,7 @@ const getNavItems = (role) => {
     { name: "TiraDuvidas", label: "Tira-dúvidas IA", icon: Bot },
     { name: "Orientacoes", label: "Orientações", icon: BookOpen },
     { name: "Planos", label: "Planos", icon: CreditCard },
+    { name: "VooDoCorvo", label: "O Voo do Corvo", icon: Feather },
   ];
 };
 
