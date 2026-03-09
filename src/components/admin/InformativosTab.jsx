@@ -215,30 +215,75 @@ ${linhas}${nos}
 </svg>`;
 }
 
-// ─── Captura de tela via html2canvas da própria página atual ──────────────────
+// ─── Captura de tela via navegação interna ────────────────────────────────────
 
 async function capturarTelaAtual() {
-  try {
-    const html2canvas = (await import("html2canvas")).default;
-    // Captura a área principal de conteúdo (main)
-    const main = document.querySelector("main") || document.body;
-    const canvas = await html2canvas(main, {
-      width: 1280,
-      height: Math.max(main.scrollHeight, 800),
-      windowWidth: 1280,
-      windowHeight: 900,
-      scale: 0.6,
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: "#f8fafc",
-      logging: false,
-      scrollY: 0,
-      scrollX: 0,
-    });
-    return canvas.toDataURL("image/jpeg", 0.82);
-  } catch (e) {
-    return null;
-  }
+  return new Promise(async (resolve) => {
+    try {
+      await new Promise(r => setTimeout(r, 1500));
+      const html2canvas = (await import("html2canvas")).default;
+      const el = document.querySelector("main") || document.body;
+      const canvas = await html2canvas(el, {
+        width: el.scrollWidth,
+        height: Math.min(el.scrollHeight, 1200),
+        scale: 1,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: "#f8fafc",
+        logging: false,
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: 1280,
+        windowHeight: 900,
+      });
+      resolve(canvas.toDataURL("image/jpeg", 0.88));
+    } catch (e) {
+      resolve(null);
+    }
+  });
+}
+
+async function capturarTelaNaUrl(url, setLabel) {
+  return new Promise((resolve) => {
+    // Abre uma nova janela em modo de captura
+    const w = window.open(url, "_blank", "width=1280,height=900,scrollbars=no,toolbar=no,menubar=no,location=no");
+    if (!w) { resolve(null); return; }
+
+    const timeout = setTimeout(() => {
+      try { w.close(); } catch(e) {}
+      resolve(null);
+    }, 12000);
+
+    const tryCapture = async () => {
+      try {
+        await new Promise(r => setTimeout(r, 2800));
+        const html2canvas = (await import("html2canvas")).default;
+        const targetEl = w.document.querySelector("main") || w.document.body;
+        const canvas = await html2canvas(targetEl, {
+          width: 1280,
+          height: 900,
+          scale: 1,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: "#f8fafc",
+          logging: false,
+          windowWidth: 1280,
+          windowHeight: 900,
+        });
+        clearTimeout(timeout);
+        try { w.close(); } catch(e) {}
+        resolve(canvas.toDataURL("image/jpeg", 0.88));
+      } catch (e) {
+        clearTimeout(timeout);
+        try { w.close(); } catch(e2) {}
+        resolve(null);
+      }
+    };
+
+    w.onload = tryCapture;
+    // fallback se onload não disparar
+    setTimeout(tryCapture, 3500);
+  });
 }
 
 // ─── Divulgação a Investidores ────────────────────────────────────────────────
@@ -252,51 +297,11 @@ function DivulgacaoInvestidores() {
     setEstado("capturando");
     const novasCapturas = {};
 
-    // Navega para cada página, aguarda render, captura
-    const baseUrl = window.location.origin;
-    const paginasUnicas = [...new Map(TELAS.map(t => [t.url, t])).values()];
-
-    for (let i = 0; i < paginasUnicas.length; i++) {
-      const tela = paginasUnicas[i];
-      setProgresso({ atual: i + 1, total: paginasUnicas.length, label: `Capturando: ${tela.titulo}` });
-
-      await new Promise(resolve => {
-        const win = window.open(tela.url, "_blank", "width=1280,height=900,toolbar=no,menubar=no,scrollbars=no");
-        if (!win) { resolve(); return; }
-        let tentativas = 0;
-        const interval = setInterval(async () => {
-          tentativas++;
-          try {
-            if (win.closed || tentativas > 40) { clearInterval(interval); win.close(); resolve(); return; }
-            if (win.document?.readyState === "complete") {
-              clearInterval(interval);
-              await new Promise(r => setTimeout(r, 2500));
-              try {
-                const html2canvas = (await import("html2canvas")).default;
-                const main = win.document.querySelector("main") || win.document.body;
-                const canvas = await html2canvas(main, {
-                  width: 1280, height: 900, windowWidth: 1280, windowHeight: 900,
-                  scale: 0.65, useCORS: true, allowTaint: true,
-                  backgroundColor: "#f8fafc", logging: false,
-                });
-                const id = TELAS.find(t2 => t2.url === tela.url)?.id || tela.id;
-                // Atribui a mesma captura a todas as telas com a mesma URL
-                TELAS.filter(t2 => t2.url === tela.url).forEach(t2 => { novasCapturas[t2.id] = canvas.toDataURL("image/jpeg", 0.82); });
-              } catch(e) { /* sem captura, usa placeholder */ }
-              win.close();
-              resolve();
-            }
-          } catch(e) { /* página ainda carregando */ }
-        }, 300);
-      });
-    }
-
-    // Fallback: captura tela atual para telas sem captura
-    const semCaptura = TELAS.filter(t => !novasCapturas[t.id]);
-    if (semCaptura.length > 0) {
-      setProgresso({ atual: paginasUnicas.length, total: paginasUnicas.length, label: "Captura de fallback..." });
-      const capturaAtual = await capturarTelaAtual();
-      if (capturaAtual) semCaptura.forEach(t => { novasCapturas[t.id] = capturaAtual; });
+    for (let i = 0; i < TELAS.length; i++) {
+      const tela = TELAS[i];
+      setProgresso({ atual: i + 1, total: TELAS.length, label: tela.titulo });
+      const dataUrl = await capturarTela(window.location.origin + "/" + tela.url.replace(/^\//, ""));
+      if (dataUrl) novasCapturas[tela.id] = dataUrl;
     }
 
     setCapturas(novasCapturas);
