@@ -66,17 +66,50 @@ export default function ExportarRelatorio({ projeto, campos }) {
     setLoading(true);
 
     const templateUrl = projeto.relatorio_template_url;
+    const isDocx = projeto.relatorio_template_tipo === "docx" ||
+      (templateUrl && templateUrl.toLowerCase().match(/\.docx?(\?|$)/));
 
     if (templateUrl) {
-      // Usa IA para preencher o PDF modelo com os dados dos campos
       const dadosCampos = campos.map(c => ({
         secao: c.secao || "",
         pergunta: c.pergunta || "",
         valor: buildValorTexto(c),
       })).filter(c => c.valor);
 
-      const r = await base44.integrations.Core.InvokeLLM({
-        prompt: `Você receberá um documento PDF modelo de relatório de prestação de contas e os dados preenchidos pelo usuário. 
+      const nomeArquivo = `relatorio_${(projeto.titulo || "projeto").replace(/\s+/g, "_")}`;
+
+      if (isDocx) {
+        // Para DOCX: gera HTML rico que pode ser salvo como .doc (Word abre HTML)
+        const r = await base44.integrations.Core.InvokeLLM({
+          prompt: `Você receberá um documento Word (DOCX) modelo de relatório de prestação de contas e os dados preenchidos pelo usuário.
+Gere um HTML completo compatível com Microsoft Word (MHTML/HTML que o Word abre corretamente).
+Reproduza a estrutura do documento modelo (tabelas, seções numeradas, cabeçalhos), substituindo os campos em branco pelos dados fornecidos.
+Use estilos inline compatíveis com Word: font-family Arial, margens, bordas de tabela com border-collapse:collapse.
+Inclua a diretiva: <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+Dados preenchidos pelo usuário:
+${dadosCampos.map(c => `[${c.secao}] ${c.pergunta}:\n${c.valor}`).join("\n\n---\n\n")}
+
+Retorne APENAS o HTML completo, começando com <!DOCTYPE html>.`,
+          file_urls: [templateUrl],
+          model: "claude_sonnet_4_6",
+        });
+
+        const htmlContent = typeof r === "string" ? r : "";
+        // Gera blob como .doc (Word abre HTML com extensão .doc)
+        const blob = new Blob([htmlContent], { type: "application/msword" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${nomeArquivo}.doc`;
+        document.body.appendChild(a);
+        a.click();
+        URL.revokeObjectURL(url);
+        a.remove();
+      } else {
+        // PDF modelo: gera HTML fiel ao layout
+        const r = await base44.integrations.Core.InvokeLLM({
+          prompt: `Você receberá um documento PDF modelo de relatório de prestação de contas e os dados preenchidos pelo usuário. 
 Gere um HTML completo que reproduz a estrutura do documento modelo, mas com os campos preenchidos com os dados fornecidos abaixo.
 Mantenha a formatação visual próxima ao original (tabelas, seções, títulos numerados).
 Use estilos inline para impressão (font-family Arial, margens, bordas de tabela).
@@ -85,19 +118,20 @@ Dados preenchidos pelo usuário:
 ${dadosCampos.map(c => `[${c.secao}] ${c.pergunta}:\n${c.valor}`).join("\n\n---\n\n")}
 
 Retorne APENAS o HTML completo, começando com <!DOCTYPE html>.`,
-        file_urls: [templateUrl],
-      });
+          file_urls: [templateUrl],
+        });
 
-      const htmlContent = typeof r === "string" ? r : "";
-      const blob = new Blob([htmlContent], { type: "text/html" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `relatorio_${(projeto.titulo || "projeto").replace(/\s+/g, "_")}.html`;
-      document.body.appendChild(a);
-      a.click();
-      URL.revokeObjectURL(url);
-      a.remove();
+        const htmlContent = typeof r === "string" ? r : "";
+        const blob = new Blob([htmlContent], { type: "text/html" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${nomeArquivo}.html`;
+        document.body.appendChild(a);
+        a.click();
+        URL.revokeObjectURL(url);
+        a.remove();
+      }
     } else {
       // Fallback: gera HTML estruturado sem modelo
       const linhas = campos.map(c => {
