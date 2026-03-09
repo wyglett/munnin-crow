@@ -300,7 +300,8 @@ function DivulgacaoInvestidores() {
     for (let i = 0; i < TELAS.length; i++) {
       const tela = TELAS[i];
       setProgresso({ atual: i + 1, total: TELAS.length, label: tela.titulo });
-      const dataUrl = await capturarTela(window.location.origin + "/" + tela.url.replace(/^\//, ""));
+      const fullUrl = window.location.origin + tela.url;
+      const dataUrl = await capturarTelaNaUrl(fullUrl);
       if (dataUrl) novasCapturas[tela.id] = dataUrl;
     }
 
