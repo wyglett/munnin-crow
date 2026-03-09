@@ -61,7 +61,7 @@ import PropostaDetalhe from './pages/PropostaDetalhe';
 import SobreNos from './pages/SobreNos';
 import TiraDuvidas from './pages/TiraDuvidas';
 import Planos from './pages/Planos';
-import VooDoCorvo from './pages/VooDoCorvo';
+import VooCorvo from './pages/VooCorvo';
 import __Layout from './Layout.jsx';
 
 
@@ -80,7 +80,7 @@ export const PAGES = {
     "SobreNos": SobreNos,
     "TiraDuvidas": TiraDuvidas,
     "Planos": Planos,
-    "VooDoCorvo": VooDoCorvo,
+    "VooCorvo": VooCorvo,
 }
 
 export const pagesConfig = {

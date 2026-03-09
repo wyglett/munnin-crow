@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
-import { Home, MessageSquare, FileText, Activity, Bot, BookOpen, Settings, User, Menu, X, ChevronRight, Info, CreditCard } from "lucide-react";
+import { Home, MessageSquare, FileText, Activity, Bot, BookOpen, Settings, User, Menu, X, ChevronRight, Info, CreditCard, Trophy } from "lucide-react";
 
 const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/user_699eeda5be72b683e3bedcf3/7507bc7bf_e6e55591-30ba-4237-91e5-2d46775150cf.png";
 
@@ -14,6 +14,7 @@ const getNavItems = (role) => {
       { name: "Comunidade", label: "Comunidade", icon: MessageSquare },
       { name: "Orientacoes", label: "Minhas Orientações", icon: BookOpen },
       { name: "Planos", label: "Planos", icon: CreditCard },
+      { name: "VooCorvo", label: "O Voo do Corvo", icon: Trophy },
     ];
   }
   return [
@@ -24,6 +25,7 @@ const getNavItems = (role) => {
     { name: "TiraDuvidas", label: "Tira-dúvidas IA", icon: Bot },
     { name: "Orientacoes", label: "Orientações", icon: BookOpen },
     { name: "Planos", label: "Planos", icon: CreditCard },
+    { name: "VooCorvo", label: "O Voo do Corvo", icon: Trophy },
   ];
 };
 
