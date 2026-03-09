@@ -1062,21 +1062,50 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
     salvar(novos);
   };
 
+  const [exportandoDocx, setExportandoDocx] = useState(false);
+
   const uploadTemplate = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    const isDocx = file.name.toLowerCase().endsWith(".docx") || file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
     setUploadingPdf(true);
     const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    await onSave({ relatorio_template_url: file_url });
+    await onSave({ relatorio_template_url: file_url, relatorio_template_tipo: isDocx ? "docx" : "pdf" });
     setUploadingPdf(false);
     setExtraindo(true);
+
+    let textoExtraido = null;
+    if (isDocx) {
+      const resp = await base44.functions.invoke("extrairDocx", { file_url });
+      textoExtraido = resp.data?.text || null;
+    }
+
     const r = await base44.integrations.Core.InvokeLLM({
-      prompt: `Analise este PDF modelo de relatório. Identifique todos os campos/seções. Para cada campo: secao (título com número), pergunta, tipo_resposta ("texto_longo", "texto_curto", "numero", "data", "tabela_itens"). Ordene pela ordem do documento.`,
-      file_urls: [file_url],
+      prompt: `Analise este modelo de relatório (${isDocx ? "texto extraído de DOCX" : "PDF"}). Identifique todos os campos/seções que precisam ser preenchidos. Para cada campo: secao (título com número), pergunta, tipo_resposta ("texto_longo", "texto_curto", "numero", "data", "tabela_itens"). Ordene pela ordem do documento.${textoExtraido ? `\n\nTexto do documento:\n${textoExtraido.slice(0, 8000)}` : ""}`,
+      ...(isDocx ? {} : { file_urls: [file_url] }),
       response_json_schema: { type: "object", properties: { campos: { type: "array", items: { type: "object", properties: { secao: { type: "string" }, pergunta: { type: "string" }, tipo_resposta: { type: "string" } } } } } }
     });
     if (r.campos) salvar(r.campos.map((c, i) => ({ id: `campo-${Date.now()}-${i}`, secao: c.secao || "", pergunta: c.pergunta || `Campo ${i + 1}`, tipo_resposta: c.tipo_resposta || "texto_longo", resposta: "", concluido: false })));
     setExtraindo(false);
+  };
+
+  const exportarDocx = async () => {
+    if (!campos.length) return;
+    setExportandoDocx(true);
+    const resp = await base44.functions.invoke("gerarDocxRelatorio", { projeto, campos });
+    if (resp.data?.base64) {
+      const binary = atob(resp.data.base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      const blob = new Blob([bytes], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = resp.data.filename || "relatorio.docx";
+      document.body.appendChild(a); a.click();
+      URL.revokeObjectURL(url); a.remove();
+    }
+    setExportandoDocx(false);
   };
 
   // Regera 8.1 ao adicionar gasto (com debounce de 5s para evitar rate limit)
@@ -1116,9 +1145,9 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
         <label className="cursor-pointer">
           <div className="inline-flex items-center gap-2 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium">
             {uploadingPdf || extraindo ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-            {uploadingPdf ? "Enviando..." : extraindo ? "Extraindo campos..." : "Upload do Modelo PDF"}
+            {uploadingPdf ? "Enviando..." : extraindo ? "Extraindo campos..." : "Upload do Modelo (PDF ou DOCX)"}
           </div>
-          <input type="file" className="hidden" accept=".pdf" onChange={uploadTemplate} disabled={uploadingPdf || extraindo} />
+          <input type="file" className="hidden" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={uploadTemplate} disabled={uploadingPdf || extraindo} />
         </label>
         <ImportProjetoAprovado projeto={projeto} onSave={onSave} campos={campos} onSalvarCampos={salvar} />
         <ExportarRelatorio projeto={projeto} campos={campos} />
