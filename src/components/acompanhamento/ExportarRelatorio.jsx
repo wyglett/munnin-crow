@@ -190,7 +190,7 @@ Retorne APENAS o HTML completo, começando com <!DOCTYPE html>.`,
       className="border-green-300 text-green-700 hover:bg-green-50"
     >
       {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
-      {loading ? "Gerando..." : "Exportar Relatório"}
+      {loading ? "Gerando..." : `Exportar Relatório${projeto.relatorio_template_tipo === "docx" ? " (.doc)" : " (.html)"}`}
     </Button>
   );
 }
