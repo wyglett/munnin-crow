@@ -1067,11 +1067,12 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
     if (!file) return;
     setUploadingPdf(true);
     const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    await onSave({ relatorio_template_url: file_url });
+    const isDocx = file.name.toLowerCase().match(/\.docx?$/);
+    await onSave({ relatorio_template_url: file_url, relatorio_template_tipo: isDocx ? "docx" : "pdf" });
     setUploadingPdf(false);
     setExtraindo(true);
     const r = await base44.integrations.Core.InvokeLLM({
-      prompt: `Analise este PDF modelo de relatório. Identifique todos os campos/seções. Para cada campo: secao (título com número), pergunta, tipo_resposta ("texto_longo", "texto_curto", "numero", "data", "tabela_itens"). Ordene pela ordem do documento.`,
+      prompt: `Analise este documento modelo de relatório de prestação de contas (pode ser PDF ou Word/DOCX). Identifique todos os campos/seções que o usuário deve preencher. Para cada campo retorne: secao (título da seção com número, ex: "1. Identificação"), pergunta (o que deve ser preenchido), tipo_resposta ("texto_longo", "texto_curto", "numero", "data", "tabela_itens"). Ordene pela ordem do documento.`,
       file_urls: [file_url],
       response_json_schema: { type: "object", properties: { campos: { type: "array", items: { type: "object", properties: { secao: { type: "string" }, pergunta: { type: "string" }, tipo_resposta: { type: "string" } } } } } }
     });
