@@ -1117,7 +1117,7 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
         <label className="cursor-pointer">
           <div className="inline-flex items-center gap-2 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium">
             {uploadingPdf || extraindo ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-            {uploadingPdf ? "Enviando..." : extraindo ? "Extraindo campos..." : "Upload do Modelo PDF"}
+            {uploadingPdf ? "Enviando..." : extraindo ? "Extraindo campos..." : "Upload do Modelo (PDF ou Word)"}
           </div>
           <input type="file" className="hidden" accept=".pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={uploadTemplate} disabled={uploadingPdf || extraindo} />
         </label>
