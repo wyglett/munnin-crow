@@ -19,7 +19,8 @@ const PLANOS_CORES = { Freemium: "#64748b", Básico: "#6366f1", Premium: "#8b5cf
 
 const EMPTY_FORM = { tipo: "assinatura", plano: "Básico", user_email: "", user_nome: "", valor: "", descricao: "", data: new Date().toISOString().slice(0, 10), status: "confirmado" };
 
-function StatCard({ icon: Icon, label, value, sub, cor }) {
+function StatCard({ icon: IconComp, label, value, sub, cor }) {
+  const Icon = IconComp;
   return (
     <Card>
       <CardContent className="p-4 flex items-center gap-4">
