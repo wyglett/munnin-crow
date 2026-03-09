@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,12 +10,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Download, Loader2, Plus, Pencil, Trash2, FolderOpen, UserPlus, Users, BookOpen, ChevronDown, ChevronRight, Info, BarChart2 } from "lucide-react";
+import { Download, Loader2, Plus, Pencil, Trash2, FolderOpen, UserPlus, Users, BookOpen, ChevronDown, ChevronRight, Info, TrendingUp } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import EditalDocumentosAdmin from "../components/admin/EditalDocumentosAdmin";
 import InformativosTab from "../components/admin/InformativosTab";
-import AdminRevenueTab from "../components/admin/AdminRevenueTab";
+import ReceitaUsoTab from "../components/admin/ReceitaUsoTab";
 
 const ESTADO_LABELS = {
   ES: "Espírito Santo — FAPES", RJ: "Rio de Janeiro — FAPERJ",
@@ -168,7 +168,7 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
         <p className="text-gray-500 text-sm mb-6">Gerencie editais, usuários e configurações</p>
 
         <Tabs defaultValue="editais">
-          <TabsList className="mb-6">
+          <TabsList className="mb-6 flex-wrap">
             <TabsTrigger value="editais">Editais</TabsTrigger>
             <TabsTrigger value="usuarios">Usuários</TabsTrigger>
             <TabsTrigger value="receitas">Receitas & Uso</TabsTrigger>
@@ -210,7 +210,7 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
           </TabsContent>
 
           <TabsContent value="receitas">
-            <AdminRevenueTab />
+            <ReceitaUsoTab />
           </TabsContent>
 
           <TabsContent value="informativos">
