@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import EditalDocumentosAdmin from "../components/admin/EditalDocumentosAdmin";
 import InformativosTab from "../components/admin/InformativosTab";
-import ReceitasUsoTab from "../components/admin/ReceitasUsoTab";
+import AdminRevenueTab from "../components/admin/AdminRevenueTab";
 
 const ESTADO_LABELS = {
   ES: "Espírito Santo — FAPES", RJ: "Rio de Janeiro — FAPERJ",
@@ -210,7 +210,7 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
           </TabsContent>
 
           <TabsContent value="receitas">
-            <ReceitasUsoTab />
+            <AdminRevenueTab />
           </TabsContent>
 
           <TabsContent value="informativos">
