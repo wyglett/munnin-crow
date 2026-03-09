@@ -1151,6 +1151,12 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
         </label>
         <ImportProjetoAprovado projeto={projeto} onSave={onSave} campos={campos} onSalvarCampos={salvar} />
         <ExportarRelatorio projeto={projeto} campos={campos} />
+        {campos.length > 0 && (
+          <Button type="button" variant="outline" size="sm" onClick={exportarDocx} disabled={exportandoDocx} className="border-blue-300 text-blue-700 hover:bg-blue-50">
+            {exportandoDocx ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
+            {exportandoDocx ? "Gerando DOCX..." : "Exportar DOCX"}
+          </Button>
+        )}
       </div>
 
       {projeto.relatorio_template_url && (
