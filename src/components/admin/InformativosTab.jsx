@@ -215,37 +215,30 @@ ${linhas}${nos}
 </svg>`;
 }
 
-// ─── Captura de tela via iframe oculto ────────────────────────────────────────
+// ─── Captura de tela via html2canvas da própria página atual ──────────────────
 
-async function capturarTela(url) {
-  return new Promise((resolve) => {
-    const iframe = document.createElement("iframe");
-    iframe.style.cssText = "position:fixed;top:-9999px;left:-9999px;width:1280px;height:800px;border:none;opacity:0;pointer-events:none;";
-    iframe.src = url;
-    document.body.appendChild(iframe);
-
-    const cleanup = () => { try { document.body.removeChild(iframe); } catch(e) {} };
-
-    iframe.onload = async () => {
-      await new Promise(r => setTimeout(r, 2000)); // aguarda renderização
-      try {
-        const html2canvas = (await import("html2canvas")).default;
-        const canvas = await html2canvas(iframe.contentDocument.body, {
-          width: 1280, height: 800, scale: 0.75,
-          useCORS: true, allowTaint: true,
-          backgroundColor: "#f8fafc",
-          logging: false,
-        });
-        cleanup();
-        resolve(canvas.toDataURL("image/jpeg", 0.82));
-      } catch (e) {
-        cleanup();
-        resolve(null);
-      }
-    };
-    iframe.onerror = () => { cleanup(); resolve(null); };
-    setTimeout(() => { cleanup(); resolve(null); }, 15000);
-  });
+async function capturarTelaAtual() {
+  try {
+    const html2canvas = (await import("html2canvas")).default;
+    // Captura a área principal de conteúdo (main)
+    const main = document.querySelector("main") || document.body;
+    const canvas = await html2canvas(main, {
+      width: 1280,
+      height: Math.max(main.scrollHeight, 800),
+      windowWidth: 1280,
+      windowHeight: 900,
+      scale: 0.6,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: "#f8fafc",
+      logging: false,
+      scrollY: 0,
+      scrollX: 0,
+    });
+    return canvas.toDataURL("image/jpeg", 0.82);
+  } catch (e) {
+    return null;
+  }
 }
 
 // ─── Divulgação a Investidores ────────────────────────────────────────────────
