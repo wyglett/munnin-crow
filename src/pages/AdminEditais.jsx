@@ -15,7 +15,6 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import EditalDocumentosAdmin from "../components/admin/EditalDocumentosAdmin";
 import InformativosTab from "../components/admin/InformativosTab";
-import AdminRevenueTab from "../components/admin/AdminRevenueTab";
 
 const ESTADO_LABELS = {
   ES: "Espírito Santo — FAPES", RJ: "Rio de Janeiro — FAPERJ",
@@ -171,7 +170,6 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
           <TabsList className="mb-6">
             <TabsTrigger value="editais">Editais</TabsTrigger>
             <TabsTrigger value="usuarios">Usuários</TabsTrigger>
-            <TabsTrigger value="receitas">Receitas & Uso</TabsTrigger>
             <TabsTrigger value="informativos">Informativos</TabsTrigger>
           </TabsList>
 
@@ -207,10 +205,6 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
                 ));
               })()}
             </div>
-          </TabsContent>
-
-          <TabsContent value="receitas">
-            <AdminRevenueTab />
           </TabsContent>
 
           <TabsContent value="informativos">
