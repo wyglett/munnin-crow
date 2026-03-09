@@ -13,7 +13,6 @@ const getNavItems = (role) => {
       { name: "Acompanhamento", label: "Acompanhamento", icon: Activity },
       { name: "Comunidade", label: "Comunidade", icon: MessageSquare },
       { name: "Orientacoes", label: "Minhas Orientações", icon: BookOpen },
-      { name: "Planos", label: "Planos", icon: CreditCard },
     ];
   }
   return [
