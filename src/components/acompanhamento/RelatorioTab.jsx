@@ -1119,7 +1119,7 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
             {uploadingPdf || extraindo ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
             {uploadingPdf ? "Enviando..." : extraindo ? "Extraindo campos..." : "Upload do Modelo PDF"}
           </div>
-          <input type="file" className="hidden" accept=".pdf" onChange={uploadTemplate} disabled={uploadingPdf || extraindo} />
+          <input type="file" className="hidden" accept=".pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={uploadTemplate} disabled={uploadingPdf || extraindo} />
         </label>
         <ImportProjetoAprovado projeto={projeto} onSave={onSave} campos={campos} onSalvarCampos={salvar} />
         <ExportarRelatorio projeto={projeto} campos={campos} />
