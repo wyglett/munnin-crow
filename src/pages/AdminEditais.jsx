@@ -10,11 +10,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Download, Loader2, Plus, Pencil, Trash2, FolderOpen, UserPlus, Users, BookOpen, ChevronDown, ChevronRight, Info } from "lucide-react";
+import { Download, Loader2, Plus, Pencil, Trash2, FolderOpen, UserPlus, Users, BookOpen, ChevronDown, ChevronRight, Info, BarChart2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import EditalDocumentosAdmin from "../components/admin/EditalDocumentosAdmin";
 import InformativosTab from "../components/admin/InformativosTab";
+import AdminRevenueTab from "../components/admin/AdminRevenueTab";
 
 const ESTADO_LABELS = {
   ES: "Espírito Santo — FAPES", RJ: "Rio de Janeiro — FAPERJ",
@@ -170,6 +171,7 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
           <TabsList className="mb-6">
             <TabsTrigger value="editais">Editais</TabsTrigger>
             <TabsTrigger value="usuarios">Usuários</TabsTrigger>
+            <TabsTrigger value="receitas">Receitas & Uso</TabsTrigger>
             <TabsTrigger value="informativos">Informativos</TabsTrigger>
           </TabsList>
 
@@ -205,6 +207,10 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
                 ));
               })()}
             </div>
+          </TabsContent>
+
+          <TabsContent value="receitas">
+            <AdminRevenueTab />
           </TabsContent>
 
           <TabsContent value="informativos">
