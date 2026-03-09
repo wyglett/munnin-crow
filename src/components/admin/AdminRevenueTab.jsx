@@ -4,6 +4,8 @@ import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Users, FileText, Activity, MessageSquare, TrendingUp, DollarSign, BookOpen, Handshake } from "lucide-react";
+
+
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 
 const PLANO_VALORES = { freemium: 0, basico: 49, premium: 99, pro: 199, master: 499 };
@@ -11,6 +13,7 @@ const PLANO_CORES = { freemium: "#94a3b8", basico: "#6366f1", premium: "#8b5cf6"
 const STATUS_CORES = { rascunho: "#94a3b8", em_analise: "#6366f1", submetida: "#f59e0b", aprovada: "#22c55e", rejeitada: "#ef4444" };
 
 function StatCard({ icon: Icon, title, value, sub, color = "#6366f1" }) {
+  // Icon is used as a component below
   return (
     <Card>
       <CardContent className="p-5 flex items-start gap-4">
