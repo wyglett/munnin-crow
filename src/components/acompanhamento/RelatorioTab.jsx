@@ -1076,18 +1076,25 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
     setExtraindo(true);
 
     let textoExtraido = null;
+    let htmlExtraido = null;
     if (isDocx) {
       try {
         const resp = await base44.functions.invoke("extrairDocx", { file_url });
         textoExtraido = resp.data?.text || null;
+        htmlExtraido = resp.data?.html || null;
       } catch {
-        // Se falhar a extração do DOCX, continua sem o texto extraído
         textoExtraido = null;
+        htmlExtraido = null;
       }
     }
 
+    // Para DOCX: usa SOMENTE o texto/HTML extraído do arquivo — não passa o arquivo para o LLM
+    // Para PDF: passa o arquivo diretamente ao LLM (mais confiável)
+    const conteudoDocx = htmlExtraido || textoExtraido;
     const r = await base44.integrations.Core.InvokeLLM({
-      prompt: `Analise este modelo de relatório (${isDocx ? "texto extraído de DOCX" : "PDF"}). Identifique todos os campos/seções que precisam ser preenchidos. Para cada campo: secao (título com número), pergunta, tipo_resposta ("texto_longo", "texto_curto", "numero", "data", "tabela_itens"). Ordene pela ordem do documento.${textoExtraido ? `\n\nTexto do documento:\n${textoExtraido.slice(0, 8000)}` : ""}`,
+      prompt: isDocx
+        ? `Abaixo está o conteúdo COMPLETO de um modelo de relatório extraído de um arquivo DOCX. Analise SOMENTE o que está escrito abaixo — NÃO invente campos que não existem no texto. Identifique cada seção/campo que deve ser preenchido pelo usuário. Para cada campo retorne: secao (número e título exato do documento), pergunta (label ou instrução de preenchimento), tipo_resposta ("texto_longo", "texto_curto", "numero", "data", "tabela_itens"). Ordene exatamente como aparecem no documento.\n\nCONTEÚDO DO DOCUMENTO:\n${conteudoDocx?.slice(0, 12000) || "(não foi possível extrair o texto)"}`
+        : `Analise este modelo de relatório (PDF). Identifique todos os campos/seções que precisam ser preenchidos. Para cada campo: secao (título com número), pergunta, tipo_resposta ("texto_longo", "texto_curto", "numero", "data", "tabela_itens"). Ordene pela ordem do documento. Retorne APENAS campos que existem explicitamente no documento.`,
       ...(isDocx ? {} : { file_urls: [file_url] }),
       response_json_schema: { type: "object", properties: { campos: { type: "array", items: { type: "object", properties: { secao: { type: "string" }, pergunta: { type: "string" }, tipo_resposta: { type: "string" } } } } } }
     });
