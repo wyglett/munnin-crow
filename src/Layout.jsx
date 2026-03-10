@@ -211,6 +211,14 @@ export default function Layout({ children, currentPageName }) {
         </main>
       </div>
       <PontosNotificacao />
+      <OnboardingModal
+        user={user}
+        open={showOnboarding}
+        onComplete={(role) => {
+          setShowOnboarding(false);
+          setUser(u => u ? { ...u, role, perfil_concluido: true } : u);
+        }}
+      />
     </div>
   );
 }
