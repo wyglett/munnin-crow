@@ -58,6 +58,18 @@ export default function ConsultorGestao() {
     enabled: !!user?.email,
   });
 
+  const { data: todosEmpreendedores = [] } = useQuery({
+    queryKey: ["empreendedores-lista"],
+    queryFn: () => base44.entities.User.filter({ role: "empreendedor" }, "-created_date", 100),
+    enabled: !!user?.email,
+  });
+
+  const [empreendedorSelecionado, setEmpreendedorSelecionado] = useState("");
+
+  const projetosFiltrados = projetos.filter(p =>
+    !empreendedorSelecionado || p.created_by === empreendedorSelecionado
+  );
+
   const criarRecibo = useMutation({
     mutationFn: async (data) => {
       return base44.entities.ReciboPagamento.create({
