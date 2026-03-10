@@ -56,7 +56,12 @@ export default function OnboardingModal({ user, open, onComplete }) {
         }
       }
       setError("");
-      setStep(3);
+      // Se for consultor PJ, vai para passo extra de organização
+      if (role === "consultor" && pessoaJuridica) {
+        setStep(3);
+      } else {
+        setStep(4); // pula direto pro captcha
+      }
       return;
     }
     setError("");
