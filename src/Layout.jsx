@@ -199,6 +199,8 @@ export default function Layout({ children, currentPageName }) {
           {children}
         </main>
       </div>
+      <PontosNotificacao />
+      </div>
     </div>
   );
 }
