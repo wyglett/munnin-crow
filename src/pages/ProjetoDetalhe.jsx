@@ -20,7 +20,7 @@ import RelatorioTab from "../components/acompanhamento/RelatorioTab";
 
 const STATUS_MAP = { ativo: "bg-green-100 text-green-800", concluido: "bg-blue-100 text-blue-800", suspenso: "bg-yellow-100 text-yellow-800" };
 
-const DRIVE_STRUCT = [
+const FINANCEIRO_CATS = [
   "Material Permanente",
   "Material de Consumo",
   "Terceiros",
@@ -29,6 +29,7 @@ const DRIVE_STRUCT = [
   "Contrapartida",
   "DOACI",
 ];
+const RELATORIOS_CATS = ["Parcial", "Final"];
 
 // Extrai o folder ID de um link do Google Drive
 function extrairFolderId(url) {
