@@ -184,7 +184,14 @@ export default function ProjetoDetalhe() {
                 <p className="text-sm font-semibold text-indigo-800 mb-2">A plataforma criará automaticamente:</p>
                 <div className="text-xs text-indigo-700 font-mono space-y-0.5">
                   <p>📁 {projeto.titulo}</p>
-                  {DRIVE_STRUCT.map(s => <p key={s} className="ml-4">├── 📁 {s}</p>)}
+                  <p className="ml-4">├── 📁 Financeiro</p>
+                  {FINANCEIRO_CATS.map((s, i) => (
+                    <p key={s} className="ml-8">{i < FINANCEIRO_CATS.length - 1 ? "├──" : "└──"} 📁 {s}</p>
+                  ))}
+                  <p className="ml-4">└── 📁 Relatórios</p>
+                  {RELATORIOS_CATS.map((s, i) => (
+                    <p key={s} className="ml-8">{i < RELATORIOS_CATS.length - 1 ? "├──" : "└──"} 📁 {s}</p>
+                  ))}
                 </div>
               </div>
               <p className="text-xs text-gray-500 mb-1">Cada item exportado cria subpasta: <code className="bg-gray-100 px-1 rounded">AAAA-MM-DD_FORNECEDOR - DESCRIÇÃO</code></p>
