@@ -4,7 +4,8 @@ import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { Home, MessageSquare, FileText, Activity, Bot, BookOpen, Settings, User, Menu, X, ChevronRight, Info, CreditCard, Feather, Receipt } from "lucide-react";
 import PontosNotificacao from "./components/gamification/PontosNotificacao";
-import NotificacaoSino from "./components/layout/NotificacaoSino";
+import OnboardingModal from "./components/onboarding/OnboardingModal";
+import NotificacoesPanel from "./components/notificacoes/NotificacoesPanel";
 
 const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/user_699eeda5be72b683e3bedcf3/7507bc7bf_e6e55591-30ba-4237-91e5-2d46775150cf.png";
 
@@ -26,7 +27,6 @@ const getNavItems = (role) => {
     { name: "Acompanhamento", label: "Acompanhamento", icon: Activity },
     { name: "TiraDuvidas", label: "Tira-dúvidas IA", icon: Bot },
     { name: "Orientacoes", label: "Orientações", icon: BookOpen },
-    { name: "RecibosDoConsultor", label: "Recibos", icon: Receipt },
     { name: "VooDoCorvo", label: "O Voo do Corvo", icon: Feather },
     { name: "Planos", label: "Planos", icon: CreditCard },
   ];
@@ -38,14 +38,8 @@ export default function Layout({ children, currentPageName }) {
   const [viewAsRole, setViewAsRole] = useState(null);
 
   useEffect(() => {
-    base44.auth.me().then(u => {
-      setUser(u);
-      // Redirecionar para onboarding se não completou cadastro
-      if (u && !u.onboarding_completo && currentPageName !== "Onboarding") {
-        window.location.href = createPageUrl("Onboarding");
-      }
-    }).catch(() => {});
-  }, [currentPageName]);
+    base44.auth.me().then(setUser).catch(() => {});
+  }, []);
 
   const isAdmin = user?.role === "admin";
   const effectiveRole = viewAsRole || user?.role;
@@ -108,11 +102,6 @@ export default function Layout({ children, currentPageName }) {
           </>
         )}
       </nav>
-
-      {/* Sino notificações desktop */}
-      <div className="px-3 pb-1 flex justify-end">
-        <NotificacaoSino userEmail={user?.email} />
-      </div>
 
       {/* Bottom */}
       <div className="px-3 pb-3 space-y-1">
@@ -207,7 +196,6 @@ export default function Layout({ children, currentPageName }) {
               }}
             />
           </div>
-          <NotificacaoSino userEmail={user?.email} />
         </header>
         <main className="flex-1 overflow-y-auto bg-slate-50">
           {children}
