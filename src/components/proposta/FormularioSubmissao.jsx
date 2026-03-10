@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { CheckCircle, Lock, Unlock, Sparkles, Loader2, MessageSquare, X, Send, Download, FileText, FilePlus } from "lucide-react";
+import { marcarAtividade } from "@/components/gamification/gamificacao";
 
 // Remove aspas do texto gerado por IA
 const limparAspas = (texto) => texto?.replace(/["""''`]/g, "") || "";

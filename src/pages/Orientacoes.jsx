@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Card, CardContent } from "@/components/ui/card";
 import { BookOpen } from "lucide-react";
+import { marcarAtividade } from "@/components/gamification/gamificacao";
 
 export default function Orientacoes() {
   const { data: orientacoes = [], isLoading } = useQuery({

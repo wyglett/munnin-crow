@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Plus, Trash2, Loader2, Upload, ExternalLink, FolderOpen, CheckCircle2, AlertTriangle, ChevronDown, ChevronRight, Pencil, X, Sparkles, Zap } from "lucide-react";
+import { marcarAtividade } from "@/components/gamification/gamificacao";
 import { Switch } from "@/components/ui/switch";
 import moment from "moment";
 

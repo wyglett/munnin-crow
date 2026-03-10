@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
@@ -9,12 +9,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Bot, Send, Loader2, GraduationCap } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import { marcarAtividade } from "@/components/gamification/gamificacao";
 
 export default function TiraDuvidas() {
   const [user, setUser] = useState(null);
   const [selectedEdital, setSelectedEdital] = useState("geral");
-  const [filtroEstado, setFiltroEstado] = useState("todos");
-  const [filtroStatus, setFiltroStatus] = useState("todos");
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -36,19 +35,8 @@ export default function TiraDuvidas() {
     queryFn: () => base44.entities.User.filter({ role: "consultor" }),
   });
 
-  // Gamificação: marcar uso do tira-dúvidas
-  const marcarGamificacao = () => {
-    if (!user) return;
-    const hoje = new Date().toLocaleDateString("sv-SE");
-    try {
-      localStorage.setItem(`tiraduvidas_used_${user.email}`, "1");
-      localStorage.setItem(`tiraduvidas_today_${user.email}_${hoje}`, "1");
-    } catch {}
-  };
-
   const handleSend = async () => {
     if (!input.trim() || loading) return;
-    marcarGamificacao();
     const userMsg = input;
     setInput("");
     setMessages(prev => [...prev, { role: "user", content: userMsg }]);
