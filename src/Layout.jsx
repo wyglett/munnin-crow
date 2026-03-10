@@ -106,7 +106,7 @@ export default function Layout({ children, currentPageName }) {
           </div>
         )}
         <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.15em] px-4 pb-2">Principal</p>
-        {getNavItems(effectiveRole).map(renderNavItem)}
+        {getNavItems(effectiveRole, user).map(renderNavItem)}
         {isAdmin && !viewAsRole && (
           <>
             <div className="pt-4" />
