@@ -32,6 +32,7 @@ export default function NotificacoesPanel({ user }) {
   const { data: notificacoes = [] } = useQuery({
     queryKey: ["notificacoes", user?.email],
     queryFn: async () => {
+      if (!user?.email) return [];
       const minhas = await base44.entities.NotificacaoPlataforma.filter({ user_email: user.email }, "-created_date", 20);
       const gerais = await base44.entities.NotificacaoPlataforma.filter({ para_todos: true }, "-created_date", 20);
       const todas = [...minhas, ...gerais];
