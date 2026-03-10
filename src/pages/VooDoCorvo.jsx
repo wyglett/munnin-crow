@@ -11,13 +11,25 @@ import { createPageUrl } from "@/utils";
 // ─── Constantes de data ───────────────────────────────────────────────────────
 const HOJE = new Date().toLocaleDateString("sv-SE"); // YYYY-MM-DD local
 
-// ─── Tarefas Diárias ──────────────────────────────────────────────────────────
-export const TAREFAS_DIARIAS_DEF = [
-  { base_id: "diaria_login",       titulo: "Acessar a plataforma hoje",   descricao: "Simplesmente entre e navegue pela plataforma", pontos: 5,  icone: "☀️", dificuldade: "facil" },
-  { base_id: "diaria_comunidade",  titulo: "Participar da comunidade hoje",descricao: "Envie uma mensagem no chat da comunidade",       pontos: 10, icone: "💬", dificuldade: "facil" },
-  { base_id: "diaria_tiraduvidas", titulo: "Usar o tira-dúvidas IA hoje", descricao: "Faça uma pergunta ao assistente especializado",  pontos: 12, icone: "🤖", dificuldade: "medio" },
-  { base_id: "diaria_orientacao",  titulo: "Estudar um material hoje",    descricao: "Acesse uma orientação ou material de apoio",     pontos: 12, icone: "📚", dificuldade: "medio" },
+// ─── Tarefas Diárias por Role ─────────────────────────────────────────────────
+export const TAREFAS_DIARIAS_EMPREENDEDOR = [
+  { base_id: "diaria_login",       titulo: "Acessar a plataforma hoje",     descricao: "Simplesmente entre e navegue pela plataforma",        pontos: 5,  icone: "☀️", dificuldade: "facil" },
+  { base_id: "diaria_comunidade",  titulo: "Participar da comunidade hoje", descricao: "Envie uma mensagem no chat da comunidade",             pontos: 10, icone: "💬", dificuldade: "facil" },
+  { base_id: "diaria_tiraduvidas", titulo: "Usar o tira-dúvidas IA hoje",   descricao: "Faça uma pergunta ao assistente especializado",        pontos: 12, icone: "🤖", dificuldade: "medio" },
+  { base_id: "diaria_orientacao",  titulo: "Estudar um material hoje",      descricao: "Acesse uma orientação ou material de apoio",           pontos: 12, icone: "📚", dificuldade: "medio" },
+  { base_id: "diaria_edital",      titulo: "Explorar um edital hoje",       descricao: "Abra e leia os detalhes de algum edital disponível",   pontos: 8,  icone: "📄", dificuldade: "facil" },
 ];
+
+export const TAREFAS_DIARIAS_CONSULTOR = [
+  { base_id: "diaria_login",       titulo: "Acessar a plataforma hoje",       descricao: "Simplesmente entre e navegue pela plataforma",             pontos: 5,  icone: "☀️", dificuldade: "facil" },
+  { base_id: "diaria_comunidade",  titulo: "Participar da comunidade hoje",   descricao: "Interaja com a comunidade e apoie empreendedores",         pontos: 10, icone: "💬", dificuldade: "facil" },
+  { base_id: "diaria_orientacao",  titulo: "Publicar ou revisar orientação",  descricao: "Publique um material ou revise uma orientação existente",  pontos: 15, icone: "📚", dificuldade: "medio" },
+  { base_id: "diaria_projeto",     titulo: "Acompanhar projeto hoje",         descricao: "Acesse e atualize o andamento de um projeto assistido",    pontos: 12, icone: "📊", dificuldade: "medio" },
+  { base_id: "diaria_recibo",      titulo: "Registrar atividade financeira",  descricao: "Emita ou atualize um recibo/NF na plataforma",             pontos: 10, icone: "💰", dificuldade: "facil" },
+];
+
+// Mantém retrocompatibilidade
+export const TAREFAS_DIARIAS_DEF = TAREFAS_DIARIAS_EMPREENDEDOR;
 
 // ─── Trilhas ──────────────────────────────────────────────────────────────────
 const TRILHA_EMPREENDEDOR = [
