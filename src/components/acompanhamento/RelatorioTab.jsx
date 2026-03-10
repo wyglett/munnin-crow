@@ -14,6 +14,7 @@ import {
   CheckCircle2, Unlock, Sparkles, RefreshCw, BookOpen, Plus, Trash2, Image as ImageIcon, Calendar
 } from "lucide-react";
 import ExportarRelatorio from "./ExportarRelatorio";
+import SeletorModeloRelatorio from "./SeletorModeloRelatorio";
 
 const fmt = (v) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0);
 
@@ -1154,6 +1155,26 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
           </div>
           <input type="file" className="hidden" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={uploadTemplate} disabled={uploadingPdf || extraindo} />
         </label>
+        <SeletorModeloRelatorio
+          uploading={uploadingPdf}
+          extraindo={extraindo}
+          onUploadCustom={uploadTemplate}
+          onSelecionar={(modelo) => {
+            if (modelo.campos_mapeados?.length) {
+              const novosCampos = modelo.campos_mapeados.map((c, i) => ({
+                id: `campo-${Date.now()}-${i}`,
+                secao: c.secao || "",
+                pergunta: c.pergunta || `Campo ${i + 1}`,
+                tipo_resposta: c.tipo_resposta || "texto_longo",
+                instrucao_ia: c.instrucao_ia || "",
+                resposta: "",
+                concluido: false
+              }));
+              salvar(novosCampos);
+              onSave({ relatorio_template_url: modelo.file_url || projeto.relatorio_template_url, relatorio_template_tipo: modelo.file_tipo || "pdf" });
+            }
+          }}
+        />
         <ImportProjetoAprovado projeto={projeto} onSave={onSave} campos={campos} onSalvarCampos={salvar} />
         <ExportarRelatorio projeto={projeto} campos={campos} />
         {campos.length > 0 && (
