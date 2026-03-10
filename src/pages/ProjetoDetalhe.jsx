@@ -82,26 +82,11 @@ export default function ProjetoDetalhe() {
     });
 
     if (res.data?.success) {
-      // Salva o root folder id e os IDs das pastas de categoria
-      const catIds = {};
-      const catMap = {
-        "Material Permanente": "material_permanente",
-        "Material de Consumo": "material_consumo",
-        "Terceiros": "terceiros",
-        "Diárias": "diarias",
-        "Passagens": "passagens",
-        "Contrapartida": "contrapartida",
-        "DOACI": "doaci",
-      };
-      Object.entries(res.data.pastas || {}).forEach(([nome, fid]) => {
-        const key = catMap[nome];
-        if (key) catIds[key] = fid;
-      });
-
+      // A função já retorna as chaves corretas em res.data.pastas
       await updateProjeto.mutateAsync({
         drive_folder_url: driveUrl,
         drive_root_folder_id: res.data.rootFolderId,
-        drive_categoria_ids: catIds,
+        drive_categoria_ids: res.data.pastas || {},
       });
       setDriveStatus("ok");
       setTimeout(() => { setDriveDialog(false); setDriveStatus(null); }, 1500);
