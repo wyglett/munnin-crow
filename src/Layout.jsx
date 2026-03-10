@@ -240,6 +240,9 @@ export default function Layout({ children, currentPageName }) {
         onComplete={(tipoUsuario) => {
           setShowOnboarding(false);
           setUser(u => u ? { ...u, tipo_usuario: tipoUsuario, perfil_concluido: true } : u);
+          // Mostrar tour após completar onboarding
+          const tourDone = localStorage.getItem("guided_tour_done");
+          if (!tourDone) setShowTour(true);
         }}
       />
     </div>
