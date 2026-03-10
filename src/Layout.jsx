@@ -112,6 +112,14 @@ export default function Layout({ children, currentPageName }) {
         )}
       </nav>
 
+      {/* Notificações */}
+      <div className="px-3 pb-1">
+        <div className="flex items-center gap-2 px-4 py-2 text-slate-400">
+          <NotificacoesPanel user={user} />
+          <span className="text-xs">Notificações</span>
+        </div>
+      </div>
+
       {/* Bottom */}
       <div className="px-3 pb-3 space-y-1">
         {isAdmin && !viewAsRole && (
