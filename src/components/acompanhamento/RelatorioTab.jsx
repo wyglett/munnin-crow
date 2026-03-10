@@ -1212,6 +1212,17 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
             {exportandoDocx ? "Gerando DOCX..." : "Exportar DOCX"}
           </Button>
         )}
+        {campos.length > 0 && (
+          <Button type="button" variant="outline" size="sm" onClick={sincronizarGoogleDoc} disabled={sincronizandoDoc} className="border-green-300 text-green-700 hover:bg-green-50">
+            {sincronizandoDoc ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <FileText className="w-4 h-4 mr-2" />}
+            {sincronizandoDoc ? "Sincronizando..." : googleDocId ? "Atualizar Google Doc" : "Criar Google Doc"}
+          </Button>
+        )}
+        {googleDocUrl && (
+          <a href={googleDocUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-2 text-xs bg-green-50 border border-green-200 text-green-700 rounded-lg hover:bg-green-100 transition-colors font-medium">
+            <FileText className="w-3.5 h-3.5" /> Abrir Google Doc
+          </a>
+        )}
       </div>
 
       {projeto.relatorio_template_url && (
