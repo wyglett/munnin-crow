@@ -86,6 +86,7 @@ export default function OnboardingModal({ user, open, onComplete }) {
       cpf: form.cpf,
       data_nascimento: form.data_nascimento,
       pessoa_juridica: role === "consultor" ? pessoaJuridica : false,
+      e_organizacao: (role === "consultor" && pessoaJuridica) ? eOrganizacao : false,
       razao_social: pessoaJuridica ? form.razao_social : undefined,
       nome_fantasia: pessoaJuridica ? form.nome_fantasia : undefined,
       cnpj: pessoaJuridica ? form.cnpj : undefined,
