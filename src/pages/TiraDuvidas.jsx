@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
@@ -7,13 +7,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Bot, Send, Loader2, GraduationCap } from "lucide-react";
+import { Bot, Send, Loader2, GraduationCap, ChevronRight } from "lucide-react";
 import ReactMarkdown from "react-markdown";
-import { marcarAtividade } from "@/components/gamification/gamificacao";
 
 export default function TiraDuvidas() {
   const [user, setUser] = useState(null);
   const [selectedEdital, setSelectedEdital] = useState("geral");
+  const [filtroEstado, setFiltroEstado] = useState("todos");
+  const [filtroStatus, setFiltroStatus] = useState("todos");
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -35,8 +36,19 @@ export default function TiraDuvidas() {
     queryFn: () => base44.entities.User.filter({ role: "consultor" }),
   });
 
+  // Gamificação: marcar uso do tira-dúvidas
+  const marcarGamificacao = () => {
+    if (!user) return;
+    const hoje = new Date().toLocaleDateString("sv-SE");
+    try {
+      localStorage.setItem(`tiraduvidas_used_${user.email}`, "1");
+      localStorage.setItem(`tiraduvidas_today_${user.email}_${hoje}`, "1");
+    } catch {}
+  };
+
   const handleSend = async () => {
     if (!input.trim() || loading) return;
+    marcarGamificacao();
     const userMsg = input;
     setInput("");
     setMessages(prev => [...prev, { role: "user", content: userMsg }]);
@@ -112,9 +124,6 @@ ${envolveVrte ? "5. Informe o VRTE vigente e como ele se aplica ao contexto da p
 
     setMessages(prev => [...prev, { role: "assistant", content: response }]);
     setLoading(false);
-    // Gamificação: usar tira-dúvidas (trilha) e tarefa diária
-    marcarAtividade("tiraduvidas_ia", false);
-    marcarAtividade("daily_tiraduvidas", true);
   };
 
   return (
@@ -128,14 +137,55 @@ ${envolveVrte ? "5. Informe o VRTE vigente e como ele se aplica ao contexto da p
             <p className="text-xs text-gray-500">Selecione um edital para respostas precisas</p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <Select value={selectedEdital} onValueChange={setSelectedEdital}>
-            <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Seletor hierárquico: estado → status → edital */}
+          <Select value={filtroEstado} onValueChange={v => { setFiltroEstado(v); setFiltroStatus("todos"); setSelectedEdital("geral"); }}>
+            <SelectTrigger className="w-36"><SelectValue placeholder="Estado" /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="geral">Visão geral</SelectItem>
-              {editais.map(e => <SelectItem key={e.id} value={e.id}>{e.titulo?.substring(0, 40)}{e.titulo?.length > 40 ? "..." : ""}</SelectItem>)}
+              <SelectItem value="todos">Todos estados</SelectItem>
+              {[...new Set(editais.map(e => e.estado).filter(Boolean))].sort().map(uf => (
+                <SelectItem key={uf} value={uf}>{uf}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
+          {filtroEstado !== "todos" && (
+            <>
+              <ChevronRight className="w-3 h-3 text-gray-400" />
+              <Select value={filtroStatus} onValueChange={v => { setFiltroStatus(v); setSelectedEdital("geral"); }}>
+                <SelectTrigger className="w-36"><SelectValue placeholder="Status" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos status</SelectItem>
+                  <SelectItem value="aberto">Aberto</SelectItem>
+                  <SelectItem value="em_breve">Em breve</SelectItem>
+                  <SelectItem value="encerrado">Encerrado</SelectItem>
+                </SelectContent>
+              </Select>
+            </>
+          )}
+          {filtroEstado !== "todos" && (
+            <>
+              <ChevronRight className="w-3 h-3 text-gray-400" />
+              <Select value={selectedEdital} onValueChange={setSelectedEdital}>
+                <SelectTrigger className="w-52"><SelectValue placeholder="Selecione o edital" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="geral">Visão geral</SelectItem>
+                  {editais
+                    .filter(e => filtroEstado === "todos" || e.estado === filtroEstado)
+                    .filter(e => filtroStatus === "todos" || e.status === filtroStatus)
+                    .map(e => <SelectItem key={e.id} value={e.id}>{e.titulo?.substring(0, 40)}{e.titulo?.length > 40 ? "..." : ""}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </>
+          )}
+          {filtroEstado === "todos" && (
+            <Select value={selectedEdital} onValueChange={setSelectedEdital}>
+              <SelectTrigger className="w-52"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="geral">Visão geral</SelectItem>
+                {editais.map(e => <SelectItem key={e.id} value={e.id}>{e.titulo?.substring(0, 40)}{e.titulo?.length > 40 ? "..." : ""}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          )}
           <Button onClick={() => setTutoriaOpen(true)} className="bg-indigo-600 hover:bg-indigo-700">
             <GraduationCap className="w-4 h-4 mr-2" /> Pedir Tutoria
           </Button>
