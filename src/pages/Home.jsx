@@ -7,6 +7,7 @@ import BrazilMap from "../components/home/BrazilMap";
 import CategoryCards from "../components/home/CategoryCards";
 import EditalCard from "../components/home/EditalCard";
 import EditalDetailModal from "../components/home/EditalDetailModal";
+import PreLoginModal from "../components/onboarding/PreLoginModal";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { motion } from "framer-motion";
