@@ -52,7 +52,7 @@ export default function NotificacoesPanel({ user }) {
   if (!user) return null;
 
   return (
-    <div className="relative">
+    <div className="relative" ref={panelRef}>
       <button
         onClick={() => setOpen(!open)}
         className="relative p-2 text-slate-400 hover:text-white transition-colors"
