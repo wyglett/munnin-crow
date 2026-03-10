@@ -174,6 +174,7 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
         drive_exportado: false,
       });
       savedId = criado.id;
+      if (!isConsultor) marcarAtividade("gasto_registrado", false);
     }
     queryClient.invalidateQueries({ queryKey: ["gastos", projetoId] });
     fecharDialog();
