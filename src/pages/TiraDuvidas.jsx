@@ -36,8 +36,19 @@ export default function TiraDuvidas() {
     queryFn: () => base44.entities.User.filter({ role: "consultor" }),
   });
 
+  // Gamificação: marcar uso do tira-dúvidas
+  const marcarGamificacao = () => {
+    if (!user) return;
+    const hoje = new Date().toLocaleDateString("sv-SE");
+    try {
+      localStorage.setItem(`tiraduvidas_used_${user.email}`, "1");
+      localStorage.setItem(`tiraduvidas_today_${user.email}_${hoje}`, "1");
+    } catch {}
+  };
+
   const handleSend = async () => {
     if (!input.trim() || loading) return;
+    marcarGamificacao();
     const userMsg = input;
     setInput("");
     setMessages(prev => [...prev, { role: "user", content: userMsg }]);
