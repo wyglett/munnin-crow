@@ -1105,6 +1105,25 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
     setExtraindo(false);
   };
 
+  const sincronizarGoogleDoc = async () => {
+    if (!campos.length) return;
+    setSincronizandoDoc(true);
+    // Tenta usar a pasta de relatórios do projeto (parcial)
+    const folderId = projeto.drive_categoria_ids?.relatorios_parcial || null;
+    const resp = await base44.functions.invoke("sincronizarRelatorioDoc", {
+      projeto,
+      campos,
+      folderId,
+      docId: googleDocId || null,
+    });
+    if (resp.data?.docId) {
+      setGoogleDocId(resp.data.docId);
+      setGoogleDocUrl(resp.data.docUrl);
+      await onSave({ google_doc_id: resp.data.docId, google_doc_url: resp.data.docUrl });
+    }
+    setSincronizandoDoc(false);
+  };
+
   const exportarDocx = async () => {
     if (!campos.length) return;
     setExportandoDocx(true);
