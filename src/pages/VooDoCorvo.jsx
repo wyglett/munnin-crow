@@ -379,7 +379,7 @@ export default function VooDoCorvo() {
               {["empreendedor", "consultor"].map(r => (
                 <button key={r} onClick={() => setAbaRanking(r)}
                   className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${abaRanking === r ? (r === "empreendedor" ? "bg-indigo-600 text-white" : "bg-emerald-600 text-white") : "bg-white border text-gray-600 hover:bg-gray-50"}`}>
-                  {r === "empreendedor" ? "🏢 Empreendedores" : "🎓 Consultores"}
+                  {r === "empreendedor" ? "🐦‍⬛ Empreendedores" : "🐦‍⬛ Consultores"}
                 </button>
               ))}
             </div>
