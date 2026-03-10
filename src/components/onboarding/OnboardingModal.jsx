@@ -28,9 +28,10 @@ function formatPhone(v) {
 export default function OnboardingModal({ user, open, onComplete }) {
   // Admin nunca deve ver o onboarding
   if (user?.role === "admin") return null;
-  const [step, setStep] = useState(1); // 1=role, 2=dados, 3=captcha
+  const [step, setStep] = useState(1); // 1=role, 2=dados, 3=pj_extra(se PJ), 4=captcha
   const [role, setRole] = useState("");
   const [pessoaJuridica, setPessoaJuridica] = useState(false);
+  const [eOrganizacao, setEOrganizacao] = useState(false);
   const [form, setForm] = useState({
     telefone: "", cpf: "", data_nascimento: "",
     razao_social: "", nome_fantasia: "", cnpj: ""
