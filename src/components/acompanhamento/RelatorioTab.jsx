@@ -1064,6 +1064,9 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
   };
 
   const [exportandoDocx, setExportandoDocx] = useState(false);
+  const [sincronizandoDoc, setSincronizandoDoc] = useState(false);
+  const [googleDocUrl, setGoogleDocUrl] = useState(projeto.google_doc_url || null);
+  const [googleDocId, setGoogleDocId] = useState(projeto.google_doc_id || null);
 
   const uploadTemplate = async (e) => {
     const file = e.target.files[0];
