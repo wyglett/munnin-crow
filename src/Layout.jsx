@@ -227,9 +227,9 @@ export default function Layout({ children, currentPageName }) {
       <OnboardingModal
         user={user}
         open={showOnboarding}
-        onComplete={(role) => {
+        onComplete={(tipoUsuario) => {
           setShowOnboarding(false);
-          setUser(u => u ? { ...u, role, perfil_concluido: true } : u);
+          setUser(u => u ? { ...u, tipo_usuario: tipoUsuario, perfil_concluido: true } : u);
         }}
       />
     </div>
