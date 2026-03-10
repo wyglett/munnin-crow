@@ -9,7 +9,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Inbox, Users, Clock, CheckCircle, DollarSign, MessageSquare, Send } from "lucide-react";
+import { Inbox, Users, Clock, CheckCircle, DollarSign, MessageSquare, Send, Receipt } from "lucide-react";
+import CobrancasTab from "../components/consultor/CobrancasTab";
 
 const fmt = (v) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0);
 
@@ -90,6 +91,7 @@ export default function ConsultorDashboard() {
           <TabsList>
             <TabsTrigger value="atribuidas">Minhas Requisições ({minhasAtribuidas.length})</TabsTrigger>
             <TabsTrigger value="gerais">Requisições Gerais ({gerais.length})</TabsTrigger>
+            <TabsTrigger value="cobrancas">Recibos / NF</TabsTrigger>
           </TabsList>
 
           <TabsContent value="atribuidas" className="mt-6">
@@ -148,6 +150,9 @@ export default function ConsultorDashboard() {
                 })}
               </div>
             )}
+          </TabsContent>
+          <TabsContent value="cobrancas" className="mt-6">
+            <CobrancasTab user={user} />
           </TabsContent>
         </Tabs>
       </div>
