@@ -67,7 +67,7 @@ export default function NotificacoesPanel({ user }) {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 z-50 max-h-[70vh] flex flex-col">
+        <div className="fixed right-4 top-16 w-96 bg-white rounded-xl shadow-2xl border border-gray-200 z-[9999] max-h-[70vh] flex flex-col md:absolute md:right-0 md:top-full md:mt-2 md:w-80 md:fixed-none">
           <div className="flex items-center justify-between p-4 border-b">
             <h3 className="font-semibold text-gray-900">Notificações</h3>
             <div className="flex items-center gap-2">
