@@ -27,7 +27,11 @@ export default function Orientacoes() {
         ) : (
           <div className="grid gap-4 md:grid-cols-2">
             {orientacoes.map((o) => (
-              <a key={o.id} href={o.url} target="_blank" rel="noopener noreferrer">
+              <a key={o.id} href={o.url} target="_blank" rel="noopener noreferrer"
+                onClick={() => {
+                  marcarAtividade("orientacao_lida", false);
+                  marcarAtividade("daily_orientacao", true);
+                }}>
                 <Card className="hover:shadow-md transition-shadow h-full">
                   <CardContent className="p-5">
                     <h3 className="font-semibold text-gray-900">{o.titulo}</h3>
