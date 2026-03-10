@@ -56,11 +56,12 @@ import Home from './pages/Home';
 import MinhasPropostas from './pages/MinhasPropostas';
 import Orientacoes from './pages/Orientacoes';
 import Perfil from './pages/Perfil';
+import Planos from './pages/Planos';
 import ProjetoDetalhe from './pages/ProjetoDetalhe';
 import PropostaDetalhe from './pages/PropostaDetalhe';
 import SobreNos from './pages/SobreNos';
 import TiraDuvidas from './pages/TiraDuvidas';
-import Planos from './pages/Planos';
+import VooCorvo from './pages/VooCorvo';
 import VooDoCorvo from './pages/VooDoCorvo';
 import __Layout from './Layout.jsx';
 
@@ -75,11 +76,12 @@ export const PAGES = {
     "MinhasPropostas": MinhasPropostas,
     "Orientacoes": Orientacoes,
     "Perfil": Perfil,
+    "Planos": Planos,
     "ProjetoDetalhe": ProjetoDetalhe,
     "PropostaDetalhe": PropostaDetalhe,
     "SobreNos": SobreNos,
     "TiraDuvidas": TiraDuvidas,
-    "Planos": Planos,
+    "VooCorvo": VooCorvo,
     "VooDoCorvo": VooDoCorvo,
 }
 

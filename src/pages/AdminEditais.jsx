@@ -16,6 +16,7 @@ import { createPageUrl } from "@/utils";
 import EditalDocumentosAdmin from "../components/admin/EditalDocumentosAdmin";
 import InformativosTab from "../components/admin/InformativosTab";
 import ReceitaUsoTab from "../components/admin/ReceitaUsoTab";
+import ModelosRelatorioAdmin from "../components/admin/ModelosRelatorioAdmin";
 
 const ESTADO_LABELS = {
   ES: "Espírito Santo — FAPES", RJ: "Rio de Janeiro — FAPERJ",
@@ -172,6 +173,7 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
             <TabsTrigger value="editais">Editais</TabsTrigger>
             <TabsTrigger value="usuarios">Usuários</TabsTrigger>
             <TabsTrigger value="receitas">Receitas & Uso</TabsTrigger>
+            <TabsTrigger value="modelos">Modelos de Relatório</TabsTrigger>
             <TabsTrigger value="informativos">Informativos</TabsTrigger>
           </TabsList>
 
@@ -211,6 +213,10 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
 
           <TabsContent value="receitas">
             <ReceitaUsoTab />
+          </TabsContent>
+
+          <TabsContent value="modelos">
+            <ModelosRelatorioAdmin />
           </TabsContent>
 
           <TabsContent value="informativos">
