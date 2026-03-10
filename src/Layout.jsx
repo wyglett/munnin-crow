@@ -38,9 +38,16 @@ export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [viewAsRole, setViewAsRole] = useState(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
-    base44.auth.me().then(setUser).catch(() => {});
+    base44.auth.me().then((u) => {
+      setUser(u);
+      // Mostrar onboarding se perfil não foi concluído (role = user ou perfil_concluido = false)
+      if (u && (!u.perfil_concluido || u.role === "user")) {
+        setShowOnboarding(true);
+      }
+    }).catch(() => {});
   }, []);
 
   const isAdmin = user?.role === "admin";
