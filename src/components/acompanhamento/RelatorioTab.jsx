@@ -1076,8 +1076,13 @@ export default function RelatorioTab({ projeto, gastos, onSave }) {
 
     let textoExtraido = null;
     if (isDocx) {
-      const resp = await base44.functions.invoke("extrairDocx", { file_url });
-      textoExtraido = resp.data?.text || null;
+      try {
+        const resp = await base44.functions.invoke("extrairDocx", { file_url });
+        textoExtraido = resp.data?.text || null;
+      } catch {
+        // Se falhar a extração do DOCX, continua sem o texto extraído
+        textoExtraido = null;
+      }
     }
 
     const r = await base44.integrations.Core.InvokeLLM({
