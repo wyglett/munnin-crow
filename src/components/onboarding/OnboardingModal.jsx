@@ -79,17 +79,16 @@ export default function OnboardingModal({ user, open, onComplete }) {
     }
     setCaptchaError(false);
     setSaving(true);
-    await base44.auth.updateMe({
+    await base44.functions.invoke("concluirOnboarding", {
       role,
-      perfil_concluido: true,
       telefone: form.telefone,
       cpf: form.cpf,
       data_nascimento: form.data_nascimento,
-      pessoa_juridica: role === "consultor" ? pessoaJuridica : false,
-      e_organizacao: (role === "consultor" && pessoaJuridica) ? eOrganizacao : false,
-      razao_social: pessoaJuridica ? form.razao_social : undefined,
-      nome_fantasia: pessoaJuridica ? form.nome_fantasia : undefined,
-      cnpj: pessoaJuridica ? form.cnpj : undefined,
+      pessoa_juridica: pessoaJuridica,
+      e_organizacao: eOrganizacao,
+      razao_social: form.razao_social,
+      nome_fantasia: form.nome_fantasia,
+      cnpj: form.cnpj,
     });
     setSaving(false);
     onComplete(role);
