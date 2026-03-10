@@ -277,7 +277,7 @@ export default function OnboardingModal({ user, open, onComplete }) {
               </div>
 
               <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setStep(2)} className="flex-1">Voltar</Button>
+                <Button variant="outline" onClick={() => setStep(role === "consultor" && pessoaJuridica ? 3 : 2)} className="flex-1">Voltar</Button>
                 <Button
                   onClick={handleCaptcha}
                   disabled={!captchaInput || saving}
