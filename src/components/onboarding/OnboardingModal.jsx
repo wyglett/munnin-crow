@@ -119,7 +119,7 @@ export default function OnboardingModal({ user, open, onComplete }) {
           </p>
           <div className="flex gap-1 mt-4">
             {Array.from({ length: totalSteps || 3 }, (_, i) => i + 1).map(s => (
-              <div key={s} className={`h-1.5 flex-1 rounded-full transition-all ${s <= step ? "bg-white" : "bg-white/30"}`} />
+              <div key={s} className={`h-1.5 flex-1 rounded-full transition-all ${s <= stepDisplay ? "bg-white" : "bg-white/30"}`} />
             ))}
           </div>
         </div>
