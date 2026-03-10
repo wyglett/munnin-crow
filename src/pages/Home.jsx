@@ -91,6 +91,17 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedEdital, setSelectedEdital] = useState(null);
   const [showMap, setShowMap] = useState(false);
+  const [showPreLogin, setShowPreLogin] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
+
+  useEffect(() => {
+    base44.auth.isAuthenticated().then(setIsAuthenticated).catch(() => setIsAuthenticated(false));
+  }, []);
+
+  const handleCTAClick = () => {
+    if (isAuthenticated) setShowMap(true);
+    else setShowPreLogin(true);
+  };
 
   const { data: editais = [] } = useQuery({
     queryKey: ["editais"],
