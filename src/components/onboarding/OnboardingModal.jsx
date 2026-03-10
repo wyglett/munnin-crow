@@ -68,6 +68,8 @@ export default function OnboardingModal({ user, open, onComplete }) {
     setStep(step + 1);
   };
 
+  const totalSteps = (role === "consultor" && pessoaJuridica) ? 4 : 3;
+
   const handleCaptcha = async () => {
     if (parseInt(captchaInput) !== challenge.answer) {
       setCaptchaError(true);
