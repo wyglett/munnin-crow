@@ -44,11 +44,20 @@ export default function Layout({ children, currentPageName }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [viewAsRole, setViewAsRole] = useState(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showTour, setShowTour] = useState(false);
 
   useEffect(() => {
-    base44.auth.me().then((u) => {
+    base44.auth.me().then(async (u) => {
       setUser(u);
-      // Mostrar onboarding se perfil não foi concluído (role = user ou perfil_concluido = false)
+
+      // Aplicar tipo_usuario pendente (vindo do fluxo pre-login)
+      const pendingTipo = localStorage.getItem("pending_tipo_usuario");
+      if (pendingTipo && u && u.role !== "admin" && !u.tipo_usuario) {
+        localStorage.removeItem("pending_tipo_usuario");
+        await base44.auth.updateMe({ tipo_usuario: pendingTipo });
+        setUser(prev => ({ ...prev, tipo_usuario: pendingTipo }));
+      }
+
       if (u && u.role !== "admin" && (!u.perfil_concluido || !u.tipo_usuario)) {
         setShowOnboarding(true);
       }
