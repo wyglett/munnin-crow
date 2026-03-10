@@ -13,11 +13,16 @@ Deno.serve(async (req) => {
     if (!response.ok) throw new Error(`Falha ao buscar arquivo: ${response.status}`);
 
     const arrayBuffer = await response.arrayBuffer();
-    const result = await mammoth.extractRawText({ arrayBuffer });
+
+    // Extrai HTML para preservar headings, tabelas e estrutura visual do DOCX
+    const htmlResult = await mammoth.convertToHtml({ arrayBuffer });
+    // Também extrai texto puro como fallback
+    const textResult = await mammoth.extractRawText({ arrayBuffer });
 
     return Response.json({
-      text: result.value,
-      warnings: result.messages?.map(m => m.message) || []
+      text: textResult.value,
+      html: htmlResult.value,
+      warnings: [...(htmlResult.messages || []), ...(textResult.messages || [])].map(m => m.message)
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
