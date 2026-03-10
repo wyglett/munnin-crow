@@ -44,7 +44,7 @@ export default function Layout({ children, currentPageName }) {
     base44.auth.me().then((u) => {
       setUser(u);
       // Mostrar onboarding se perfil não foi concluído (role = user ou perfil_concluido = false)
-      if (u && (!u.perfil_concluido || u.role === "user")) {
+      if (u && u.role !== "admin" && (!u.perfil_concluido || u.role === "user")) {
         setShowOnboarding(true);
       }
     }).catch(() => {});
