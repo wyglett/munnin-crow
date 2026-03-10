@@ -329,12 +329,40 @@ export default function ConsultorGestao() {
               </div>
             </div>
             <div>
-              <Label>E-mail do Empreendedor *</Label>
-              <Input value={form.empreendedor_email} onChange={e => setForm(f => ({ ...f, empreendedor_email: e.target.value }))} placeholder="email@exemplo.com" />
+              <Label>Empreendedor *</Label>
+              <select
+                value={form.empreendedor_email}
+                onChange={e => {
+                  const emp = todosEmpreendedores.find(u => u.email === e.target.value);
+                  setForm(f => ({ ...f, empreendedor_email: e.target.value, empreendedor_nome: emp?.full_name || "" }));
+                }}
+                className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="">Selecione um empreendedor...</option>
+                {todosEmpreendedores.map(u => (
+                  <option key={u.id} value={u.email}>{u.full_name} ({u.email})</option>
+                ))}
+              </select>
+              {form.empreendedor_email && !todosEmpreendedores.find(u => u.email === form.empreendedor_email) && (
+                <Input className="mt-1" value={form.empreendedor_email} onChange={e => setForm(f => ({ ...f, empreendedor_email: e.target.value }))} placeholder="Ou digite o e-mail manualmente" />
+              )}
             </div>
             <div>
-              <Label>Projeto / Consultoria</Label>
-              <Input value={form.projeto_titulo} onChange={e => setForm(f => ({ ...f, projeto_titulo: e.target.value }))} placeholder="Nome do projeto ou consultoria" />
+              <Label>Projeto</Label>
+              <select
+                value={form.projeto_id || ""}
+                onChange={e => {
+                  const p = projetos.find(proj => proj.id === e.target.value);
+                  setForm(f => ({ ...f, projeto_id: e.target.value, projeto_titulo: p?.titulo || "" }));
+                }}
+                className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="">Selecione um projeto (opcional)</option>
+                {projetos.map(p => <option key={p.id} value={p.id}>{p.titulo}</option>)}
+              </select>
+              {!form.projeto_id && (
+                <Input className="mt-1" value={form.projeto_titulo} onChange={e => setForm(f => ({ ...f, projeto_titulo: e.target.value }))} placeholder="Ou informe o nome da consultoria" />
+              )}
             </div>
             <div>
               <Label>Descrição do Serviço *</Label>
