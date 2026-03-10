@@ -252,10 +252,12 @@ export default function VooDoCorvo() {
 
   const proximo = NIVEIS.find(n => n.min > pontos);
 
-  // Diárias de hoje com status
-  const diariasHoje = TAREFAS_DIARIAS_DEF.map(d => ({
-    ...d, id: `${d.base_id}_${HOJE}`, concluida: tarefasAutoDetectadas.includes(`${d.base_id}_${HOJE}`)
-  }));
+  // Diárias de hoje com status — filtradas por role
+  const diariasHoje = TAREFAS_DIARIAS_DEF
+    .filter(d => d.roles.includes(role))
+    .map(d => ({
+      ...d, id: `${d.base_id}_${HOJE}`, concluida: tarefasAutoDetectadas.includes(`${d.base_id}_${HOJE}`)
+    }));
   const diariasConcluidas = diariasHoje.filter(d => d.concluida).length;
   const bonusDiariasHoje  = diariasHoje.filter(d => d.concluida).reduce((s, d) => s + d.pontos, 0);
 
