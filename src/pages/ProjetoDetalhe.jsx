@@ -31,6 +31,14 @@ const FINANCEIRO_CATS = [
 ];
 const RELATORIOS_CATS = ["Parcial", "Final"];
 
+// Detecta o tipo de drive pelo link
+function detectarTipoDrive(url) {
+  if (!url) return null;
+  if (/drive\.google\.com|docs\.google\.com/i.test(url)) return "googledrive";
+  if (/onedrive\.live\.com|1drv\.ms|sharepoint\.com/i.test(url)) return "onedrive";
+  return null;
+}
+
 // Extrai o folder ID de um link do Google Drive
 function extrairFolderId(url) {
   const m = url?.match(/\/folders\/([a-zA-Z0-9_-]+)/);
