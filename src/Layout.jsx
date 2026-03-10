@@ -9,9 +9,9 @@ import NotificacoesPanel from "./components/notificacoes/NotificacoesPanel";
 
 const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/user_699eeda5be72b683e3bedcf3/7507bc7bf_e6e55591-30ba-4237-91e5-2d46775150cf.png";
 
-const getNavItems = (role, user) => {
+const getNavItems = (role) => {
   if (role === "consultor") {
-    const items = [
+    return [
       { name: "ConsultorDashboard", label: "Tutorias", icon: MessageSquare },
       { name: "ConsultorGestao", label: "Gestão & Recibos", icon: Receipt },
       { name: "Acompanhamento", label: "Acompanhamento", icon: Activity },
@@ -20,10 +20,6 @@ const getNavItems = (role, user) => {
       { name: "VooDoCorvo", label: "O Voo do Corvo", icon: Feather },
       { name: "Planos", label: "Planos", icon: CreditCard },
     ];
-    if (user?.e_organizacao) {
-      items.splice(2, 0, { name: "GestaoOrganizacao", label: "Minha Organização", icon: Building2 });
-    }
-    return items;
   }
   return [
     { name: "Home", label: "Editais", icon: Home },
@@ -106,7 +102,7 @@ export default function Layout({ children, currentPageName }) {
           </div>
         )}
         <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.15em] px-4 pb-2">Principal</p>
-        {getNavItems(effectiveRole, user).map(renderNavItem)}
+        {getNavItems(effectiveRole).map(renderNavItem)}
         {isAdmin && !viewAsRole && (
           <>
             <div className="pt-4" />
