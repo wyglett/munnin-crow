@@ -368,7 +368,7 @@ export default function VooDoCorvo() {
               ))}
             </div>
             <div className="mt-5 p-4 bg-blue-50 border border-blue-200 rounded-xl text-xs text-blue-700">
-              <p><strong>☀️ Missões Diárias</strong> são detectadas automaticamente: login é detectado ao entrar na plataforma, participação na comunidade ao enviar mensagem hoje, tira-dúvidas e materiais ao usar cada seção.</p>
+              <p><strong>🐦‍⬛ Missões Diárias</strong> são detectadas automaticamente: login é detectado ao entrar na plataforma, participação na comunidade ao enviar mensagem hoje, tira-dúvidas e materiais ao usar cada seção.</p>
             </div>
           </div>
         )}
