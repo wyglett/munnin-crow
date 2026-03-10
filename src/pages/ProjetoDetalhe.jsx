@@ -72,11 +72,29 @@ export default function ProjetoDetalhe() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["acompanhamentos"] }),
   });
 
+  const tipoDrive = detectarTipoDrive(driveUrl);
+
   const salvarDriveECriarEstrutura = async () => {
     if (!driveUrl) return;
     setCriandoDrive(true);
     setDriveStatus("criando");
 
+    const tipo = detectarTipoDrive(driveUrl);
+
+    if (tipo === "onedrive") {
+      // Para OneDrive, apenas salva o link sem criar estrutura automática
+      await updateProjeto.mutateAsync({
+        drive_folder_url: driveUrl,
+        drive_root_folder_id: "onedrive_manual",
+        drive_categoria_ids: {},
+        drive_tipo: "onedrive",
+      });
+      setDriveStatus("ok_onedrive");
+      setCriandoDrive(false);
+      return;
+    }
+
+    // Google Drive
     const parentFolderId = extrairFolderId(driveUrl);
     if (!parentFolderId) {
       setDriveStatus("erro");
@@ -90,11 +108,11 @@ export default function ProjetoDetalhe() {
     });
 
     if (res.data?.success) {
-      // A função já retorna as chaves corretas em res.data.pastas
       await updateProjeto.mutateAsync({
         drive_folder_url: driveUrl,
         drive_root_folder_id: res.data.rootFolderId,
         drive_categoria_ids: res.data.pastas || {},
+        drive_tipo: "googledrive",
       });
       setDriveStatus("ok");
       setTimeout(() => { setDriveDialog(false); setDriveStatus(null); }, 1500);
