@@ -26,10 +26,13 @@ function formatPhone(v) {
 }
 
 export default function OnboardingModal({ user, open, onComplete }) {
-  // Admin nunca deve ver o onboarding
-  if (user?.role === "admin" || user?.tipo_usuario) return null;
-  const [step, setStep] = useState(1); // 1=role, 2=dados, 3=pj_extra(se PJ), 4=captcha
-  const [role, setRole] = useState("");
+  // Admin ou perfil já completo: não mostrar
+  if (user?.role === "admin" || (user?.tipo_usuario && user?.perfil_concluido)) return null;
+
+  // Se tipo_usuario já veio do fluxo pre-login, pular step 1
+  const prefilledRole = user?.tipo_usuario || "";
+  const [step, setStep] = useState(prefilledRole ? 2 : 1);
+  const [role, setRole] = useState(prefilledRole);
   const [pessoaJuridica, setPessoaJuridica] = useState(false);
   const [eOrganizacao, setEOrganizacao] = useState(false);
   const [form, setForm] = useState({
