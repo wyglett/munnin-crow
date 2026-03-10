@@ -162,7 +162,7 @@ export default function VooDoCorvo() {
 
   useEffect(() => { base44.auth.me().then(setUser).catch(() => {}); }, []);
 
-  const role = user?.role === "consultor" ? "consultor" : "empreendedor";
+  const role = user?.tipo_usuario || (user?.role === "consultor" ? "consultor" : "empreendedor");
   const trilha = role === "consultor" ? TRILHA_CONSULTOR : TRILHA_EMPREENDEDOR;
   const totalPossivel = role === "consultor" ? TOTAL_CONSULTOR : TOTAL_EMPREENDEDOR;
 
