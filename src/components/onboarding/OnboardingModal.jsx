@@ -71,7 +71,11 @@ export default function OnboardingModal({ user, open, onComplete }) {
     setStep(step + 1);
   };
 
-  const totalSteps = (role === "consultor" && pessoaJuridica) ? 4 : 3;
+  // Se role veio do pre-login, os passos começam do 2 (sem step 1)
+  const totalSteps = prefilledRole
+    ? ((role === "consultor" && pessoaJuridica) ? 3 : 2)
+    : ((role === "consultor" && pessoaJuridica) ? 4 : 3);
+  const stepDisplay = prefilledRole ? step - 1 : step;
 
   const handleCaptcha = async () => {
     if (parseInt(captchaInput) !== challenge.answer) {
