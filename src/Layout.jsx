@@ -26,7 +26,7 @@ const getNavItems = (role) => {
     { name: "Acompanhamento", label: "Acompanhamento", icon: Activity },
     { name: "TiraDuvidas", label: "Tira-dúvidas IA", icon: Bot },
     { name: "Orientacoes", label: "Orientações", icon: BookOpen },
-    { name: "RecibosDoConsultor", label: "Recibos", icon: FileText },
+    { name: "RecibosDoConsultor", label: "Recibos", icon: Receipt },
     { name: "VooDoCorvo", label: "O Voo do Corvo", icon: Feather },
     { name: "Planos", label: "Planos", icon: CreditCard },
   ];
