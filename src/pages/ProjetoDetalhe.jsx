@@ -202,39 +202,66 @@ export default function ProjetoDetalhe() {
             <div className="text-center py-6">
               <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-3" />
               <p className="font-semibold text-green-700">Estrutura criada com sucesso!</p>
-              <p className="text-sm text-gray-500 mt-1">As pastas por categoria foram criadas no Drive.</p>
+              <p className="text-sm text-gray-500 mt-1">As pastas por categoria foram criadas no Google Drive.</p>
+            </div>
+          ) : driveStatus === "ok_onedrive" ? (
+            <div className="text-center py-6">
+              <CheckCircle2 className="w-12 h-12 text-blue-500 mx-auto mb-3" />
+              <p className="font-semibold text-blue-700">OneDrive vinculado com sucesso!</p>
+              <p className="text-sm text-gray-500 mt-1">O link foi salvo. A gestão das pastas será feita manualmente no OneDrive.</p>
+              <Button className="mt-4" onClick={() => { setDriveDialog(false); setDriveStatus(null); }}>Fechar</Button>
             </div>
           ) : (
             <>
-              <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-3">
-                <p className="text-sm font-semibold text-indigo-800 mb-2">A plataforma criará automaticamente:</p>
-                <div className="text-xs text-indigo-700 font-mono space-y-0.5">
-                  <p>📁 {projeto.titulo}</p>
-                  <p className="ml-4">├── 📁 Financeiro</p>
-                  {FINANCEIRO_CATS.map((s, i) => (
-                    <p key={s} className="ml-8">{i < FINANCEIRO_CATS.length - 1 ? "├──" : "└──"} 📁 {s}</p>
-                  ))}
-                  <p className="ml-4">└── 📁 Relatórios</p>
-                  {RELATORIOS_CATS.map((s, i) => (
-                    <p key={s} className="ml-8">{i < RELATORIOS_CATS.length - 1 ? "├──" : "└──"} 📁 {s}</p>
-                  ))}
-                </div>
-              </div>
-              <p className="text-xs text-gray-500 mb-1">Cada item exportado cria subpasta: <code className="bg-gray-100 px-1 rounded">AAAA-MM-DD_FORNECEDOR - DESCRIÇÃO</code></p>
-              <Label className="mt-2">Link da pasta raiz no Drive (com permissão de editor)</Label>
+              <Label className="mt-2 mb-1 block">Link da pasta raiz (Google Drive ou OneDrive)</Label>
               <Input
                 value={driveUrl}
                 onChange={e => setDriveUrl(e.target.value)}
-                placeholder="https://drive.google.com/drive/folders/..."
+                placeholder="https://drive.google.com/drive/folders/... ou https://onedrive.live.com/..."
                 className="mt-1"
               />
+
+              {/* Indicador do tipo detectado */}
+              {driveUrl && (
+                <div className={`mt-2 px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2 ${tipoDrive === "googledrive" ? "bg-green-50 text-green-700 border border-green-200" : tipoDrive === "onedrive" ? "bg-blue-50 text-blue-700 border border-blue-200" : "bg-amber-50 text-amber-700 border border-amber-200"}`}>
+                  {tipoDrive === "googledrive" && <><span>🟢</span> Google Drive detectado — a plataforma criará a estrutura de pastas automaticamente.</>}
+                  {tipoDrive === "onedrive" && <><span>🔵</span> Microsoft OneDrive detectado — o link será salvo e as pastas serão gerenciadas manualmente.</>}
+                  {!tipoDrive && <><span>⚠️</span> Formato de link não reconhecido. Use um link do Google Drive ou OneDrive.</>}
+                </div>
+              )}
+
+              {tipoDrive === "googledrive" && (
+                <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mt-3">
+                  <p className="text-sm font-semibold text-indigo-800 mb-2">A plataforma criará automaticamente:</p>
+                  <div className="text-xs text-indigo-700 font-mono space-y-0.5">
+                    <p>📁 {projeto.titulo}</p>
+                    <p className="ml-4">├── 📁 Financeiro</p>
+                    {FINANCEIRO_CATS.map((s, i) => (
+                      <p key={s} className="ml-8">{i < FINANCEIRO_CATS.length - 1 ? "├──" : "└──"} 📁 {s}</p>
+                    ))}
+                    <p className="ml-4">└── 📁 Relatórios</p>
+                    {RELATORIOS_CATS.map((s, i) => (
+                      <p key={s} className="ml-8">{i < RELATORIOS_CATS.length - 1 ? "├──" : "└──"} 📁 {s}</p>
+                    ))}
+                  </div>
+                  <p className="text-xs text-indigo-600 mt-2">Cada item exportado cria subpasta: <code className="bg-indigo-100 px-1 rounded">AAAA-MM-DD_FORNECEDOR - DESCRIÇÃO</code></p>
+                </div>
+              )}
+
+              {tipoDrive === "onedrive" && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-3 text-sm text-blue-800">
+                  <p className="font-semibold mb-1">ℹ️ Integração com OneDrive</p>
+                  <p className="text-xs">O link será salvo como referência. A exportação automática de itens financeiros está disponível apenas para Google Drive. Para o OneDrive, utilize o link para acessar a pasta diretamente.</p>
+                </div>
+              )}
+
               {driveStatus === "erro" && (
                 <p className="text-red-600 text-sm mt-2">Não foi possível criar a estrutura. Verifique o link e as permissões da pasta.</p>
               )}
               <DialogFooter className="mt-4">
                 <Button variant="outline" onClick={() => { setDriveDialog(false); setDriveStatus(null); }} disabled={criandoDrive}>Cancelar</Button>
-                <Button onClick={salvarDriveECriarEstrutura} disabled={!driveUrl || criandoDrive} className="bg-indigo-600 hover:bg-indigo-700">
-                  {criandoDrive ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Criando pastas...</> : "Salvar e Criar Estrutura"}
+                <Button onClick={salvarDriveECriarEstrutura} disabled={!driveUrl || !tipoDrive || criandoDrive} className="bg-indigo-600 hover:bg-indigo-700">
+                  {criandoDrive ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Criando pastas...</> : tipoDrive === "onedrive" ? "Salvar Link OneDrive" : "Salvar e Criar Estrutura"}
                 </Button>
               </DialogFooter>
             </>
