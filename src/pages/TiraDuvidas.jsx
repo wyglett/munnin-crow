@@ -13,6 +13,8 @@ import ReactMarkdown from "react-markdown";
 export default function TiraDuvidas() {
   const [user, setUser] = useState(null);
   const [selectedEdital, setSelectedEdital] = useState("geral");
+  const [filtroEstado, setFiltroEstado] = useState("todos");
+  const [filtroStatus, setFiltroStatus] = useState("todos");
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
