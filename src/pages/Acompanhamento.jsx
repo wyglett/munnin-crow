@@ -41,7 +41,7 @@ export default function Acompanhamento() {
 
   useEffect(() => { base44.auth.me().then(setUser).catch(() => {}); }, []);
 
-  const isConsultor = user?.role === "consultor";
+  const isConsultor = (user?.tipo_usuario || user?.role) === "consultor";
 
   const { data: projetos = [], isLoading } = useQuery({
     queryKey: ["acompanhamentos"],
