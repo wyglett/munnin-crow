@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
@@ -18,17 +18,18 @@ const STATUS_MAP = {
 };
 
 export default function MinhasPropostas() {
-  const queryClient = useQueryClient();
   const [user, setUser] = React.useState(null);
   React.useEffect(() => { base44.auth.me().then(setUser).catch(() => {}); }, []);
-
-  const { data: propostas = [], isLoading } = useQuery({
+  const queryClient = useQueryClient();
+  const { data: todasPropostas = [], isLoading } = useQuery({
     queryKey: ["propostas", user?.email],
-    queryFn: () => user?.role === "admin"
-      ? base44.entities.Proposta.list("-created_date", 200)
-      : base44.entities.Proposta.filter({ created_by: user?.email }, "-created_date", 50),
+    queryFn: () => base44.entities.Proposta.list("-created_date", 50),
     enabled: !!user,
   });
+  // Filtrar apenas propostas do usuário (exceto admin que vê tudo)
+  const propostas = user?.role === "admin"
+    ? todasPropostas
+    : todasPropostas.filter(p => p.created_by === user?.email);
 
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.Proposta.delete(id),
