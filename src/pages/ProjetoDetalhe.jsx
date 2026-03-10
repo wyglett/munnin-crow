@@ -196,7 +196,7 @@ export default function ProjetoDetalhe() {
       {/* Drive Dialog */}
       <Dialog open={driveDialog} onOpenChange={(v) => { if (!criandoDrive) { setDriveDialog(v); setDriveStatus(null); } }}>
         <DialogContent className="max-w-lg">
-          <DialogHeader><DialogTitle>Configurar Pasta no Google Drive</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Configurar Pasta no Drive</DialogTitle></DialogHeader>
 
           {driveStatus === "ok" ? (
             <div className="text-center py-6">
