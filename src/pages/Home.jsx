@@ -233,7 +233,7 @@ export default function Home() {
               transition={{ delay: 0.7 }}
             >
               <Button 
-                onClick={() => setShowMap(true)} 
+                onClick={handleCTAClick} 
                 className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-6 text-lg rounded-xl shadow-lg shadow-indigo-600/30 group relative overflow-hidden"
               >
                 <span className="relative z-10 flex items-center gap-2">
