@@ -175,6 +175,7 @@ export default function VooDoCorvo() {
   const role = user?.role === "consultor" ? "consultor" : "empreendedor";
   const trilha = role === "consultor" ? TRILHA_CONSULTOR : TRILHA_EMPREENDEDOR;
   const totalPossivel = role === "consultor" ? TOTAL_CONSULTOR : TOTAL_EMPREENDEDOR;
+  const TAREFAS_DIARIAS_DEF = role === "consultor" ? TAREFAS_DIARIAS_CONSULTOR : TAREFAS_DIARIAS_EMPREENDEDOR;
 
   const { data: propostas = [] }          = useQuery({ queryKey: ["voo-propostas"], queryFn: () => base44.entities.Proposta.filter({ created_by: user.email }), enabled: !!user });
   const { data: mensagens = [] }          = useQuery({ queryKey: ["voo-msgs"], queryFn: () => base44.entities.MensagemChat.filter({ autor_email: user.email }), enabled: !!user });

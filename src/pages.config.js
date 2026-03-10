@@ -67,6 +67,7 @@ import Onboarding from './pages/Onboarding';
 import RecibosDoConsultor from './pages/RecibosDoConsultor';
 import ConsultorGestao from './pages/ConsultorGestao';
 import MeusRecibos from './pages/MeusRecibos';
+import GestaoOrganizacao from './pages/GestaoOrganizacao';
 import __Layout from './Layout.jsx';
 
 
@@ -91,6 +92,7 @@ export const PAGES = {
     "RecibosDoConsultor": RecibosDoConsultor,
     "ConsultorGestao": ConsultorGestao,
     "MeusRecibos": MeusRecibos,
+    "GestaoOrganizacao": GestaoOrganizacao,
 }
 
 export const pagesConfig = {
