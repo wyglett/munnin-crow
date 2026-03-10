@@ -224,8 +224,36 @@ export default function OnboardingModal({ user, open, onComplete }) {
             </div>
           )}
 
-          {/* Step 3 - Captcha */}
-          {step === 3 && (
+          {/* Step 3 - Pergunta de organização (só para consultor PJ) */}
+          {step === 3 && role === "consultor" && pessoaJuridica && (
+            <div className="space-y-4">
+              <div className="bg-purple-50 border border-purple-200 rounded-xl p-5">
+                <p className="text-gray-700 font-semibold mb-1">Sua empresa gerencia outros consultores?</p>
+                <p className="text-sm text-gray-500 mb-4">Se sim, você terá acesso a uma área exclusiva para gerenciar consultores da sua equipe e direcionar requisições de acompanhamento para eles.</p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setEOrganizacao(false)}
+                    className={`flex-1 py-3 rounded-xl border-2 text-sm font-medium transition-all ${!eOrganizacao ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-gray-600 border-gray-300"}`}
+                  >
+                    Não, atuo individualmente
+                  </button>
+                  <button
+                    onClick={() => setEOrganizacao(true)}
+                    className={`flex-1 py-3 rounded-xl border-2 text-sm font-medium transition-all ${eOrganizacao ? "bg-purple-600 text-white border-purple-600" : "bg-white text-gray-600 border-gray-300"}`}
+                  >
+                    Sim, sou uma organização
+                  </button>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => setStep(2)} className="flex-1">Voltar</Button>
+                <Button onClick={() => setStep(4)} className="flex-1 bg-indigo-600 hover:bg-indigo-700">Continuar</Button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 4 - Captcha */}
+          {step === 4 && (
             <div className="space-y-4 text-center">
               <div className="bg-gray-50 border rounded-xl p-6">
                 <p className="text-gray-600 text-sm mb-3">Resolva a operação abaixo para confirmar que você é humano:</p>
