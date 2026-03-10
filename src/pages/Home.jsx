@@ -314,6 +314,10 @@ export default function Home() {
         open={!!selectedEdital}
         onClose={() => setSelectedEdital(null)}
       />
+      <PreLoginModal
+        open={showPreLogin}
+        onClose={() => setShowPreLogin(false)}
+      />
     </div>
   );
 }
