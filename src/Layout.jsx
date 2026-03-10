@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
-import { Home, MessageSquare, FileText, Activity, Bot, BookOpen, Settings, User, Menu, X, ChevronRight, Info, CreditCard, Feather, Receipt } from "lucide-react";
+import { Home, MessageSquare, FileText, Activity, Bot, BookOpen, Settings, User, Menu, X, ChevronRight, Info, CreditCard, Feather, Receipt, Building2 } from "lucide-react";
 import PontosNotificacao from "./components/gamification/PontosNotificacao";
 import OnboardingModal from "./components/onboarding/OnboardingModal";
 import NotificacoesPanel from "./components/notificacoes/NotificacoesPanel";
