@@ -201,6 +201,7 @@ export default function Layout({ children, currentPageName }) {
               }}
             />
           </div>
+          <NotificacaoSino userEmail={user?.email} />
         </header>
         <main className="flex-1 overflow-y-auto bg-slate-50">
           {children}
