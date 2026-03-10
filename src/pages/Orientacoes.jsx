@@ -5,6 +5,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { BookOpen } from "lucide-react";
 
 export default function Orientacoes() {
+  const [user, setUser] = useState(null);
+  useEffect(() => { base44.auth.me().then(setUser).catch(() => {}); }, []);
+
+  const marcarOrientacao = () => {
+    if (!user) return;
+    const hoje = new Date().toLocaleDateString("sv-SE");
+    try {
+      localStorage.setItem(`orientacao_lida_${user.email}`, "1");
+      localStorage.setItem(`orientacao_today_${user.email}_${hoje}`, "1");
+    } catch {}
+  };
+
   const { data: orientacoes = [], isLoading } = useQuery({
     queryKey: ["orientacoes"],
     queryFn: () => base44.entities.Orientacao.list("-created_date", 50),
