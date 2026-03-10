@@ -17,6 +17,7 @@ import EditalDocumentosAdmin from "../components/admin/EditalDocumentosAdmin";
 import InformativosTab from "../components/admin/InformativosTab";
 import ReceitaUsoTab from "../components/admin/ReceitaUsoTab";
 import ModelosRelatorioAdmin from "../components/admin/ModelosRelatorioAdmin";
+import NotificarUsuariosAdmin from "../components/admin/NotificarUsuariosAdmin";
 
 const ESTADO_LABELS = {
   ES: "Espírito Santo — FAPES", RJ: "Rio de Janeiro — FAPERJ",
@@ -172,6 +173,7 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
           <TabsList className="mb-6 flex-wrap">
             <TabsTrigger value="editais">Editais</TabsTrigger>
             <TabsTrigger value="usuarios">Usuários</TabsTrigger>
+            <TabsTrigger value="notificacoes">Notificações</TabsTrigger>
             <TabsTrigger value="receitas">Receitas & Uso</TabsTrigger>
             <TabsTrigger value="modelos">Modelos de Relatório</TabsTrigger>
             <TabsTrigger value="informativos">Informativos</TabsTrigger>
@@ -209,6 +211,10 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
                 ));
               })()}
             </div>
+          </TabsContent>
+
+          <TabsContent value="notificacoes">
+            <NotificarUsuariosAdmin />
           </TabsContent>
 
           <TabsContent value="receitas">
