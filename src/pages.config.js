@@ -63,8 +63,8 @@ import SobreNos from './pages/SobreNos';
 import TiraDuvidas from './pages/TiraDuvidas';
 import VooCorvo from './pages/VooCorvo';
 import VooDoCorvo from './pages/VooDoCorvo';
-import Onboarding from './pages/Onboarding';
-import RecibosDoConsultor from './pages/RecibosDoConsultor';
+import ConsultorGestao from './pages/ConsultorGestao';
+import MeusRecibos from './pages/MeusRecibos';
 import __Layout from './Layout.jsx';
 
 
@@ -85,8 +85,8 @@ export const PAGES = {
     "TiraDuvidas": TiraDuvidas,
     "VooCorvo": VooCorvo,
     "VooDoCorvo": VooDoCorvo,
-    "Onboarding": Onboarding,
-    "RecibosDoConsultor": RecibosDoConsultor,
+    "ConsultorGestao": ConsultorGestao,
+    "MeusRecibos": MeusRecibos,
 }
 
 export const pagesConfig = {
