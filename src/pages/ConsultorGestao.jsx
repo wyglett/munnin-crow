@@ -60,7 +60,7 @@ export default function ConsultorGestao() {
 
   const { data: todosEmpreendedores = [] } = useQuery({
     queryKey: ["usuarios-empreendedores"],
-    queryFn: () => base44.entities.User.filter({ role: "empreendedor" }, "full_name", 100),
+    queryFn: () => base44.entities.User.filter({ tipo_usuario: "empreendedor" }, "full_name", 100),
     enabled: !!user?.email,
   });
 
