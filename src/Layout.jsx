@@ -13,6 +13,7 @@ const getNavItems = (role) => {
   if (role === "consultor") {
     return [
       { name: "ConsultorDashboard", label: "Tutorias", icon: MessageSquare },
+      { name: "ConsultorGestao", label: "Gestão & Recibos", icon: Receipt },
       { name: "Acompanhamento", label: "Acompanhamento", icon: Activity },
       { name: "Comunidade", label: "Comunidade", icon: MessageSquare },
       { name: "Orientacoes", label: "Minhas Orientações", icon: BookOpen },
@@ -25,6 +26,7 @@ const getNavItems = (role) => {
     { name: "Comunidade", label: "Comunidade", icon: MessageSquare },
     { name: "MinhasPropostas", label: "Minhas Propostas", icon: FileText },
     { name: "Acompanhamento", label: "Acompanhamento", icon: Activity },
+    { name: "MeusRecibos", label: "Recibos / NFs", icon: Receipt },
     { name: "TiraDuvidas", label: "Tira-dúvidas IA", icon: Bot },
     { name: "Orientacoes", label: "Orientações", icon: BookOpen },
     { name: "VooDoCorvo", label: "O Voo do Corvo", icon: Feather },
