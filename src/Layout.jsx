@@ -4,6 +4,7 @@ import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { Home, MessageSquare, FileText, Activity, Bot, BookOpen, Settings, User, Menu, X, ChevronRight, Info, CreditCard, Feather } from "lucide-react";
 import PontosNotificacao from "./components/gamification/PontosNotificacao";
+import NotificacaoSino from "./components/layout/NotificacaoSino";
 
 const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/user_699eeda5be72b683e3bedcf3/7507bc7bf_e6e55591-30ba-4237-91e5-2d46775150cf.png";
 

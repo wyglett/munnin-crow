@@ -19,9 +19,15 @@ const STATUS_MAP = {
 
 export default function MinhasPropostas() {
   const queryClient = useQueryClient();
+  const [user, setUser] = React.useState(null);
+  React.useEffect(() => { base44.auth.me().then(setUser).catch(() => {}); }, []);
+
   const { data: propostas = [], isLoading } = useQuery({
-    queryKey: ["propostas"],
-    queryFn: () => base44.entities.Proposta.list("-created_date", 50),
+    queryKey: ["propostas", user?.email],
+    queryFn: () => user?.role === "admin"
+      ? base44.entities.Proposta.list("-created_date", 200)
+      : base44.entities.Proposta.filter({ created_by: user?.email }, "-created_date", 50),
+    enabled: !!user,
   });
 
   const deleteMutation = useMutation({
