@@ -55,7 +55,7 @@ export default function Layout({ children, currentPageName }) {
   }, []);
 
   const isAdmin = user?.role === "admin";
-  const effectiveRole = viewAsRole || user?.role;
+  const effectiveRole = viewAsRole || user?.tipo_usuario || user?.role;
 
   const renderNavItem = (item) => {
     const isActive = currentPageName === item.name;

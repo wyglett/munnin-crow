@@ -51,23 +51,23 @@ import Acompanhamento from './pages/Acompanhamento';
 import AdminEditais from './pages/AdminEditais';
 import Comunidade from './pages/Comunidade';
 import ConsultorDashboard from './pages/ConsultorDashboard';
+import ConsultorGestao from './pages/ConsultorGestao';
 import Edital from './pages/Edital';
+import GestaoOrganizacao from './pages/GestaoOrganizacao';
 import Home from './pages/Home';
+import MeusRecibos from './pages/MeusRecibos';
 import MinhasPropostas from './pages/MinhasPropostas';
+import Onboarding from './pages/Onboarding';
 import Orientacoes from './pages/Orientacoes';
 import Perfil from './pages/Perfil';
 import Planos from './pages/Planos';
 import ProjetoDetalhe from './pages/ProjetoDetalhe';
 import PropostaDetalhe from './pages/PropostaDetalhe';
+import RecibosDoConsultor from './pages/RecibosDoConsultor';
 import SobreNos from './pages/SobreNos';
 import TiraDuvidas from './pages/TiraDuvidas';
 import VooCorvo from './pages/VooCorvo';
 import VooDoCorvo from './pages/VooDoCorvo';
-import Onboarding from './pages/Onboarding';
-import RecibosDoConsultor from './pages/RecibosDoConsultor';
-import ConsultorGestao from './pages/ConsultorGestao';
-import MeusRecibos from './pages/MeusRecibos';
-import GestaoOrganizacao from './pages/GestaoOrganizacao';
 import __Layout from './Layout.jsx';
 
 
@@ -76,23 +76,23 @@ export const PAGES = {
     "AdminEditais": AdminEditais,
     "Comunidade": Comunidade,
     "ConsultorDashboard": ConsultorDashboard,
+    "ConsultorGestao": ConsultorGestao,
     "Edital": Edital,
+    "GestaoOrganizacao": GestaoOrganizacao,
     "Home": Home,
+    "MeusRecibos": MeusRecibos,
     "MinhasPropostas": MinhasPropostas,
+    "Onboarding": Onboarding,
     "Orientacoes": Orientacoes,
     "Perfil": Perfil,
     "Planos": Planos,
     "ProjetoDetalhe": ProjetoDetalhe,
     "PropostaDetalhe": PropostaDetalhe,
+    "RecibosDoConsultor": RecibosDoConsultor,
     "SobreNos": SobreNos,
     "TiraDuvidas": TiraDuvidas,
     "VooCorvo": VooCorvo,
     "VooDoCorvo": VooDoCorvo,
-    "Onboarding": Onboarding,
-    "RecibosDoConsultor": RecibosDoConsultor,
-    "ConsultorGestao": ConsultorGestao,
-    "MeusRecibos": MeusRecibos,
-    "GestaoOrganizacao": GestaoOrganizacao,
 }
 
 export const pagesConfig = {
