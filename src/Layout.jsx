@@ -108,6 +108,11 @@ export default function Layout({ children, currentPageName }) {
         )}
       </nav>
 
+      {/* Sino notificações desktop */}
+      <div className="px-3 pb-1 flex justify-end">
+        <NotificacaoSino userEmail={user?.email} />
+      </div>
+
       {/* Bottom */}
       <div className="px-3 pb-3 space-y-1">
         {isAdmin && !viewAsRole && (
