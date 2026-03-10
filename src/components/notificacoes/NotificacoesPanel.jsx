@@ -16,6 +16,18 @@ const TIPO_CONFIG = {
 export default function NotificacoesPanel({ user }) {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
+  const panelRef = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e) => {
+      if (panelRef.current && !panelRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
 
   const { data: notificacoes = [] } = useQuery({
     queryKey: ["notificacoes", user?.email],
