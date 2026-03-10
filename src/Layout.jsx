@@ -234,6 +234,7 @@ export default function Layout({ children, currentPageName }) {
         </main>
       </div>
       <PontosNotificacao />
+      {showTour && <GuidedTour onFinish={() => setShowTour(false)} />}
       <OnboardingModal
         user={user}
         open={showOnboarding}
