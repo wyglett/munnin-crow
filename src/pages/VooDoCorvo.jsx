@@ -323,7 +323,7 @@ export default function VooDoCorvo() {
           {["trilha", "diarias", "ranking"].map(a => (
             <button key={a} onClick={() => setAba(a)}
               className={`px-5 py-2 rounded-lg text-sm font-medium shadow-sm transition-all ${aba === a ? "bg-indigo-600 text-white" : "bg-white border text-gray-600 hover:bg-gray-50"}`}>
-              {a === "trilha" ? "🛤️ Minha Trilha" : a === "diarias" ? "☀️ Missões Diárias" : "🏆 Ranking"}
+              {a === "trilha" ? "🐦‍⬛ Minha Trilha" : a === "diarias" ? "☀️ Missões Diárias" : "🏆 Ranking"}
             </button>
           ))}
         </div>
