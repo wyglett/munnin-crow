@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Card, CardContent } from "@/components/ui/card";
 import { BookOpen } from "lucide-react";
-import { marcarAtividade } from "@/components/gamification/gamificacao";
 
 export default function Orientacoes() {
   const { data: orientacoes = [], isLoading } = useQuery({
@@ -27,11 +26,7 @@ export default function Orientacoes() {
         ) : (
           <div className="grid gap-4 md:grid-cols-2">
             {orientacoes.map((o) => (
-              <a key={o.id} href={o.url} target="_blank" rel="noopener noreferrer"
-                onClick={() => {
-                  marcarAtividade("orientacao_lida", false);
-                  marcarAtividade("daily_orientacao", true);
-                }}>
+              <a key={o.id} href={o.url} target="_blank" rel="noopener noreferrer">
                 <Card className="hover:shadow-md transition-shadow h-full">
                   <CardContent className="p-5">
                     <h3 className="font-semibold text-gray-900">{o.titulo}</h3>
