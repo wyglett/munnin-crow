@@ -49,11 +49,11 @@ const TOTAL_CONSULTOR    = TRILHA_CONSULTOR.reduce((s, t) => s + t.pontos, 0);
 
 // ─── Níveis ───────────────────────────────────────────────────────────────────
 const NIVEIS = [
-  { min: 0,   max: 50,       nome: "Filhote de Corvo",  icone: "🥚", cor: "#94a3b8" },
-  { min: 51,  max: 130,      nome: "Corvo Aprendiz",    icone: "🐦", cor: "#6366f1" },
-  { min: 131, max: 250,      nome: "Corvo Experiente",  icone: "🦅", cor: "#8b5cf6" },
+  { min: 0,   max: 50,       nome: "Filhote de Corvo",  icone: "🐣", cor: "#94a3b8" },
+  { min: 51,  max: 130,      nome: "Corvo Aprendiz",    icone: "🐦‍⬛", cor: "#6366f1" },
+  { min: 131, max: 250,      nome: "Corvo Experiente",  icone: "🐦‍⬛", cor: "#8b5cf6" },
   { min: 251, max: 380,      nome: "Mestre do Voo",     icone: "🪶", cor: "#f59e0b" },
-  { min: 381, max: Infinity, nome: "Lenda do Corvo",    icone: "⚜️", cor: "#dc2626" },
+  { min: 381, max: Infinity, nome: "Lenda do Corvo",    icone: "🐦‍⬛", cor: "#dc2626" },
 ];
 
 function getNivel(pontos) {
