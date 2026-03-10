@@ -1,14 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
 
-const CATEGORIAS = [
-  "Material Permanente",
-  "Material de Consumo",
-  "Terceiros",
-  "Diárias",
-  "Passagens",
-  "Contrapartida",
-];
-
 async function criarPasta(nome, parentId, accessToken) {
   const res = await fetch("https://www.googleapis.com/drive/v3/files", {
     method: "POST",
@@ -41,13 +32,41 @@ Deno.serve(async (req) => {
     // Cria pasta raiz do projeto
     const rootId = await criarPasta(projetoTitulo || "Projeto", parentFolderId, accessToken);
 
-    // Cria subpastas por categoria
-    const pastas = {};
-    for (const cat of CATEGORIAS) {
-      pastas[cat] = await criarPasta(cat, rootId, accessToken);
+    // --- Financeiro ---
+    const financeiroId = await criarPasta("Financeiro", rootId, accessToken);
+    const subcatsFinanceiro = [
+      ["Material Permanente", "material_permanente"],
+      ["Material de Consumo", "material_consumo"],
+      ["Terceiros", "terceiros"],
+      ["Diárias", "diarias"],
+      ["Passagens", "passagens"],
+      ["Contrapartida", "contrapartida"],
+      ["Doaci", "doaci"],
+    ];
+    const pastasFinanceiro = {};
+    for (const [nome, chave] of subcatsFinanceiro) {
+      pastasFinanceiro[chave] = await criarPasta(nome, financeiroId, accessToken);
     }
 
-    return Response.json({ success: true, rootFolderId: rootId, pastas });
+    // --- Relatórios ---
+    const relatoriosId = await criarPasta("Relatórios", rootId, accessToken);
+    const parcialId = await criarPasta("Parcial", relatoriosId, accessToken);
+    const finalId = await criarPasta("Final", relatoriosId, accessToken);
+
+    // Objeto unificado de pastas (compatível com drive_categoria_ids)
+    const pastas = {
+      ...pastasFinanceiro,
+      relatorios_parcial: parcialId,
+      relatorios_final: finalId,
+    };
+
+    return Response.json({
+      success: true,
+      rootFolderId: rootId,
+      financeiroFolderId: financeiroId,
+      relatoriosFolderId: relatoriosId,
+      pastas,
+    });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
