@@ -341,7 +341,7 @@ export default function VooDoCorvo() {
               <TarefaItem key={tarefa.id} tarefa={tarefa} concluida={tarefasAutoDetectadas.includes(tarefa.id)} onMarcar={marcarSelfReport} loading={saving} />
             ))}
             <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-700">
-              <p><strong>⚡ Tarefas Auto-detectadas:</strong> verificadas automaticamente com base na sua atividade na plataforma.</p>
+              <p><strong>🐦‍⬛ Tarefas Auto-detectadas:</strong> verificadas automaticamente com base na sua atividade na plataforma.</p>
               <p className="mt-1"><strong>📋 Tarefas Auto-declaradas:</strong> marcadas manualmente por você ao completar a ação.</p>
             </div>
           </div>
