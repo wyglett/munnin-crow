@@ -37,8 +37,14 @@ export default function Layout({ children, currentPageName }) {
   const [viewAsRole, setViewAsRole] = useState(null);
 
   useEffect(() => {
-    base44.auth.me().then(setUser).catch(() => {});
-  }, []);
+    base44.auth.me().then(u => {
+      setUser(u);
+      // Redirecionar para onboarding se não completou cadastro
+      if (u && !u.onboarding_completo && currentPageName !== "Onboarding") {
+        window.location.href = createPageUrl("Onboarding");
+      }
+    }).catch(() => {});
+  }, [currentPageName]);
 
   const isAdmin = user?.role === "admin";
   const effectiveRole = viewAsRole || user?.role;
