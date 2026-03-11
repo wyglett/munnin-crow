@@ -147,7 +147,6 @@ export default function Layout({ children, currentPageName }) {
             <button onClick={() => setViewAsRole(null)} className="text-xs text-amber-100 underline hover:text-white mt-1">Voltar ao Admin</button>
           </div>
         )}
-        <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.15em] px-4 pb-2">Principal</p>
         {getNavItems(effectiveRole, user).map(renderNavItem)}
         {isAdmin && !viewAsRole && (
           <>
