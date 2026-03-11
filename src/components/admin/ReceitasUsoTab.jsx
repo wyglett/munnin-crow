@@ -92,6 +92,23 @@ export default function ReceitasUsoTab() {
 
   const topUsuarios = progressos.slice(0, 10);
 
+  const handleExportar = async () => {
+    setExportando(true);
+    exportarCSV(
+      users.map(u => ({ id: u.id, nome: u.full_name || "", email: u.email, role: u.role, tipo_usuario: u.tipo_usuario || "", acesso_liberado: u.acesso_liberado || false, cadastro: u.created_date })),
+      "usuarios_munnin.csv"
+    );
+    exportarCSV(
+      propostas.map(p => ({ id: p.id, titulo: p.titulo, status: p.status, edital: p.edital_titulo || "", criado_por: p.created_by, data: p.created_date })),
+      "propostas_munnin.csv"
+    );
+    exportarCSV(
+      acompanhamentos.map(a => ({ id: a.id, titulo: a.titulo, status: a.status, valor: a.valor_contratado || 0, inicio: a.data_inicio, criado_por: a.created_by })),
+      "projetos_munnin.csv"
+    );
+    setExportando(false);
+  };
+
   return (
     <div className="space-y-6">
       {/* Stats Cards */}
