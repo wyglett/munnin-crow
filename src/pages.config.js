@@ -68,6 +68,7 @@ import SobreNos from './pages/SobreNos';
 import TiraDuvidas from './pages/TiraDuvidas';
 import VooCorvo from './pages/VooCorvo';
 import VooDoCorvo from './pages/VooDoCorvo';
+import Orientacoes from './pages/Orientacoes';
 import __Layout from './Layout.jsx';
 
 
@@ -93,6 +94,7 @@ export const PAGES = {
     "TiraDuvidas": TiraDuvidas,
     "VooCorvo": VooCorvo,
     "VooDoCorvo": VooDoCorvo,
+    "Orientacoes": Orientacoes,
 }
 
 export const pagesConfig = {
