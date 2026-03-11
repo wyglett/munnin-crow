@@ -163,21 +163,31 @@ export default function Layout({ children, currentPageName }) {
       {/* Bottom */}
       <div className="px-3 pb-3 space-y-1">
         {isAdmin && !viewAsRole && (
-          <div className="mb-2 pb-2 border-b border-white/5 group relative">
-            <button className="w-full flex items-center gap-2 px-4 py-2 rounded-lg text-xs text-slate-500 hover:text-white hover:bg-white/5 transition-all">
+          <div className="mb-2 pb-2 border-b border-white/5 relative" ref={verComoRef}>
+            <button
+              onClick={() => setShowVerComo(v => !v)}
+              className="w-full flex items-center gap-2 px-4 py-2 rounded-lg text-xs text-slate-500 hover:text-white hover:bg-white/5 transition-all"
+            >
               <Settings className="w-3.5 h-3.5" />
               <span>Ver Como</span>
+              <ChevronRight className={`w-3 h-3 ml-auto transition-transform ${showVerComo ? "rotate-90" : ""}`} />
             </button>
-            <div className="absolute left-full top-0 ml-2 hidden group-hover:block z-50">
-              <div className="bg-[#0c0f1a] border border-white/10 rounded-lg p-2 shadow-xl min-w-[140px]">
-                <button onClick={() => setViewAsRole("empreendedor")} className="w-full flex items-center gap-2 px-3 py-2 rounded text-xs text-slate-400 hover:text-white hover:bg-white/5 transition-all">
+            {showVerComo && (
+              <div className="mt-1 bg-[#0c0f1a] border border-white/10 rounded-xl p-1.5 shadow-2xl">
+                <button
+                  onClick={() => { setViewAsRole("empreendedor"); setShowVerComo(false); }}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-slate-400 hover:text-white hover:bg-white/5 transition-all"
+                >
                   <User className="w-3 h-3" /> Empreendedor
                 </button>
-                <button onClick={() => setViewAsRole("consultor")} className="w-full flex items-center gap-2 px-3 py-2 rounded text-xs text-slate-400 hover:text-white hover:bg-white/5 transition-all">
+                <button
+                  onClick={() => { setViewAsRole("consultor"); setShowVerComo(false); }}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-slate-400 hover:text-white hover:bg-white/5 transition-all"
+                >
                   <User className="w-3 h-3" /> Consultor
                 </button>
               </div>
-            </div>
+            )}
           </div>
         )}
         <Link
