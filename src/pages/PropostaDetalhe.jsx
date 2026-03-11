@@ -93,6 +93,34 @@ Faça uma análise crítica da proposta, aponte pontos fortes, lacunas e dê sug
   const aceitarConvite = () => update.mutate({ consultor_status: "em_apoio" });
   const recusarConvite = () => update.mutate({ consultor_status: "recusado" });
 
+  const marcarSubmetida = () => update.mutate({ status: "em_julgamento" });
+
+  const marcarContratada = async () => {
+    await base44.entities.Proposta.update(id, { status: "contratada" });
+    // Criar acompanhamento de projeto
+    const acomp = await base44.entities.AcompanhamentoProjeto.create({
+      titulo: proposta.titulo,
+      descricao_projeto: proposta.descricao || "",
+      orgao_financiador: proposta.edital_orgao || "",
+      status: "ativo",
+      consultor_email: proposta.consultor_email || null,
+      consultor_nome: proposta.consultor_nome || null,
+      consultor_status: proposta.consultor_email ? "aguardando" : "sem_consultor",
+    });
+    // Notificar consultor se houver
+    if (proposta.consultor_email) {
+      await base44.entities.NotificacaoPlataforma.create({
+        user_email: proposta.consultor_email,
+        titulo: "Proposta Contratada!",
+        mensagem: `A proposta "${proposta.titulo}" foi contratada. Entre em contato com o empreendedor para oferecer seu serviço de acompanhamento.`,
+        tipo: "aviso",
+        entidade: "AcompanhamentoProjeto",
+        entidade_id: acomp.id,
+      });
+    }
+    window.location.href = createPageUrl(`ProjetoDetalhe?id=${acomp.id}`);
+  };
+
   if (!proposta) return <div className="flex items-center justify-center h-64"><Loader2 className="w-6 h-6 animate-spin text-indigo-600" /></div>;
 
   const status = STATUS_MAP[proposta.status] || STATUS_MAP.rascunho;
