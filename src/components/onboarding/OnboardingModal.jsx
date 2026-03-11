@@ -86,10 +86,9 @@ export default function OnboardingModal({ user, open, onComplete }) {
     // Empreendedor = acesso imediato; Consultor = aguarda moderação (acesso_liberado: false)
     const isConsultor = role === "consultor";
 
-    await base44.auth.updateMe({
-      tipo_usuario: role,
-      perfil_concluido: true,
-      acesso_liberado: !isConsultor, // empreendedor libera na hora, consultor aguarda
+    // Usa o backend para garantir que o campo `role` seja salvo corretamente
+    await base44.functions.invoke("concluirOnboarding", {
+      role,
       telefone: form.telefone,
       cpf: form.cpf,
       data_nascimento: form.data_nascimento,
@@ -98,6 +97,12 @@ export default function OnboardingModal({ user, open, onComplete }) {
       razao_social: pessoaJuridica ? form.razao_social : undefined,
       nome_fantasia: pessoaJuridica ? form.nome_fantasia : undefined,
       cnpj: pessoaJuridica ? form.cnpj : undefined,
+    });
+
+    // Complementar: salvar acesso_liberado e tipo_usuario via auth
+    await base44.auth.updateMe({
+      tipo_usuario: role,
+      acesso_liberado: !isConsultor,
     });
 
     setSaving(false);
