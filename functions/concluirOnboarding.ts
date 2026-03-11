@@ -21,14 +21,17 @@ Deno.serve(async (req) => {
     }
 
     // Usa service role para conseguir alterar o campo `role`
+    const isConsultor = role === "consultor";
     await base44.asServiceRole.entities.User.update(user.id, {
-      role,
+      role: isConsultor ? "empreendedor" : role, // consultor começa como empreendedor até aprovação
+      tipo_usuario: role,
       perfil_concluido: true,
+      acesso_liberado: !isConsultor,
       telefone,
       cpf,
       data_nascimento,
-      pessoa_juridica: role === "consultor" ? pessoa_juridica : false,
-      e_organizacao: (role === "consultor" && pessoa_juridica) ? e_organizacao : false,
+      pessoa_juridica: isConsultor ? pessoa_juridica : false,
+      e_organizacao: (isConsultor && pessoa_juridica) ? e_organizacao : false,
       razao_social: pessoa_juridica ? razao_social : undefined,
       nome_fantasia: pessoa_juridica ? nome_fantasia : undefined,
       cnpj: pessoa_juridica ? cnpj : undefined,
