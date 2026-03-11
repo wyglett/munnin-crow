@@ -15,7 +15,6 @@ Deno.serve(async (req) => {
     let sincronizados = 0;
     for (const u of pendentes) {
       await base44.asServiceRole.entities.User.update(u.id, {
-        role: u.tipo_usuario,
         acesso_liberado: true
       });
       sincronizados++;
