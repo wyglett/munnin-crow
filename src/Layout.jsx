@@ -237,7 +237,7 @@ export default function Layout({ children, currentPageName }) {
           </div>
           <NotificacoesPanel user={user} />
         </header>
-        {user && user.role !== "admin" && user.tipo_usuario && user.role !== user.tipo_usuario && !user.acesso_liberado && (
+        {user && user.role !== "admin" && user.tipo_usuario === "consultor" && !user.acesso_liberado && (
           <BannerPendente tipoUsuario={user.tipo_usuario} />
         )}
         <main className="flex-1 overflow-y-auto bg-slate-50">
