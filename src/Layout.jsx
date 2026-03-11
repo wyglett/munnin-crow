@@ -94,6 +94,12 @@ export default function Layout({ children, currentPageName }) {
   const effectiveRole = viewAsRole || user?.tipo_usuario || user?.role;
 
   const renderNavItem = (item) => {
+    if (item.separator) {
+      return <div key={item.key} className="pt-3 pb-1"><div className="h-px bg-white/5" /></div>;
+    }
+    if (item.label_section) {
+      return <p key={item.key} className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.15em] px-4 pb-1 pt-3">{item.label_section}</p>;
+    }
     const isActive = currentPageName === item.name;
     const Icon = item.icon;
     return (
