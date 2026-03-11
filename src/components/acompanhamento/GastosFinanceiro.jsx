@@ -342,8 +342,11 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
             Exportar Todos ({exportPendentes})
           </Button>
         )}
+        <Button variant="outline" size="sm" onClick={() => { setLoteNFOpen(true); }} className="border-indigo-300 text-indigo-700 hover:bg-indigo-50">
+          <Package className="w-4 h-4 mr-2" /> Upload em Lote
+        </Button>
         <Button variant="outline" size="sm" onClick={() => { setLeituraAutoOpen(true); }} className="border-teal-300 text-teal-700 hover:bg-teal-50">
-          <Sparkles className="w-4 h-4 mr-2" /> Leitura Automática (Experimental)
+          <Sparkles className="w-4 h-4 mr-2" /> Leitura Automática
         </Button>
         <Button onClick={() => { fecharDialog(); setGastoDialog(true); }} className="bg-indigo-600 hover:bg-indigo-700" size="sm">
           <Plus className="w-4 h-4 mr-2" /> Registrar Item
