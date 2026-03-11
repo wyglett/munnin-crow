@@ -58,7 +58,6 @@ import Home from './pages/Home';
 import MeusRecibos from './pages/MeusRecibos';
 import MinhasPropostas from './pages/MinhasPropostas';
 import Onboarding from './pages/Onboarding';
-import Orientacoes from './pages/Orientacoes';
 import Perfil from './pages/Perfil';
 import Planos from './pages/Planos';
 import ProjetoDetalhe from './pages/ProjetoDetalhe';
@@ -84,7 +83,6 @@ export const PAGES = {
     "MeusRecibos": MeusRecibos,
     "MinhasPropostas": MinhasPropostas,
     "Onboarding": Onboarding,
-    "Orientacoes": Orientacoes,
     "Perfil": Perfil,
     "Planos": Planos,
     "ProjetoDetalhe": ProjetoDetalhe,
