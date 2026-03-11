@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, Camera, User, Mail, Shield, CheckCircle } from "lucide-react";
 
-const ROLE_LABELS = { admin: "ADMINISTRADOR", empreendedor: "EMPREENDEDOR", consultor: "CONSULTOR" };
+const ROLE_LABELS = { admin: "ADMINISTRADOR", empreendedor: "EMPREENDEDOR", consultor: "CONSULTOR", user: "EMPREENDEDOR" };
 
 export default function Perfil() {
   const [user, setUser] = useState(null);
