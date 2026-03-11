@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
-import { Users, FileText, Activity, MessageSquare, DollarSign, TrendingUp, Award } from "lucide-react";
+import { Users, FileText, Activity, MessageSquare, DollarSign, TrendingUp, Award, Download, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 function StatCard({ icon: Icon, label, value, sub, cor }) {
   return (
