@@ -1,8 +1,8 @@
 import React from "react";
 import { Clock, User } from "lucide-react";
 
-export default function BannerPendente({ tipoUsuario }) {
-  if (tipoUsuario !== "consultor") return null;
+export default function BannerPendente({ tipoUsuario, acesso_liberado }) {
+  if (tipoUsuario !== "consultor" || acesso_liberado) return null;
 
   return (
     <div className="w-full bg-amber-500/95 text-white px-4 py-2.5 flex items-start gap-3 text-sm">
