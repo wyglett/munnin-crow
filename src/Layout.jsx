@@ -164,35 +164,53 @@ export default function Layout({ children, currentPageName }) {
           <span>Sobre Nós</span>
         </Link>
         <div className="border-t border-white/5 pt-2">
-          <Link
-            to={createPageUrl("Perfil")}
-            onClick={() => setMobileOpen(false)}
-            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
-              currentPageName === "Perfil"
-                ? "bg-indigo-600/90 text-white"
-                : "hover:bg-white/5 text-slate-300"
-            }`}
-          >
-            {user?.avatar_url ? (
-              <img src={user.avatar_url} alt="" className="w-8 h-8 rounded-full object-cover ring-2 ring-indigo-500/30" />
-            ) : (
-              <div className="w-8 h-8 rounded-full bg-indigo-600/30 flex items-center justify-center">
+          {user ? (
+            <>
+              <Link
+                to={createPageUrl("Perfil")}
+                onClick={() => setMobileOpen(false)}
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
+                  currentPageName === "Perfil"
+                    ? "bg-indigo-600/90 text-white"
+                    : "hover:bg-white/5 text-slate-300"
+                }`}
+              >
+                {user?.avatar_url ? (
+                  <img src={user.avatar_url} alt="" className="w-8 h-8 rounded-full object-cover ring-2 ring-indigo-500/30" />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-indigo-600/30 flex items-center justify-center">
+                    <User className="w-4 h-4 text-indigo-300" />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">{user?.full_name || "Meu Perfil"}</p>
+                  <p className="text-[10px] text-slate-500 truncate">{user?.email || ""}</p>
+                </div>
+                <ChevronRight className="w-3 h-3 text-slate-600 flex-shrink-0" />
+              </Link>
+              <button
+                onClick={() => base44.auth.logout()}
+                className="w-full flex items-center gap-3 px-4 py-2 rounded-lg text-xs text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-all"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Sair</span>
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => base44.auth.redirectToLogin()}
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-indigo-600/20 text-slate-300 hover:text-white transition-all group"
+            >
+              <div className="w-8 h-8 rounded-full bg-indigo-600/30 group-hover:bg-indigo-600/50 flex items-center justify-center transition-all">
                 <User className="w-4 h-4 text-indigo-300" />
               </div>
-            )}
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{user?.full_name || "Meu Perfil"}</p>
-              <p className="text-[10px] text-slate-500 truncate">{user?.email || ""}</p>
-            </div>
-            <ChevronRight className="w-3 h-3 text-slate-600 flex-shrink-0" />
-          </Link>
-          <button
-            onClick={() => base44.auth.logout()}
-            className="w-full flex items-center gap-3 px-4 py-2 rounded-lg text-xs text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-all"
-          >
-            <LogOut className="w-3.5 h-3.5" />
-            <span>Sair</span>
-          </button>
+              <div className="flex-1 min-w-0 text-left">
+                <p className="text-sm font-medium">Acessar Meu Usuário</p>
+                <p className="text-[10px] text-slate-500">Entrar ou cadastrar</p>
+              </div>
+              <ChevronRight className="w-3 h-3 text-slate-600 flex-shrink-0" />
+            </button>
+          )}
         </div>
       </div>
     </div>
