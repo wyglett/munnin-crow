@@ -58,7 +58,7 @@ export default function Layout({ children, currentPageName }) {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showTour, setShowTour] = useState(false);
   const [showVerComo, setShowVerComo] = useState(false);
-  const verComoRef = React.useRef(null);
+  const verComoRef = useRef(null);
 
   // Close Ver Como on outside click
   useEffect(() => {
