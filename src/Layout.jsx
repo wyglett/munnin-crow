@@ -16,6 +16,7 @@ const getNavItems = (role, user) => {
   if (role === "consultor") {
     const items = [
       { name: "ConsultorDashboard", label: "Tutorias", icon: MessageSquare },
+      { name: "PropostasConsultor", label: "Propostas", icon: FileText },
       { name: "ConsultorGestao", label: "Gestão & Recibos", icon: Receipt },
       { name: "Acompanhamento", label: "Acompanhamento", icon: Activity },
       { name: "Comunidade", label: "Comunidade", icon: MessageSquare },
