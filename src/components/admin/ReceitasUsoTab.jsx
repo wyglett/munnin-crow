@@ -111,6 +111,14 @@ export default function ReceitasUsoTab() {
 
   return (
     <div className="space-y-6">
+      {/* Export Button */}
+      <div className="flex justify-end">
+        <Button onClick={handleExportar} disabled={exportando} variant="outline" className="gap-2 text-sm">
+          {exportando ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+          Exportar Dados (CSV)
+        </Button>
+      </div>
+
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard icon={Users} label="Usuários cadastrados" value={users.length} sub={`${empreendedores.length} emp. · ${consultores.length} cons.`} cor="#6366f1" />
