@@ -15,38 +15,38 @@ const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/pub
 const getNavItems = (role, user) => {
   if (role === "consultor") {
     const items = [
-      // Trabalho principal
+      { key: "s1", label_section: "Trabalho" },
       { name: "ConsultorDashboard", label: "Tutorias", icon: MessageSquare },
       { name: "PropostasConsultor", label: "Propostas", icon: FileText },
       { name: "Acompanhamento", label: "Acompanhamento", icon: Activity },
-      // Gestão
+      { key: "s2", label_section: "Gestão" },
       { name: "ConsultorGestao", label: "Gestão & Recibos", icon: Receipt },
-      // Organização (se aplicável)
-      // Conteúdo & comunidade
+      { key: "s3", label_section: "Comunidade" },
       { name: "Comunidade", label: "Comunidade", icon: MessageSquare },
       { name: "VooDoCorvo", label: "O Voo do Corvo", icon: Feather },
       { name: "Orientacoes", label: "Orientações", icon: BookOpen },
-      // Planos
+      { key: "s4", label_section: "Conta" },
       { name: "Planos", label: "Planos", icon: CreditCard },
     ];
     if (user?.e_organizacao) {
-      items.splice(3, 0, { name: "GestaoOrganizacao", label: "Minha Organização", icon: Building2 });
+      items.splice(5, 0, { name: "GestaoOrganizacao", label: "Minha Organização", icon: Building2 });
     }
     return items;
   }
   return [
-    // Descoberta
+    { key: "s1", label_section: "Descoberta" },
     { name: "Home", label: "Editais", icon: Home },
-    // Propostas & Projetos
+    { key: "s2", label_section: "Meus Projetos" },
     { name: "MinhasPropostas", label: "Minhas Propostas", icon: FileText },
     { name: "Acompanhamento", label: "Acompanhamento", icon: Activity },
     { name: "MeusRecibos", label: "Recibos / NFs", icon: Receipt },
-    // Apoio & Conhecimento
+    { key: "s3", label_section: "Apoio" },
     { name: "TiraDuvidas", label: "Tira-dúvidas IA", icon: Bot },
     { name: "Comunidade", label: "Comunidade", icon: MessageSquare },
+    { key: "s4", label_section: "Conteúdo" },
     { name: "VooDoCorvo", label: "O Voo do Corvo", icon: Feather },
     { name: "Orientacoes", label: "Orientações", icon: BookOpen },
-    // Planos
+    { key: "s5", label_section: "Conta" },
     { name: "Planos", label: "Planos", icon: CreditCard },
   ];
 };
