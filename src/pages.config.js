@@ -63,12 +63,12 @@ import Perfil from './pages/Perfil';
 import Planos from './pages/Planos';
 import ProjetoDetalhe from './pages/ProjetoDetalhe';
 import PropostaDetalhe from './pages/PropostaDetalhe';
+import PropostasConsultor from './pages/PropostasConsultor';
 import RecibosDoConsultor from './pages/RecibosDoConsultor';
 import SobreNos from './pages/SobreNos';
 import TiraDuvidas from './pages/TiraDuvidas';
 import VooCorvo from './pages/VooCorvo';
 import VooDoCorvo from './pages/VooDoCorvo';
-import PropostasConsultor from './pages/PropostasConsultor';
 import __Layout from './Layout.jsx';
 
 
@@ -89,12 +89,12 @@ export const PAGES = {
     "Planos": Planos,
     "ProjetoDetalhe": ProjetoDetalhe,
     "PropostaDetalhe": PropostaDetalhe,
+    "PropostasConsultor": PropostasConsultor,
     "RecibosDoConsultor": RecibosDoConsultor,
     "SobreNos": SobreNos,
     "TiraDuvidas": TiraDuvidas,
     "VooCorvo": VooCorvo,
     "VooDoCorvo": VooDoCorvo,
-    "PropostasConsultor": PropostasConsultor,
 }
 
 export const pagesConfig = {
