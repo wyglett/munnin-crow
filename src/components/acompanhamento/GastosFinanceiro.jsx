@@ -51,6 +51,7 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
   const [confirmDelete, setConfirmDelete] = useState(null); // null | "single" | "bulk"
   const [deletingId, setDeletingId] = useState(null);
   const [leituraAutoOpen, setLeituraAutoOpen] = useState(false);
+  const [loteNFOpen, setLoteNFOpen] = useState(false);
   // Exportação automática: lê do localStorage por projeto para persistir preferência
   const autoExportKey = `autoExportDrive_${projetoId}`;
   const [autoExportDrive, setAutoExportDrive] = useState(() => {
