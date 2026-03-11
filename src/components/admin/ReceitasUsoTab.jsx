@@ -40,7 +40,21 @@ function agruparPorMes(items, campo = "created_date") {
     }));
 }
 
+function exportarCSV(data, filename) {
+  if (!data.length) return;
+  const keys = Object.keys(data[0]);
+  const rows = [keys.join(";"), ...data.map(r => keys.map(k => `"${String(r[k] ?? "").replace(/"/g, '""')}"`).join(";"))];
+  const blob = new Blob(["\uFEFF" + rows.join("\n")], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 export default function ReceitasUsoTab() {
+  const [exportando, setExportando] = useState(false);
   const { data: users = [] } = useQuery({ queryKey: ["admin-users"], queryFn: () => base44.entities.User.list() });
   const { data: propostas = [] } = useQuery({ queryKey: ["admin-propostas"], queryFn: () => base44.entities.Proposta.list("-created_date", 500) });
   const { data: acompanhamentos = [] } = useQuery({ queryKey: ["admin-acomp"], queryFn: () => base44.entities.AcompanhamentoProjeto.list("-created_date", 500) });
