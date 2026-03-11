@@ -566,6 +566,21 @@ export default function GastosFinanceiro({ projeto, gastos, isConsultor, projeto
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* Upload em Lote de NFs */}
+      <LoteNFDialog
+        open={loteNFOpen}
+        onClose={() => setLoteNFOpen(false)}
+        projeto={projeto}
+        projetoId={projetoId}
+        isConsultor={isConsultor}
+        autoExportDrive={autoExportDrive}
+        onSaved={() => {
+          queryClient.invalidateQueries({ queryKey: ["gastos", projetoId] });
+          setLoteNFOpen(false);
+        }}
+        exportarItem={exportarItem}
+      />
+
       {/* Leitura Automática (Experimental) */}
       <LeituraAutomaticaDialog
         open={leituraAutoOpen}
