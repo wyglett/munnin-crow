@@ -16,7 +16,9 @@ export default function Perfil() {
   const [avatarUrl, setAvatarUrl] = useState("");
 
   useEffect(() => {
-    base44.auth.me().then((u) => { setUser(u); setAvatarUrl(u?.avatar_url || ""); });
+    base44.auth.me()
+      .then((u) => { setUser(u); setAvatarUrl(u?.avatar_url || ""); })
+      .catch(() => { base44.auth.redirectToLogin(); });
   }, []);
 
   const handleUpload = async (e) => {
