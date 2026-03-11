@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { ArrowLeft, FileText, Upload, Sparkles, Loader2, ExternalLink, Users, CheckCircle, XCircle, Send } from "lucide-react";
+import { ArrowLeft, FileText, Upload, Sparkles, Loader2, ExternalLink, Users, CheckCircle, XCircle, Send, Trophy, Activity } from "lucide-react";
 import FormularioSubmissao from "../components/proposta/FormularioSubmissao";
 import SigfapesFormulario from "../components/proposta/SigfapesFormulario";
 import ReactMarkdown from "react-markdown";
