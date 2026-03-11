@@ -139,7 +139,7 @@ export default function Layout({ children, currentPageName }) {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+      <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto scrollbar-hide" style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}}>
         {viewAsRole && (
           <div className="mb-3 px-3 py-2 bg-amber-500/20 border border-amber-500/30 rounded-lg">
             <p className="text-[10px] text-amber-300 font-bold mb-1">MODO VISUALIZAÇÃO</p>
