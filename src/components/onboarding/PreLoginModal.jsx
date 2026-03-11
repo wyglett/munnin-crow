@@ -69,18 +69,20 @@ export default function PreLoginModal({ open, onClose }) {
               disabled={!role}
               className="flex-1 bg-indigo-600 hover:bg-indigo-700"
             >
-              Criar conta <ChevronRight className="w-4 h-4 ml-1" />
+              Continuar <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
           </div>
 
           <p className="text-xs text-center text-gray-400">
             Já tem conta?{" "}
             <button
-              onClick={() => base44.auth.redirectToLogin(window.location.href)}
-              className="text-indigo-600 hover:underline"
+              onClick={handleContinue}
+              disabled={!role}
+              className="text-indigo-600 hover:underline disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Entrar
             </button>
+            {!role && <span className="block mt-0.5 text-[10px] text-amber-500">Selecione seu papel acima primeiro</span>}
           </p>
         </div>
       </DialogContent>
