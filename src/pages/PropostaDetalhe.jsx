@@ -146,11 +146,23 @@ Faça uma análise crítica da proposta, aponte pontos fortes, lacunas e dê sug
                   )}
                 </div>
               </div>
-              {edital?.url_fapes && (
-                <a href={edital.url_fapes} target="_blank" rel="noopener noreferrer">
-                  <Button variant="outline" size="sm"><ExternalLink className="w-3.5 h-3.5 mr-1" /> Ver Edital</Button>
-                </a>
-              )}
+              <div className="flex gap-2 flex-wrap">
+                {edital?.url_fapes && (
+                  <a href={edital.url_fapes} target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline" size="sm"><ExternalLink className="w-3.5 h-3.5 mr-1" /> Ver Edital</Button>
+                  </a>
+                )}
+                {!isConsultor && proposta.status === "rascunho" && (
+                  <Button size="sm" onClick={marcarSubmetida} className="bg-blue-600 hover:bg-blue-700">
+                    <Send className="w-3.5 h-3.5 mr-1" /> Marcar como Submetida
+                  </Button>
+                )}
+                {!isConsultor && (proposta.status === "em_julgamento" || proposta.status === "submetida") && (
+                  <Button size="sm" onClick={marcarContratada} className="bg-emerald-600 hover:bg-emerald-700">
+                    <Trophy className="w-3.5 h-3.5 mr-1" /> Fui Contratado! → Acompanhamento
+                  </Button>
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>
