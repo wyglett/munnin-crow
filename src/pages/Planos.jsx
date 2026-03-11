@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Check, X, Zap, Star, Crown, Rocket, Gift } from "lucide-react";
+import { Check, X, Zap, Star, Crown, Gift } from "lucide-react";
 
 // ─── Definição dos planos ─────────────────────────────────────────────────────
 
@@ -315,7 +315,7 @@ export default function Planos() {
 
       {/* Cards */}
       <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {planos.map(plano => (
             <CardPlano key={plano.id} plano={plano} />
           ))}
