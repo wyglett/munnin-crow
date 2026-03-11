@@ -57,6 +57,20 @@ export default function Layout({ children, currentPageName }) {
   const [viewAsRole, setViewAsRole] = useState(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showTour, setShowTour] = useState(false);
+  const [showVerComo, setShowVerComo] = useState(false);
+  const verComoRef = React.useRef(null);
+
+  // Close Ver Como on outside click
+  useEffect(() => {
+    if (!showVerComo) return;
+    const handler = (e) => {
+      if (verComoRef.current && !verComoRef.current.contains(e.target)) {
+        setShowVerComo(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [showVerComo]);
 
   useEffect(() => {
     base44.auth.me().then(async (u) => {
