@@ -15,29 +15,38 @@ const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/pub
 const getNavItems = (role, user) => {
   if (role === "consultor") {
     const items = [
+      // Trabalho principal
       { name: "ConsultorDashboard", label: "Tutorias", icon: MessageSquare },
       { name: "PropostasConsultor", label: "Propostas", icon: FileText },
-      { name: "ConsultorGestao", label: "Gestão & Recibos", icon: Receipt },
       { name: "Acompanhamento", label: "Acompanhamento", icon: Activity },
+      // Gestão
+      { name: "ConsultorGestao", label: "Gestão & Recibos", icon: Receipt },
+      // Organização (se aplicável)
+      // Conteúdo & comunidade
       { name: "Comunidade", label: "Comunidade", icon: MessageSquare },
-      { name: "Orientacoes", label: "Minhas Orientações", icon: BookOpen },
       { name: "VooDoCorvo", label: "O Voo do Corvo", icon: Feather },
+      { name: "Orientacoes", label: "Orientações", icon: BookOpen },
+      // Planos
       { name: "Planos", label: "Planos", icon: CreditCard },
     ];
     if (user?.e_organizacao) {
-      items.splice(2, 0, { name: "GestaoOrganizacao", label: "Minha Organização", icon: Building2 });
+      items.splice(3, 0, { name: "GestaoOrganizacao", label: "Minha Organização", icon: Building2 });
     }
     return items;
   }
   return [
+    // Descoberta
     { name: "Home", label: "Editais", icon: Home },
-    { name: "Comunidade", label: "Comunidade", icon: MessageSquare },
+    // Propostas & Projetos
     { name: "MinhasPropostas", label: "Minhas Propostas", icon: FileText },
     { name: "Acompanhamento", label: "Acompanhamento", icon: Activity },
     { name: "MeusRecibos", label: "Recibos / NFs", icon: Receipt },
+    // Apoio & Conhecimento
     { name: "TiraDuvidas", label: "Tira-dúvidas IA", icon: Bot },
-    { name: "Orientacoes", label: "Orientações", icon: BookOpen },
+    { name: "Comunidade", label: "Comunidade", icon: MessageSquare },
     { name: "VooDoCorvo", label: "O Voo do Corvo", icon: Feather },
+    { name: "Orientacoes", label: "Orientações", icon: BookOpen },
+    // Planos
     { name: "Planos", label: "Planos", icon: CreditCard },
   ];
 };
