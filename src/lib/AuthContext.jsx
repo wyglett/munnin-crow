@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
         
         // If we got the app public settings successfully, check if user is authenticated
         if (appParams.token) {
-          await checkUserAuth();
+          await checkUserAuth(publicSettings);
         } else {
           setIsLoadingAuth(false);
           setIsAuthenticated(false);
