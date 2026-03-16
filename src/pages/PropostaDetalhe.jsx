@@ -322,6 +322,35 @@ Faça uma análise crítica da proposta, aponte pontos fortes, lacunas e dê sug
         </Tabs>
       </div>
 
+      {/* Dialog pós-submissão */}
+      <Dialog open={postSubmitDialog} onOpenChange={setPostSubmitDialog}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>🎉 Proposta Submetida!</DialogTitle></DialogHeader>
+          <p className="text-gray-600 text-sm">Sua proposta foi marcada como submetida. Ela foi aprovada/contratada pelo órgão financiador?</p>
+          <div className="flex flex-col gap-3 mt-2">
+            <Button
+              onClick={() => marcarContratada(true)}
+              disabled={abrindoAcomp}
+              className="bg-emerald-600 hover:bg-emerald-700 w-full"
+            >
+              {abrindoAcomp ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Trophy className="w-4 h-4 mr-2" />}
+              Sim, foi contratada! Abrir no Acompanhamento
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => marcarContratada(false)}
+              disabled={abrindoAcomp}
+              className="w-full"
+            >
+              Sim, foi contratada (registrar só)
+            </Button>
+            <Button variant="ghost" onClick={() => setPostSubmitDialog(false)} className="w-full text-gray-500">
+              Ainda não, está em julgamento
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Dialog solicitar consultor */}
       <Dialog open={consultorDialog} onOpenChange={setConsultorDialog}>
         <DialogContent>
