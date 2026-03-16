@@ -53,6 +53,7 @@ function GrupoEstado({ estado, editais, onEdit, onDelete, onDocs }) {
               </div>
               <div className="flex gap-1">
                 <Button size="sm" variant="ghost" onClick={() => onDocs(e)} title="Documentos & IA"><BookOpen className="w-4 h-4 text-indigo-500" /></Button>
+                <Button size="sm" variant="ghost" onClick={() => onAbsorver(e)} title="Absorver Conhecimento"><Brain className="w-4 h-4 text-purple-500" /></Button>
                 <Button size="sm" variant="ghost" onClick={() => onEdit(e)}><Pencil className="w-4 h-4" /></Button>
                 <Button size="sm" variant="ghost" className="text-red-500" onClick={() => onDelete(e.id)}><Trash2 className="w-4 h-4" /></Button>
               </div>
