@@ -228,8 +228,30 @@ export default function EditalDocumentosAdmin({ edital, onUpdate }) {
                                     </a>
                                   )}
                                 </div>
-                                <div className="flex gap-1 flex-shrink-0">
-                                 {doc && (tipo === "perguntas_site" || tipo === "anexo_proposta") && (
+                                <div className="flex flex-col gap-1 flex-shrink-0">
+                                {/* Campo de link para manual_recurso */}
+                                {tipo === "manual_recurso" && !doc && (
+                                  <div className="flex gap-1 items-center">
+                                    <input
+                                      type="url"
+                                      placeholder="Colar URL do site..."
+                                      value={linkInputs[`${etapa.id}-${tipo}`] || ""}
+                                      onChange={e => setLinkInputs(prev => ({ ...prev, [`${etapa.id}-${tipo}`]: e.target.value }))}
+                                      className="text-xs border border-gray-300 rounded px-2 py-1 w-48 focus:outline-none focus:ring-1 focus:ring-teal-400"
+                                    />
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="h-7 text-xs border-teal-300 text-teal-700 hover:bg-teal-50"
+                                      onClick={() => handleLinkDoc(etapa.id, tipo)}
+                                      disabled={!linkInputs[`${etapa.id}-${tipo}`]}
+                                    >
+                                      <Link2 className="w-3 h-3 mr-1" /> Linkar
+                                    </Button>
+                                  </div>
+                                )}
+                                <div className="flex gap-1">
+                                {doc && (tipo === "perguntas_site" || tipo === "anexo_proposta") && (
                                    <Button
                                      size="sm"
                                      variant="outline"
