@@ -68,7 +68,8 @@ export default function AdminEditais() {
   const [importando, setImportando] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
   const [editando, setEditando] = useState(null);
-  const [docsEdital, setDocsEdital] = useState(null); // edital sendo configurado docs
+  const [docsEdital, setDocsEdital] = useState(null);
+  const [absorverEdital, setAbsorverEdital] = useState(null);
   const [form, setForm] = useState({ titulo: "", numero: "", descricao: "", area: "", categoria: "outros_programas", valor_total: "", data_encerramento: "", url_fapes: "", status: "aberto", estado: "ES", orgao: "FAPES" });
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState("empreendedor");
