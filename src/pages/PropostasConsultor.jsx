@@ -116,9 +116,16 @@ export default function PropostasConsultor() {
             <h1 className="text-2xl font-bold text-gray-900">Propostas</h1>
             <p className="text-gray-500 text-sm">Gerencie suas propostas e apoie empreendedores</p>
           </div>
-          <Button onClick={handleCriar} className="bg-indigo-600 hover:bg-indigo-700">
-            <Plus className="w-4 h-4 mr-2" /> Nova Proposta
-          </Button>
+          <div className="flex gap-2">
+            <Link to={createPageUrl("GrupoConsultores")}>
+              <Button variant="outline">
+                <Users2 className="w-4 h-4 mr-2" /> Grupos de Consultores
+              </Button>
+            </Link>
+            <Button onClick={handleCriar} className="bg-indigo-600 hover:bg-indigo-700">
+              <Plus className="w-4 h-4 mr-2" /> Nova Proposta
+            </Button>
+          </div>
         </div>
 
         <Tabs defaultValue="minhas">
