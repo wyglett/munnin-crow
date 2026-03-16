@@ -95,11 +95,14 @@ Faça uma análise crítica da proposta, aponte pontos fortes, lacunas e dê sug
   const aceitarConvite = () => update.mutate({ consultor_status: "em_apoio" });
   const recusarConvite = () => update.mutate({ consultor_status: "recusado" });
 
-  const marcarSubmetida = () => update.mutate({ status: "em_julgamento" });
+  const marcarSubmetida = () => {
+    update.mutate({ status: "em_julgamento" });
+    setPostSubmitDialog(true);
+  };
 
-  const marcarContratada = async () => {
+  const marcarContratada = async (irParaAcomp = true) => {
+    setAbrindoAcomp(true);
     await base44.entities.Proposta.update(id, { status: "contratada" });
-    // Criar acompanhamento de projeto
     const acomp = await base44.entities.AcompanhamentoProjeto.create({
       titulo: proposta.titulo,
       descricao_projeto: proposta.descricao || "",
@@ -109,7 +112,6 @@ Faça uma análise crítica da proposta, aponte pontos fortes, lacunas e dê sug
       consultor_nome: proposta.consultor_nome || null,
       consultor_status: proposta.consultor_email ? "aguardando" : "sem_consultor",
     });
-    // Notificar consultor se houver
     if (proposta.consultor_email) {
       await base44.entities.NotificacaoPlataforma.create({
         user_email: proposta.consultor_email,
@@ -120,7 +122,13 @@ Faça uma análise crítica da proposta, aponte pontos fortes, lacunas e dê sug
         entidade_id: acomp.id,
       });
     }
-    window.location.href = createPageUrl(`ProjetoDetalhe?id=${acomp.id}`);
+    setAbrindoAcomp(false);
+    if (irParaAcomp) {
+      window.location.href = createPageUrl(`ProjetoDetalhe?id=${acomp.id}`);
+    } else {
+      queryClient.invalidateQueries(["propostas"]);
+      setPostSubmitDialog(false);
+    }
   };
 
   if (!proposta) return <div className="flex items-center justify-center h-64"><Loader2 className="w-6 h-6 animate-spin text-indigo-600" /></div>;
