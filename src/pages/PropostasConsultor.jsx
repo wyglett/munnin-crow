@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { FileText, Plus, ArrowLeft, Trash2, Loader2, Pencil, Users, Group } from "lucide-react";
+import { FileText, Plus, ArrowLeft, Trash2, Loader2, Pencil, Users, Users2 } from "lucide-react";
 
 const STATUS_MAP = {
   rascunho: { label: "Rascunho", color: "bg-gray-100 text-gray-700" },
