@@ -229,50 +229,37 @@ export default function EditalDocumentosAdmin({ edital, onUpdate }) {
                                   )}
                                 </div>
                                 <div className="flex flex-col gap-1 flex-shrink-0">
-                                {/* Campo de link para manual_recurso */}
-                                {tipo === "manual_recurso" && !doc && (
-                                  <div className="flex gap-1 items-center">
-                                    <input
-                                      type="url"
-                                      placeholder="Colar URL do site..."
-                                      value={linkInputs[`${etapa.id}-${tipo}`] || ""}
-                                      onChange={e => setLinkInputs(prev => ({ ...prev, [`${etapa.id}-${tipo}`]: e.target.value }))}
-                                      className="text-xs border border-gray-300 rounded px-2 py-1 w-48 focus:outline-none focus:ring-1 focus:ring-teal-400"
-                                    />
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      className="h-7 text-xs border-teal-300 text-teal-700 hover:bg-teal-50"
-                                      onClick={() => handleLinkDoc(etapa.id, tipo)}
-                                      disabled={!linkInputs[`${etapa.id}-${tipo}`]}
-                                    >
-                                      <Link2 className="w-3 h-3 mr-1" /> Linkar
-                                    </Button>
-                                  </div>
-                                )}
-                                <div className="flex gap-1">
-                                {doc && (tipo === "perguntas_site" || tipo === "anexo_proposta") && (
-                                   <Button
-                                     size="sm"
-                                     variant="outline"
-                                     className="h-7 text-xs"
-                                     onClick={() => extrairPerguntas(etapa.id, tipo)}
-                                     disabled={extraindo === `${etapa.id}-${tipo}`}
-                                   >
-                                     {extraindo === `${etapa.id}-${tipo}` ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Sparkles className="w-3 h-3 mr-1" />}
-                                     {tipo === "anexo_proposta" ? "Extrair Seções" : "Extrair Perguntas"}
-                                   </Button>
-                                 )}
-                                  {doc && <Button size="icon" variant="ghost" className="h-7 w-7 text-red-400" onClick={() => removeDoc(etapa.id, doc.id)}><Trash2 className="w-3 h-3" /></Button>}
-                                  <Label htmlFor={`up-${etapa.id}-${tipo}`} className="cursor-pointer">
-                                    <div className={`flex items-center gap-1 text-xs px-2 py-1 rounded border ${doc ? "border-gray-300 text-gray-600" : "border-indigo-300 text-indigo-600 bg-indigo-50"} hover:bg-indigo-50 transition-all`}>
-                                      {isUploading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Upload className="w-3 h-3" />}
-                                      {doc ? "Substituir" : "Upload"}
+                                  {tipo === "manual_recurso" && !doc && (
+                                    <div className="flex gap-1 items-center">
+                                      <input
+                                        type="url"
+                                        placeholder="Colar URL do site..."
+                                        value={linkInputs[`${etapa.id}-${tipo}`] || ""}
+                                        onChange={e => setLinkInputs(prev => ({ ...prev, [`${etapa.id}-${tipo}`]: e.target.value }))}
+                                        className="text-xs border border-gray-300 rounded px-2 py-1 w-48 focus:outline-none focus:ring-1 focus:ring-teal-400"
+                                      />
+                                      <Button size="sm" variant="outline" className="h-7 text-xs border-teal-300 text-teal-700 hover:bg-teal-50" onClick={() => handleLinkDoc(etapa.id, tipo)} disabled={!linkInputs[`${etapa.id}-${tipo}`]}>
+                                        <Link2 className="w-3 h-3 mr-1" /> Linkar
+                                      </Button>
                                     </div>
-                                  </Label>
-                                  <input id={`up-${etapa.id}-${tipo}`} type="file" className="hidden" onChange={e => e.target.files[0] && handleUploadDoc(etapa.id, tipo, e.target.files[0])} accept=".pdf,.doc,.docx,.xlsx,.xls" />
+                                  )}
+                                  <div className="flex gap-1">
+                                    {doc && (tipo === "perguntas_site" || tipo === "anexo_proposta") && (
+                                      <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => extrairPerguntas(etapa.id, tipo)} disabled={extraindo === `${etapa.id}-${tipo}`}>
+                                        {extraindo === `${etapa.id}-${tipo}` ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Sparkles className="w-3 h-3 mr-1" />}
+                                        {tipo === "anexo_proposta" ? "Extrair Seções" : "Extrair Perguntas"}
+                                      </Button>
+                                    )}
+                                    {doc && <Button size="icon" variant="ghost" className="h-7 w-7 text-red-400" onClick={() => removeDoc(etapa.id, doc.id)}><Trash2 className="w-3 h-3" /></Button>}
+                                    <Label htmlFor={`up-${etapa.id}-${tipo}`} className="cursor-pointer">
+                                      <div className={`flex items-center gap-1 text-xs px-2 py-1 rounded border ${doc ? "border-gray-300 text-gray-600" : "border-indigo-300 text-indigo-600 bg-indigo-50"} hover:bg-indigo-50 transition-all`}>
+                                        {isUploading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Upload className="w-3 h-3" />}
+                                        {doc ? "Substituir" : "Upload"}
+                                      </div>
+                                    </Label>
+                                    <input id={`up-${etapa.id}-${tipo}`} type="file" className="hidden" onChange={e => e.target.files[0] && handleUploadDoc(etapa.id, tipo, e.target.files[0])} accept=".pdf,.doc,.docx,.xlsx,.xls" />
                                   </div>
-                                  </div>
+                                </div>
                               </div>
                             </div>
                           );
