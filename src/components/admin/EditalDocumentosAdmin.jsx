@@ -271,7 +271,8 @@ export default function EditalDocumentosAdmin({ edital, onUpdate }) {
                                     </div>
                                   </Label>
                                   <input id={`up-${etapa.id}-${tipo}`} type="file" className="hidden" onChange={e => e.target.files[0] && handleUploadDoc(etapa.id, tipo, e.target.files[0])} accept=".pdf,.doc,.docx,.xlsx,.xls" />
-                                </div>
+                                  </div>
+                                  </div>
                               </div>
                             </div>
                           );
