@@ -162,7 +162,7 @@ export default function Comunidade() {
   };
 
   const channels = [{ id: "geral", titulo: "Geral" }, ...editais.map(e => ({ id: e.id, titulo: e.titulo }))];
-  const currentChannel = channels.find(c => c.id === selectedChannel);
+  const currentChannel = channels.find(c => c.id === selectedChannel) || { id: selectedChannel, titulo: "Canal" };
 
   // Group consecutive messages by same author
   const groupedByDate = groupMessagesByDate(messages);
