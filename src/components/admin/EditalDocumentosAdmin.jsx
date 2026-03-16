@@ -78,6 +78,23 @@ export default function EditalDocumentosAdmin({ edital, onUpdate }) {
     save(novas, null);
   };
 
+  const handleLinkDoc = async (etapaId, tipo) => {
+    const url = linkInputs[`${etapaId}-${tipo}`];
+    if (!url) return;
+    const novas = etapas.map(e => {
+      if (e.id !== etapaId) return e;
+      const docs = [...(e.documentos || [])];
+      const existing = docs.findIndex(d => d.tipo === tipo);
+      const nome = url.replace(/^https?:\/\/(www\.)?/, "").split("/")[0] + " (link)";
+      const novo = { id: Date.now().toString(), nome, tipo, url, instrucoes: "" };
+      if (existing >= 0) docs[existing] = novo; else docs.push(novo);
+      return { ...e, documentos: docs };
+    });
+    setEtapas(novas);
+    setLinkInputs(prev => ({ ...prev, [`${etapaId}-${tipo}`]: "" }));
+    await save(novas, null);
+  };
+
   // extrairTipo: "perguntas_site" → campos do site de submissão | "anexo_proposta" → seções descritivas do anexo
   const extrairPerguntas = async (etapaId, extrairTipo) => {
     const etapa = etapas.find(e => e.id === etapaId);
