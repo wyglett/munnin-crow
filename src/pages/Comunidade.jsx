@@ -197,25 +197,48 @@ export default function Comunidade() {
         </div>
 
         {/* Channel list */}
-        <div className="flex-1 overflow-y-auto py-3">
-          <p className="text-[10px] font-bold text-[#5c5c7a] uppercase tracking-wider px-4 mb-1">Canais de Texto</p>
-          {channels.map(ch => (
-            <button
-              key={ch.id}
-              onClick={() => handleSelectChannel(ch.id)}
-              className={`w-full flex items-center gap-2 px-3 py-1.5 mx-1 rounded-md text-sm transition-all group ${
-                selectedChannel === ch.id
-                  ? "bg-[#3f3f5a] text-white"
-                  : "text-[#8e8ea8] hover:bg-[#2e2e47] hover:text-[#c9c9e3]"
-              }`}
-              style={{ maxWidth: "calc(100% - 8px)" }}
-            >
-              <Hash className="w-4 h-4 flex-shrink-0 opacity-70" />
-              <span className="truncate text-left">
-                {ch.id === "geral" ? "geral" : ch.titulo?.toLowerCase().slice(0, 30)}
-              </span>
-            </button>
-          ))}
+        <div className="flex-1 overflow-y-auto py-3 space-y-1">
+          {/* Canal Geral */}
+          <p className="text-[10px] font-bold text-[#5c5c7a] uppercase tracking-wider px-4 mb-1">Geral</p>
+          <button
+            onClick={() => handleSelectChannel("geral")}
+            className={`w-full flex items-center gap-2 px-3 py-1.5 mx-1 rounded-md text-sm transition-all ${
+              selectedChannel === "geral" ? "bg-[#3f3f5a] text-white" : "text-[#8e8ea8] hover:bg-[#2e2e47] hover:text-[#c9c9e3]"
+            }`}
+            style={{ maxWidth: "calc(100% - 8px)" }}
+          >
+            <Hash className="w-4 h-4 flex-shrink-0 opacity-70" />
+            <span className="truncate text-left">geral</span>
+          </button>
+
+          {/* Editais agrupados por estado */}
+          {Object.entries(editaisPorEstado).map(([uf, lista]) => {
+            const aberto = expandedStates[uf] !== false; // default aberto
+            return (
+              <div key={uf}>
+                <button
+                  onClick={() => toggleState(uf)}
+                  className="w-full flex items-center gap-1 px-3 py-1 text-[10px] font-bold text-[#5c5c7a] uppercase tracking-wider hover:text-[#8e8ea8] transition-colors"
+                >
+                  <ChevronDown className={`w-3 h-3 transition-transform ${aberto ? "" : "-rotate-90"}`} />
+                  {ESTADO_NOMES[uf] || uf}
+                </button>
+                {aberto && lista.map(e => (
+                  <button
+                    key={e.id}
+                    onClick={() => handleSelectChannel(e.id)}
+                    className={`w-full flex items-center gap-2 px-3 py-1.5 mx-1 rounded-md text-xs transition-all ${
+                      selectedChannel === e.id ? "bg-[#3f3f5a] text-white" : "text-[#8e8ea8] hover:bg-[#2e2e47] hover:text-[#c9c9e3]"
+                    }`}
+                    style={{ maxWidth: "calc(100% - 8px)" }}
+                  >
+                    <Hash className="w-3.5 h-3.5 flex-shrink-0 opacity-70" />
+                    <span className="truncate text-left">{e.titulo?.toLowerCase().slice(0, 28)}</span>
+                  </button>
+                ))}
+              </div>
+            );
+          })}
         </div>
 
         {/* User bar at bottom */}
