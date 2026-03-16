@@ -104,8 +104,21 @@ export default function Comunidade() {
 
   const { data: editais = [] } = useQuery({
     queryKey: ["editais-chat"],
-    queryFn: () => base44.entities.Edital.list("-created_date", 50),
+    queryFn: () => base44.entities.Edital.filter({ status: "aberto" }, "-created_date", 100),
   });
+
+  const [expandedStates, setExpandedStates] = useState({});
+  const toggleState = (uf) => setExpandedStates(prev => ({ ...prev, [uf]: !prev[uf] }));
+
+  // Agrupa editais por estado
+  const editaisPorEstado = editais.reduce((acc, e) => {
+    const uf = e.estado || "Outros";
+    if (!acc[uf]) acc[uf] = [];
+    acc[uf].push(e);
+    return acc;
+  }, {});
+
+  const ESTADO_NOMES = { ES: "🟢 FAPES — ES", RJ: "🟢 FAPERJ — RJ", SP: "🟢 FAPESP — SP", MG: "🟢 FAPEMIG — MG" };
 
   const { data: messages = [], refetch } = useQuery({
     queryKey: ["chat", selectedChannel],
