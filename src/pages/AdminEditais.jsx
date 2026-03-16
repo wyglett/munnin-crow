@@ -204,12 +204,13 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
                 const estados = [...new Set([...ordem, ...Object.keys(grupos)])].filter(k => grupos[k]);
                 return estados.map(uf => (
                   <GrupoEstado
-                    key={uf}
-                    estado={uf}
-                    editais={grupos[uf]}
-                    onEdit={openEdit}
-                    onDelete={(id) => deleteEdital.mutate(id)}
-                    onDocs={setDocsEdital}
+                   key={uf}
+                   estado={uf}
+                   editais={grupos[uf]}
+                   onEdit={openEdit}
+                   onDelete={(id) => deleteEdital.mutate(id)}
+                   onDocs={setDocsEdital}
+                   onAbsorver={setAbsorverEdital}
                   />
                 ));
               })()}
