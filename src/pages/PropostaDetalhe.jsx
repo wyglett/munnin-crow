@@ -35,6 +35,8 @@ export default function PropostaDetalhe() {
   const [consultorDialog, setConsultorDialog] = useState(false);
   const [consultorEmail, setConsultorEmail] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [postSubmitDialog, setPostSubmitDialog] = useState(false);
+  const [abrindoAcomp, setAbrindoAcomp] = useState(false);
   const queryClient = useQueryClient();
 
   useEffect(() => { base44.auth.me().then(setUser).catch(() => {}); }, []);
