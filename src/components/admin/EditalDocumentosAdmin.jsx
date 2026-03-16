@@ -27,6 +27,7 @@ export default function EditalDocumentosAdmin({ edital, onUpdate }) {
   const [extraindo, setExtraindo] = useState(null);
   const [saving, setSaving] = useState(false);
   const [expandedEtapas, setExpandedEtapas] = useState({});
+  const [linkInputs, setLinkInputs] = useState({}); // { "etapaId-tipo": url }
 
   const save = async (novasEtapas, novoTreinamento) => {
     setSaving(true);
