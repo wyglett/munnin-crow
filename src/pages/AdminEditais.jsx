@@ -335,8 +335,18 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
             </div>
             <div><Label>Link do Edital</Label><Input value={form.url_fapes} onChange={(e) => setForm({ ...form, url_fapes: e.target.value })} /></div>
             <div><Label>Descrição</Label><Textarea value={form.descricao} onChange={(e) => setForm({ ...form, descricao: e.target.value })} rows={3} /></div>
-            <DialogFooter>
+            <DialogFooter className="flex-wrap gap-2">
               <Button type="button" variant="outline" onClick={() => setFormOpen(false)}>Cancelar</Button>
+              {editando && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="border-purple-300 text-purple-700 hover:bg-purple-50"
+                  onClick={() => { setFormOpen(false); setAbsorverEdital(editando); }}
+                >
+                  <Brain className="w-4 h-4 mr-2" /> Absorver Conhecimento
+                </Button>
+              )}
               <Button type="submit" disabled={createEdital.isPending} className="bg-indigo-600 hover:bg-indigo-700">
                 {createEdital.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                 {editando ? "Salvar" : "Cadastrar"}
@@ -345,6 +355,18 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* Absorver Conhecimento Modal */}
+      <AbsorverConhecimentoModal
+        open={!!absorverEdital}
+        onClose={() => setAbsorverEdital(null)}
+        editalDestino={absorverEdital}
+        editaisDisponiveis={editais}
+        onSaved={() => {
+          queryClient.invalidateQueries({ queryKey: ["editais"] });
+          setAbsorverEdital(null);
+        }}
+      />
     </div>
   );
 }
