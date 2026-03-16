@@ -25,7 +25,7 @@ const ESTADO_LABELS = {
   SP: "São Paulo — FAPESP", MG: "Minas Gerais — FAPEMIG",
 };
 
-function GrupoEstado({ estado, editais, onEdit, onDelete, onDocs }) {
+function GrupoEstado({ estado, editais, onEdit, onDelete, onDocs, onAbsorver }) {
   const [aberto, setAberto] = useState(true);
   const label = ESTADO_LABELS[estado] || estado;
   return (
