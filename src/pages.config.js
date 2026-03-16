@@ -69,6 +69,7 @@ import TiraDuvidas from './pages/TiraDuvidas';
 import VooCorvo from './pages/VooCorvo';
 import VooDoCorvo from './pages/VooDoCorvo';
 import Orientacoes from './pages/Orientacoes';
+import GrupoConsultores from './pages/GrupoConsultores';
 import __Layout from './Layout.jsx';
 
 
@@ -95,6 +96,7 @@ export const PAGES = {
     "VooCorvo": VooCorvo,
     "VooDoCorvo": VooDoCorvo,
     "Orientacoes": Orientacoes,
+    "GrupoConsultores": GrupoConsultores,
 }
 
 export const pagesConfig = {
