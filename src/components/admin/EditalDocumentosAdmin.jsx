@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Trash2, Upload, Loader2, FileText, Sparkles, Brain, ChevronDown, ChevronUp, GripVertical, MessageSquarePlus } from "lucide-react";
+import { Plus, Trash2, Upload, Loader2, FileText, Sparkles, Brain, ChevronDown, ChevronUp, GripVertical, MessageSquarePlus, Link2, X } from "lucide-react";
 import ConversaAdminIA from "./ConversaAdminIA";
 
 const TIPO_LABELS = {
