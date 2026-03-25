@@ -337,6 +337,42 @@ function V2Layout({ user, isAdmin, effectiveRole, viewAsRole, setViewAsRole, cur
           }
         </div>
       </main>
+
+      {/* Footer with admin "Ver Como" option */}
+      {isAdmin && !viewAsRole && currentPageName !== "Home" && (
+        <footer className={`flex-shrink-0 border-t ${isLight ? "bg-white border-slate-200" : "bg-[#0c0f1a]/50 border-white/5"} px-4 py-3`}>
+          <div className="flex items-center justify-center gap-2">
+            <button
+              onClick={() => setViewAsRole("empreendedor")}
+              className={`text-xs px-3 py-1.5 rounded-lg transition-all ${isLight ? "text-slate-600 hover:bg-indigo-50 hover:text-indigo-700" : "text-slate-400 hover:bg-white/5 hover:text-white"}`}
+            >
+              Ver como Empreendedor
+            </button>
+            <div className={`w-px h-4 ${isLight ? "bg-slate-200" : "bg-white/10"}`} />
+            <button
+              onClick={() => setViewAsRole("consultor")}
+              className={`text-xs px-3 py-1.5 rounded-lg transition-all ${isLight ? "text-slate-600 hover:bg-indigo-50 hover:text-indigo-700" : "text-slate-400 hover:bg-white/5 hover:text-white"}`}
+            >
+              Ver como Consultor
+            </button>
+          </div>
+        </footer>
+      )}
+
+      {/* Footer showing active "Ver Como" mode */}
+      {viewAsRole && (
+        <footer className={`flex-shrink-0 border-t ${isLight ? "bg-amber-50 border-amber-200" : "bg-amber-500/10 border-amber-500/30"} px-4 py-2`}>
+          <div className="flex items-center justify-center gap-2 text-xs">
+            <span className={isLight ? "text-amber-700" : "text-amber-300"}>Modo visualização ativo: {viewAsRole === "empreendedor" ? "Empreendedor" : "Consultor"}</span>
+            <button
+              onClick={() => setViewAsRole(null)}
+              className={`ml-2 px-2 py-0.5 rounded transition-all ${isLight ? "text-amber-600 hover:bg-amber-200" : "text-amber-200 hover:bg-amber-500/20"}`}
+            >
+              Voltar
+            </button>
+          </div>
+        </footer>
+      )}
     </div>
   );
 }
