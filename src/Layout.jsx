@@ -9,6 +9,8 @@ import OnboardingModal from "./components/onboarding/OnboardingModal";
 import NotificacoesPanel from "./components/notificacoes/NotificacoesPanel";
 import GuidedTour from "./components/onboarding/GuidedTour";
 import BannerPendente from "./components/layout/BannerPendente";
+import FirstAccessGuide from "./components/onboarding/FirstAccessGuide";
+import AppearanceFloatingPanel from "./components/layout/AppearanceFloatingPanel";
 import { getAppearance } from "@/hooks/useAppearance";
 import V2HomePage from "@/components/layout/V2HomePage";
 import PontosButton from "@/components/gamification/PontosButton";
@@ -386,6 +388,7 @@ export default function Layout({ children, currentPageName }) {
   const [showTour, setShowTour] = useState(false);
   const [showVerComo, setShowVerComo] = useState(false);
   const [appearance, setAppearance] = useState(getAppearance);
+  const [showFirstAccessGuide, setShowFirstAccessGuide] = useState(false);
   const verComoRef = useRef(null);
 
   // Re-read appearance on storage change (across tabs or same tab)
@@ -396,6 +399,16 @@ export default function Layout({ children, currentPageName }) {
     const interval = setInterval(() => setAppearance(getAppearance()), 300);
     return () => { window.removeEventListener("storage", handler); clearInterval(interval); };
   }, []);
+
+  // Check for first access
+  useEffect(() => {
+    if (!user) return;
+    const hasSeenFirstAccess = localStorage.getItem(`first_access_${user.email}`);
+    if (!hasSeenFirstAccess && user.perfil_concluido) {
+      setShowFirstAccessGuide(true);
+      localStorage.setItem(`first_access_${user.email}`, "true");
+    }
+  }, [user]);
 
   useEffect(() => {
     if (!showVerComo) return;
@@ -429,6 +442,11 @@ export default function Layout({ children, currentPageName }) {
     showOnboarding, setShowOnboarding, setUser,
   };
 
+  const handleAppearanceChange = (newAppearance) => {
+    localStorage.setItem("appearance", JSON.stringify(newAppearance));
+    setAppearance(newAppearance);
+  };
+
   return (
     <>
       {appearance.layout === "v2"
@@ -437,6 +455,23 @@ export default function Layout({ children, currentPageName }) {
       }
       <PontosNotificacao />
       {showTour && <GuidedTour onFinish={() => setShowTour(false)} />}
+      
+      {/* Show appearance floating panel on first access */}
+      {showFirstAccessGuide && user && (
+        <AppearanceFloatingPanel
+          isLight={appearance.tema === "light"}
+          onThemeChange={(tema) => handleAppearanceChange({ ...appearance, tema })}
+          onLayoutChange={(layout) => handleAppearanceChange({ ...appearance, layout })}
+          currentLayout={appearance.layout}
+        />
+      )}
+
+      <FirstAccessGuide
+        open={showFirstAccessGuide}
+        onClose={() => setShowFirstAccessGuide(false)}
+        onAppearanceChange={handleAppearanceChange}
+      />
+
       <OnboardingModal
         user={user}
         open={showOnboarding}
