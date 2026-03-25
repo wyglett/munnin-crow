@@ -326,7 +326,7 @@ export default function Home() {
 
         {/* Step 3: Editais List */}
         {selectedState && selectedCategory && (
-          <EditaisLista editais={categoryEditais} category={selectedCategory} onBack={goBack} onSelect={setSelectedEdital} />
+          <EditaisLista editais={categoryEditais} category={selectedCategory} onBack={goBack} onSelect={setSelectedEdital} isLight={isLight} />
         )}
       </div>
 
