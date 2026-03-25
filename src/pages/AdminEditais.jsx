@@ -242,38 +242,40 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
             <div className="space-y-6">
 
             {activeTab === "editais" && (
-            <div className="flex flex-wrap gap-3">
-              <Button onClick={importar} disabled={importando} className="bg-indigo-600 hover:bg-indigo-700">
-                {importando ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
-                {importando ? "Importando editais..." : "Importar Editais (ES, RJ, SP, MG)"}
-              </Button>
-              <Button onClick={openNew} variant="outline"><Plus className="w-4 h-4 mr-2" /> Cadastrar Edital</Button>
-            </div>
+              <div className="space-y-4">
+                <div className="flex flex-wrap gap-3">
+                  <Button onClick={importar} disabled={importando} className="bg-indigo-600 hover:bg-indigo-700">
+                    {importando ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
+                    {importando ? "Importando editais..." : "Importar Editais (ES, RJ, SP, MG)"}
+                  </Button>
+                  <Button onClick={openNew} variant="outline"><Plus className="w-4 h-4 mr-2" /> Cadastrar Edital</Button>
+                </div>
 
-            <div className="space-y-3">
-              {/* Agrupa por estado */}
-              {(() => {
-                const grupos = {};
-                editais.forEach(e => {
-                  const uf = e.estado || "ES";
-                  if (!grupos[uf]) grupos[uf] = [];
-                  grupos[uf].push(e);
-                });
-                const ordem = ["ES", "RJ", "SP", "MG"];
-                const estados = [...new Set([...ordem, ...Object.keys(grupos)])].filter(k => grupos[k]);
-                return estados.map(uf => (
-                  <GrupoEstado
-                   key={uf}
-                   estado={uf}
-                   editais={grupos[uf]}
-                   onEdit={openEdit}
-                   onDelete={(id) => deleteEdital.mutate(id)}
-                   onDocs={setDocsEdital}
-                   onAbsorver={setAbsorverEdital}
-                  />
-                ));
-              })()}
-            </div>
+                <div className="space-y-3">
+                  {/* Agrupa por estado */}
+                  {(() => {
+                    const grupos = {};
+                    editais.forEach(e => {
+                      const uf = e.estado || "ES";
+                      if (!grupos[uf]) grupos[uf] = [];
+                      grupos[uf].push(e);
+                    });
+                    const ordem = ["ES", "RJ", "SP", "MG"];
+                    const estados = [...new Set([...ordem, ...Object.keys(grupos)])].filter(k => grupos[k]);
+                    return estados.map(uf => (
+                      <GrupoEstado
+                       key={uf}
+                       estado={uf}
+                       editais={grupos[uf]}
+                       onEdit={openEdit}
+                       onDelete={(id) => deleteEdital.mutate(id)}
+                       onDocs={setDocsEdital}
+                       onAbsorver={setAbsorverEdital}
+                      />
+                    ));
+                  })()}
+                </div>
+              </div>
             )}
 
             {activeTab === "usuarios" && <UsuariosAdmin />}
@@ -371,100 +373,6 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
     </div>
   );
 }
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-indigo-600" />
-                  Criar Acesso Direto
-                </CardTitle>
-                <p className="text-xs text-slate-500 font-normal">
-                  Envia o convite <strong>e já define o tipo de usuário</strong> — assim que ele entrar pela primeira vez o role já estará configurado automaticamente.
-                </p>
-              </CardHeader>
-              <CardContent>
-                <div className="flex gap-3 flex-wrap">
-                  <Input value={inviteEmail} onChange={(e) => { setInviteEmail(e.target.value); setInviteMsg(null); }} placeholder="email@exemplo.com" className="flex-1 min-w-[200px]" />
-                  <Select value={inviteRole} onValueChange={setInviteRole}>
-                    <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="empreendedor">Empreendedor</SelectItem>
-                      <SelectItem value="consultor">Consultor</SelectItem>
-                      <SelectItem value="admin">Administrador</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    onClick={async () => {
-                      if (!inviteEmail || inviting) return;
-                      setInviting(true);
-                      setInviteMsg(null);
-                      // Convida o usuário com a role escolhida
-                      await base44.users.inviteUser(inviteEmail, inviteRole);
-                      // Tenta atualizar o tipo_usuario caso o usuário já exista na lista
-                      const existente = users.find(u => u.email === inviteEmail);
-                      if (existente) {
-                        await base44.entities.User.update(existente.id, {
-                          role: inviteRole,
-                          tipo_usuario: inviteRole !== "admin" ? inviteRole : existente.tipo_usuario,
-                          perfil_concluido: true,
-                          acesso_liberado: true,
-                        });
-                        queryClient.invalidateQueries({ queryKey: ["users"] });
-                      }
-                      setInviteMsg({ ok: true, text: `Acesso criado para ${inviteEmail} como ${inviteRole}.` });
-                      setInviteEmail("");
-                      setInviting(false);
-                    }}
-                    disabled={inviting || !inviteEmail}
-                    className="bg-indigo-600 hover:bg-indigo-700"
-                  >
-                    {inviting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Criando...</> : <><Zap className="w-4 h-4 mr-2" />Criar Acesso</>}
-                  </Button>
-                </div>
-                {inviteMsg && (
-                  <p className={`text-xs mt-2 ${inviteMsg.ok ? "text-green-600" : "text-red-600"}`}>{inviteMsg.text}</p>
-                )}
-              </CardContent>
-            </Card>
-
-            <div className="space-y-2">
-              {users.map(u => {
-                const isCurrentUser = currentUser?.email === u.email;
-                const isCurrentUserAdmin = currentUser?.role === "admin";
-                const canChangeRole = isCurrentUserAdmin && !isCurrentUser;
-                return (
-                  <div key={u.id} className="p-4 bg-white rounded-lg border flex items-center justify-between gap-3">
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-900 truncate">{u.full_name || u.email} {isCurrentUser && <span className="text-xs text-indigo-600">(Você)</span>}</p>
-                      <p className="text-sm text-gray-500 truncate">{u.email}</p>
-                      {u.tipo_usuario && u.tipo_usuario !== u.role && (
-                        <p className="text-xs text-amber-600 mt-0.5">tipo_usuario: {u.tipo_usuario} → role será sincronizado</p>
-                      )}
-                    </div>
-                    <div className="relative">
-                      <Select 
-                        value={u.role || "empreendedor"} 
-                        onValueChange={(v) => updateRole.mutate({ id: u.id, role: v })}
-                        disabled={!canChangeRole || updateRole.isPending}
-                      >
-                        <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="empreendedor">Empreendedor</SelectItem>
-                          <SelectItem value="consultor">Consultor</SelectItem>
-                          <SelectItem value="admin">Admin</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      {updateRole.isPending && updateRole.variables?.id === u.id && (
-                        <div className="absolute inset-0 bg-white/80 flex items-center justify-center rounded">
-                          <Loader2 className="w-4 h-4 animate-spin text-indigo-600" />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </TabsContent>
-        </Tabs>
-      </div>
 
       {/* Documentos & IA Dialog */}
       <Dialog open={!!docsEdital} onOpenChange={() => setDocsEdital(null)}>
