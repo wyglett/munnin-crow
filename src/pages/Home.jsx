@@ -280,7 +280,7 @@ export default function Home() {
         {/* Breadcrumb */}
         {selectedState && (
           <div className="flex items-center gap-2 mb-6 text-sm">
-            <button onClick={() => { setSelectedState(null); setSelectedCategory(null); }} className="flex items-center gap-1 text-white/40 hover:text-white/70 transition-colors">
+            <button onClick={() => { setSelectedState(null); setSelectedCategory(null); }} className={`flex items-center gap-1 transition-colors ${breadCrumbBtn}`}>
               <MapPin className="w-3.5 h-3.5" /> Estado
             </button>
             <ChevronRight className="w-3 h-3 text-white/20" />
