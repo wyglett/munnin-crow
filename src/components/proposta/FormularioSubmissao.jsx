@@ -253,11 +253,6 @@ Retorne o documento completo em texto puro, bem estruturado com títulos de seç
                         {campo.pergunta}
                       </label>
                       <div className="flex items-center gap-1 flex-shrink-0" onClick={e => e.stopPropagation()}>
-                        {!campo.concluido && (
-                          <Button size="icon" variant="ghost" className="h-7 w-7 text-indigo-400 hover:text-indigo-600" onClick={() => abrirChat(campo.id)} title="Pedir ajuda à IA">
-                            <Sparkles className="w-3.5 h-3.5" />
-                          </Button>
-                        )}
                         <Button size="icon" variant="ghost" className={`h-7 w-7 ${campo.concluido ? "text-green-600" : "text-gray-400"}`} onClick={() => toggleConcluido(campo.id, campo.concluido)}>
                           {campo.concluido ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
                         </Button>
