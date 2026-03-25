@@ -309,17 +309,17 @@ export default function GlowingRunes({ isLight = false, intensity = "normal" }) 
           style={{
             cursor: "pointer",
             filter: hoveredRune === "right-5"
-              ? `drop-shadow(0 0 12px #00acc1) drop-shadow(0 0 24px #00acc180)`
+              ? `drop-shadow(0 0 8px #00acc1) drop-shadow(0 0 16px #00acc1) drop-shadow(0 0 24px #00acc1)`
               : "none",
-            transition: "filter 0.3s ease"
+            transition: "filter 0.2s ease"
           }}
         >
           {hoveredRune === "right-5" && (
-            <circle cx="0" cy="0" r="22" fill="none" stroke="#00acc1" strokeWidth="1" opacity="0.3" />
+            <circle cx="0" cy="0" r="22" fill="none" stroke="#00acc1" strokeWidth="1" opacity="0.4" />
           )}
-          <line x1="-8" y1="-13" x2="-8" y2="13" stroke={color2} strokeWidth="1.8" />
-          <line x1="8" y1="-13" x2="8" y2="13" stroke={color2} strokeWidth="1.8" />
-          <line x1="-8" y1="0" x2="8" y2="0" stroke={color2} strokeWidth="1.8" />
+          <line x1="-8" y1="-13" x2="-8" y2="13" stroke={hoveredRune === "right-5" ? "#00acc1" : color2} strokeWidth={hoveredRune === "right-5" ? "2.2" : "1.8"} />
+          <line x1="8" y1="-13" x2="8" y2="13" stroke={hoveredRune === "right-5" ? "#00acc1" : color2} strokeWidth={hoveredRune === "right-5" ? "2.2" : "1.8"} />
+          <line x1="-8" y1="0" x2="8" y2="0" stroke={hoveredRune === "right-5" ? "#00acc1" : color2} strokeWidth={hoveredRune === "right-5" ? "2.2" : "1.8"} />
         </g>
       </svg>
     </div>
