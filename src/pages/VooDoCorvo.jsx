@@ -77,9 +77,9 @@ function calcularPontosTotais(tarefasConcluidas, trilha) {
 }
 
 // ─── Componente de tarefa ──────────────────────────────────────────────────────
-function TarefaItem({ tarefa, concluida, onMarcar, loading, isDiaria }) {
+function TarefaItem({ tarefa, concluida, onMarcar, loading, isDiaria, isLight = true }) {
   return (
-    <div className={`flex items-start gap-3 p-4 rounded-xl border transition-all ${concluida ? "border-green-200 bg-green-50/50" : "border-gray-200 bg-white hover:border-indigo-200"}`}>
+    <div className={`flex items-start gap-3 p-4 rounded-xl border transition-all ${concluida ? "border-green-200 bg-green-50/50" : isLight ? "border-gray-200 bg-white hover:border-indigo-200" : "border-white/10 bg-white/5 hover:border-indigo-400/40"}`}>
       <div className="text-2xl flex-shrink-0 mt-0.5">{tarefa.icone}</div>
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
