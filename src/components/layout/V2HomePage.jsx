@@ -339,22 +339,38 @@ export default function V2HomePage({ user, isAdmin, effectiveRole }) {
     [firstName]
   );
 
+  const rootBg = isLight
+    ? "linear-gradient(160deg, #f1f5f9 0%, #e2e8f0 50%, #f8fafc 100%)"
+    : "linear-gradient(160deg, #0a0e1a 0%, #0f172a 40%, #150d2e 100%)";
+
+  const textPrimary   = isLight ? "text-slate-900" : "text-white";
+  const textSecondary = isLight ? "text-slate-400" : "text-white/30";
+  const textMuted     = isLight ? "text-slate-500" : "text-white/60";
+  const avatarIcon    = isLight ? "text-indigo-600" : "text-indigo-300";
+  const avatarBg      = isLight ? "bg-indigo-100" : "bg-indigo-600/30";
+  const logoFilter    = isLight ? "none" : "drop-shadow(0 0 4px rgba(255,255,255,0.6))";
+  const logoutCls     = isLight ? "text-slate-400 hover:text-red-500" : "text-white/30 hover:text-red-400";
+
   return (
     <div
       className="v2-home min-h-screen relative overflow-hidden"
-      style={{ background: "linear-gradient(160deg, #0a0e1a 0%, #0f172a 40%, #150d2e 100%)" }}
+      style={{ background: rootBg }}
     >
       {/* Background orbs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <motion.div
           className="absolute top-[-10%] left-[-5%] w-[50vw] h-[50vw] rounded-full"
-          style={{ background: "radial-gradient(circle, #4f46e511 0%, transparent 70%)" }}
+          style={{ background: isLight
+            ? "radial-gradient(circle, #6366f118 0%, transparent 70%)"
+            : "radial-gradient(circle, #4f46e511 0%, transparent 70%)" }}
           animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
           transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
           className="absolute bottom-[-10%] right-[-5%] w-[60vw] h-[60vw] rounded-full"
-          style={{ background: "radial-gradient(circle, #7c3aed0d 0%, transparent 70%)" }}
+          style={{ background: isLight
+            ? "radial-gradient(circle, #8b5cf618 0%, transparent 70%)"
+            : "radial-gradient(circle, #7c3aed0d 0%, transparent 70%)" }}
           animate={{ scale: [1.1, 1, 1.1], opacity: [0.4, 0.7, 0.4] }}
           transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
         />
@@ -367,20 +383,20 @@ export default function V2HomePage({ user, isAdmin, effectiveRole }) {
             src={LOGO_URL}
             alt="Munnin Crow"
             className="h-10 w-auto object-contain"
-            style={{ filter: "drop-shadow(0 0 4px rgba(255,255,255,0.6))" }}
+            style={{ filter: logoFilter }}
           />
           <div className="flex items-center gap-3">
             <NotificacoesPanel user={user} />
             <Link to={createPageUrl("Perfil")} className="flex items-center gap-2 group">
               {user?.avatar_url
                 ? <img src={user.avatar_url} alt="" className="w-8 h-8 rounded-full object-cover ring-2 ring-indigo-500/40" />
-                : <div className="w-8 h-8 rounded-full bg-indigo-600/30 flex items-center justify-center"><User className="w-4 h-4 text-indigo-300" /></div>
+                : <div className={`w-8 h-8 rounded-full ${avatarBg} flex items-center justify-center`}><User className={`w-4 h-4 ${avatarIcon}`} /></div>
               }
-              <span className="text-sm text-white/60 group-hover:text-white transition-colors hidden sm:block">{user?.full_name?.split(" ")[0]}</span>
+              <span className={`text-sm ${textMuted} group-hover:${isLight ? "text-slate-900" : "text-white"} transition-colors hidden sm:block`}>{user?.full_name?.split(" ")[0]}</span>
             </Link>
             <button
               onClick={() => base44.auth.logout(window.location.origin)}
-              className="text-white/30 hover:text-red-400 transition-colors"
+              className={`${logoutCls} transition-colors`}
               title="Sair"
             >
               <LogOut className="w-4 h-4" />
@@ -395,8 +411,8 @@ export default function V2HomePage({ user, isAdmin, effectiveRole }) {
           transition={{ duration: 0.7 }}
           className="mb-10"
         >
-          <p className="text-white/30 text-xs uppercase tracking-[0.2em] font-bold mb-2">Plataforma Munnin Crow</p>
-          <h1 className="text-3xl md:text-4xl font-black text-white leading-snug">
+          <p className={`${textSecondary} text-xs uppercase tracking-[0.2em] font-bold mb-2`}>Plataforma Munnin Crow</p>
+          <h1 className={`text-3xl md:text-4xl font-black ${textPrimary} leading-snug`}>
             {greeting}
           </h1>
         </motion.div>
@@ -404,7 +420,7 @@ export default function V2HomePage({ user, isAdmin, effectiveRole }) {
         {/* Blocks grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {blocks.map((block, i) => (
-            <NavBlock key={block.name} block={block} index={i} />
+            <NavBlock key={block.name} block={block} index={i} isLight={isLight} />
           ))}
         </div>
 
@@ -413,11 +429,11 @@ export default function V2HomePage({ user, isAdmin, effectiveRole }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
-          className="flex items-center gap-4 mt-10 text-white/20 text-xs"
+          className={`flex items-center gap-4 mt-10 ${textSecondary} text-xs`}
         >
-          <Link to={createPageUrl("SobreNos")} className="hover:text-white/50 transition-colors">Sobre Nós</Link>
+          <Link to={createPageUrl("SobreNos")} className={`hover:${isLight ? "text-slate-700" : "text-white/50"} transition-colors`}>Sobre Nós</Link>
           <span>·</span>
-          <Link to={createPageUrl("Perfil")} className="hover:text-white/50 transition-colors">Perfil & Aparência</Link>
+          <Link to={createPageUrl("Perfil")} className={`hover:${isLight ? "text-slate-700" : "text-white/50"} transition-colors`}>Perfil & Aparência</Link>
         </motion.div>
       </div>
     </div>
