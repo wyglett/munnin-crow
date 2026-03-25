@@ -344,14 +344,14 @@ export default function ModelosPropostaAdmin() {
       {publicados.length > 0 && (
         <div className="space-y-2">
           <p className="text-xs font-bold text-green-700 uppercase tracking-wider">Publicados</p>
-          {publicados.map(m => <ModeloCard key={m.id} modelo={m} onEdit={openEdit} onDelete={id => excluir.mutate(id)} onToggleStatus={m => toggleStatus.mutate(m)} />)}
+          {publicados.map(m => <ModeloCard key={m.id} modelo={m} onEdit={openEdit} onDelete={id => excluir.mutate(id)} onToggleStatus={m => toggleStatus.mutate(m)} onEditTemplate={setTemplateModelo} />)}
         </div>
       )}
 
       {rascunhos.length > 0 && (
         <div className="space-y-2">
           <p className="text-xs font-bold text-yellow-700 uppercase tracking-wider">Rascunhos</p>
-          {rascunhos.map(m => <ModeloCard key={m.id} modelo={m} onEdit={openEdit} onDelete={id => excluir.mutate(id)} onToggleStatus={m => toggleStatus.mutate(m)} />)}
+          {rascunhos.map(m => <ModeloCard key={m.id} modelo={m} onEdit={openEdit} onDelete={id => excluir.mutate(id)} onToggleStatus={m => toggleStatus.mutate(m)} onEditTemplate={setTemplateModelo} />)}
         </div>
       )}
 
