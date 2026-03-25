@@ -61,8 +61,25 @@ const FEATURES = [
 ];
 
 export default function SobreNos() {
+  const [isLight, setIsLight] = useState(() => getAppearance().tema === "light");
+  useEffect(() => {
+    const iv = setInterval(() => setIsLight(getAppearance().tema === "light"), 300);
+    return () => clearInterval(iv);
+  }, []);
+
+  const rootBg = isLight
+    ? "linear-gradient(135deg, #eef2ff 0%, #f1f5f9 50%, #faf5ff 100%)"
+    : "linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)";
+
+  const textMain = isLight ? "text-slate-900" : "text-white";
+  const textSub  = isLight ? "text-slate-500" : "text-slate-400";
+  const cardBg   = isLight ? "bg-white/80 border-slate-200" : "bg-white/5 border-white/10";
+  const orbA     = isLight ? "bg-indigo-400/15" : "bg-indigo-600/10";
+  const orbB     = isLight ? "bg-purple-400/12" : "bg-purple-600/10";
+
   return (
-    <div className="min-h-screen overflow-hidden" style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)" }}>
+    <div className="min-h-screen overflow-hidden relative" style={{ background: rootBg }}>
+      <NorseBackground isLight={isLight} intensity="subtle" />
       {/* Animated background orbs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <motion.div
