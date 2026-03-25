@@ -10,6 +10,7 @@ import NotificacoesPanel from "./components/notificacoes/NotificacoesPanel";
 import GuidedTour from "./components/onboarding/GuidedTour";
 import BannerPendente from "./components/layout/BannerPendente";
 import { getAppearance } from "@/hooks/useAppearance";
+import V2HomePage from "@/components/layout/V2HomePage";
 
 const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/user_699eeda5be72b683e3bedcf3/7507bc7bf_e6e55591-30ba-4237-91e5-2d46775150cf.png";
 
