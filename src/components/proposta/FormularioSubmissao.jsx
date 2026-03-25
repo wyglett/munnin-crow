@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { CheckCircle, Lock, Unlock, Loader2, MessageSquare, Download, FileText, FilePlus } from "lucide-react";
+import { CheckCircle, Lock, Unlock, Loader2, MessageSquare, Download, FileText, FilePlus, Sparkles } from "lucide-react";
 import { marcarAtividade } from "@/components/gamification/gamificacao";
 import AIChatField from "@/components/ai/AIChatField";
 import GerarPropostaCompleta from "@/components/ai/GerarPropostaCompleta";
@@ -217,6 +217,7 @@ Retorne o documento completo em texto puro, bem estruturado com títulos de seç
           <div className="flex gap-2 ml-auto flex-wrap">
             <GerarPropostaCompleta
               edital={edital}
+              propostaId={proposta?.id}
               campos={campos}
               onApply={(novosCampos) => setCampos(novosCampos)}
             />

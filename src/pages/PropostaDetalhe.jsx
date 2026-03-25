@@ -168,7 +168,7 @@ Faça uma análise crítica da proposta, aponte pontos fortes, lacunas e dê sug
                   </Button>
                 )}
                 {!isConsultor && (proposta.status === "em_julgamento" || proposta.status === "submetida") && (
-                  <Button size="sm" onClick={marcarContratada} className="bg-emerald-600 hover:bg-emerald-700">
+                  <Button size="sm" onClick={() => marcarContratada(true)} className="bg-emerald-600 hover:bg-emerald-700">
                     <Trophy className="w-3.5 h-3.5 mr-1" /> Fui Contratado! → Acompanhamento
                   </Button>
                 )}
