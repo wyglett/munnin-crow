@@ -96,10 +96,7 @@ html[data-tema="light"] body {
   background: #f1f5f9;
 }
 
-html[data-tema="light"] .card,
-html[data-tema="light"] [class*="rounded"][class*="border"] {
-  background: #ffffff;
-}
+/* intentionally removed broad rounded+border override — caused V2 nav blocks to go white */
 
 /* Headings and primary text in light content areas */
 html[data-tema="light"] .text-gray-900 { color: #0f172a !important; }
