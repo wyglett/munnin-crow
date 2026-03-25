@@ -274,8 +274,13 @@ function NavBlock({ block, index, isLight }) {
           <div
             className="absolute inset-0 rounded-2xl border transition-all duration-300"
             style={{
-              borderColor: hovered ? `${block.accent}88` : `${block.accent}22`,
-              boxShadow: hovered ? `0 0 30px ${block.accent}44, inset 0 0 30px ${block.accent}11` : "none",
+              borderColor: isLight
+                ? hovered ? `${block.accent}99` : `${c1}33`
+                : hovered ? `${block.accent}88` : `${block.accent}22`,
+              boxShadow: isLight
+                ? hovered ? `0 4px 20px ${c1}22` : "0 1px 4px rgba(0,0,0,0.06)"
+                : hovered ? `0 0 30px ${block.accent}44, inset 0 0 30px ${block.accent}11` : "none",
+              ...(isLight && { backgroundColor: "#ffffff" }),
             }}
           />
 
@@ -287,12 +292,12 @@ function NavBlock({ block, index, isLight }) {
               className="w-10 h-10 rounded-xl flex items-center justify-center"
               style={{ background: `${block.accent}33`, border: `1px solid ${block.accent}44` }}
             >
-              <Icon className="w-5 h-5" style={{ color: block.accent }} />
+              <Icon className="w-5 h-5" style={{ color: isLight ? c1 : block.accent }} />
             </motion.div>
 
             <div>
-              <p className="text-white font-bold text-base leading-tight">{block.label}</p>
-              <p className="text-white/50 text-xs mt-0.5">{block.sub}</p>
+              <p className={`${isLight ? "text-slate-800" : "text-white"} font-bold text-base leading-tight`}>{block.label}</p>
+              <p className={`${isLight ? "text-slate-400" : "text-white/50"} text-xs mt-0.5`}>{block.sub}</p>
             </div>
           </div>
 
