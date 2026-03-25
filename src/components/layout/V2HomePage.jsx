@@ -313,6 +313,7 @@ export default function V2HomePage({ user, isAdmin, effectiveRole }) {
             <img src={LOGO_URL} alt="Munnin Crow" className="h-10 w-auto object-contain" style={{ filter: logoFilter }} />
           </div>
           <div className="flex items-center gap-3">
+            <PontosButton user={user} />
             <NotificacoesPanel user={user} />
             <Link to={createPageUrl("Perfil")} className="flex items-center gap-2 group">
               {user?.avatar_url
