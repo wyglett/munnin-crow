@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
@@ -12,6 +12,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Activity, Calendar, DollarSign, Loader2, ArrowRight, Users, Clock, CheckCircle, Upload, FileText, Sparkles, Link2 } from "lucide-react";
 import IAChatBalloon from "@/components/ai/IAChatBalloon";
+import NorseBackground from "@/components/layout/NorseBackground";
+import { getAppearance } from "@/hooks/useAppearance";
 import moment from "moment";
 
 const STATUS_MAP = {
@@ -31,6 +33,7 @@ const fmt = (v) => new Intl.NumberFormat("pt-BR", { style: "currency", currency:
 
 export default function Acompanhamento() {
   const [user, setUser] = useState(null);
+  const [isLight, setIsLight] = useState(() => getAppearance().tema === "light");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState({ titulo: "", descricao_projeto: "", orgao_financiador: "", numero_edital: "", valor_contratado: "", data_inicio: "", data_fim_prevista: "", status: "ativo" });
   const [projetoAprovadoUrl, setProjetoAprovadoUrl] = useState(null);
@@ -41,6 +44,10 @@ export default function Acompanhamento() {
   const queryClient = useQueryClient();
 
   useEffect(() => { base44.auth.me().then(setUser).catch(() => {}); }, []);
+  useEffect(() => {
+    const iv = setInterval(() => setIsLight(getAppearance().tema === "light"), 300);
+    return () => clearInterval(iv);
+  }, []);
 
   const isConsultor = (user?.tipo_usuario || user?.role) === "consultor";
 
@@ -138,8 +145,9 @@ export default function Acompanhamento() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 relative">
-      <div className="max-w-5xl mx-auto">
+    <div className={`min-h-screen p-6 relative ${isLight ? "bg-slate-50" : "bg-[#0f172a]"}`}>
+      <NorseBackground isLight={isLight} intensity="subtle" />
+      <div className="relative z-10 max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
