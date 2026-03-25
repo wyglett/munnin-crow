@@ -148,7 +148,8 @@ Faça uma análise crítica da proposta, aponte pontos fortes, lacunas e dê sug
 
   return (
     <div className="min-h-screen bg-slate-50 p-6 relative">
-      <div className="max-w-5xl mx-auto">
+      <NorseBackground isLight={true} intensity="subtle" />
+      <div className="relative z-10 max-w-5xl mx-auto">
         <Link to={createPageUrl("MinhasPropostas")}>
           <Button variant="ghost" className="mb-4 -ml-2"><ArrowLeft className="w-4 h-4 mr-2" /> Voltar para Minhas Propostas</Button>
         </Link>
