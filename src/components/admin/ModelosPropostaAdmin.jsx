@@ -135,7 +135,7 @@ function CamposAgrupados({ campos, onChange, onDelete }) {
   );
 }
 
-function ModeloCard({ modelo, onEdit, onDelete, onToggleStatus }) {
+function ModeloCard({ modelo, onEdit, onDelete, onToggleStatus, onEditTemplate }) {
   return (
     <div className="bg-white border rounded-xl p-4 flex items-start justify-between gap-3">
       <div className="flex-1 min-w-0">
@@ -174,6 +174,9 @@ function ModeloCard({ modelo, onEdit, onDelete, onToggleStatus }) {
       <div className="flex gap-1 flex-shrink-0">
         <Button size="sm" variant="ghost" onClick={() => onToggleStatus(modelo)} title={modelo.status === "publicado" ? "Despublicar" : "Publicar"}>
           {modelo.status === "publicado" ? <EyeOff className="w-4 h-4 text-amber-500" /> : <Eye className="w-4 h-4 text-green-500" />}
+        </Button>
+        <Button size="sm" variant="ghost" onClick={() => onEditTemplate(modelo)} title="Montar Template">
+          <LayoutTemplate className="w-4 h-4 text-indigo-500" />
         </Button>
         <Button size="sm" variant="ghost" onClick={() => onEdit(modelo)}><Pencil className="w-4 h-4" /></Button>
         <Button size="sm" variant="ghost" className="text-red-400" onClick={() => onDelete(modelo.id)}><Trash2 className="w-4 h-4" /></Button>
