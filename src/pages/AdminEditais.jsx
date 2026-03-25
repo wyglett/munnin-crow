@@ -241,7 +241,7 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
             {/* Content Sections */}
             <div className="space-y-6">
 
-          <TabsContent value="editais" className="space-y-4">
+            {activeTab === "editais" && (
             <div className="flex flex-wrap gap-3">
               <Button onClick={importar} disabled={importando} className="bg-indigo-600 hover:bg-indigo-700">
                 {importando ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
@@ -274,37 +274,35 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
                 ));
               })()}
             </div>
-          </TabsContent>
+            )}
 
-          <TabsContent value="notificacoes">
-            <NotificacoesAdminPanel />
-          </TabsContent>
+            {activeTab === "usuarios" && <UsuariosAdmin />}
 
-          <TabsContent value="receitas">
-            <ReceitaUsoTab />
-          </TabsContent>
+            {activeTab === "modelos" && <ModelosUnificadoAdmin />}
 
-          <TabsContent value="modelos">
-            <ModelosRelatorioAdmin />
-          </TabsContent>
+            {activeTab === "financeiro" && <ReceitaUsoTab />}
 
-          <TabsContent value="modelos_proposta">
-            <ModelosPropostaAdmin />
-          </TabsContent>
+            {activeTab === "notificacoes" && (
+              <div className="bg-white/5 backdrop-blur-xl rounded-xl border border-slate-700/50 p-6">
+                <NotificacoesAdminPanel />
+              </div>
+            )}
 
-          <TabsContent value="informativos">
-            <InformativosTab />
-          </TabsContent>
+            {activeTab === "informativos" && (
+              <div className="bg-white/5 backdrop-blur-xl rounded-xl border border-slate-700/50 p-6">
+                <InformativosTab />
+              </div>
+            )}
 
-          <TabsContent value="configuracoes" className="space-y-4">
-            <Card className="border-indigo-200 bg-indigo-50/40">
+            {activeTab === "configuracoes" && (
+            <Card className="border-slate-700/50 bg-slate-800/40 backdrop-blur-xl">
               <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-indigo-600" />
+                <CardTitle className="text-base flex items-center gap-2 text-white">
+                  <Zap className="w-4 h-4 text-indigo-400" />
                   Aparência Padrão da Plataforma
                 </CardTitle>
-                <p className="text-xs text-slate-500 font-normal mt-1">
-                  Configure a aparência padrão que será mostrada para novos usuários ao acessar pela primeira vez.
+                <p className="text-xs text-slate-400 font-normal mt-1">
+                  Configure a aparência padrão para novos usuários.
                 </p>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -366,11 +364,13 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
-
-          <TabsContent value="usuarios" className="space-y-4">
-            {/* ── Criar Acesso (sem convite manual) ── */}
-            <Card className="border-indigo-200 bg-indigo-50/40">
+            )}
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
               <CardHeader className="pb-2">
                 <CardTitle className="text-base flex items-center gap-2">
                   <Zap className="w-4 h-4 text-indigo-600" />
@@ -537,6 +537,3 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
           setAbsorverEdital(null);
         }}
       />
-    </div>
-  );
-}
