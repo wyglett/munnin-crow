@@ -224,10 +224,12 @@ function V2Layout({ user, isAdmin, effectiveRole, viewAsRole, setViewAsRole, cur
   const rootBg = isLight ? { background: "#f1f5f9" } : { background: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)" };
   const mainBg = isLight ? "bg-slate-50" : "bg-white/[0.02]";
 
+  const isHome = currentPageName === "Home";
+
   return (
     <div className="flex flex-col h-screen overflow-hidden" style={rootBg}>
-      {/* Top bar */}
-      <header className={`flex-shrink-0 ${topBarBg}`}>
+      {/* Top bar — hidden on Home page (V2HomePage has its own chrome) */}
+      <header className={`flex-shrink-0 ${topBarBg} ${isHome ? "hidden" : ""}`}>
         <div className="flex items-center gap-3 px-4 h-14">
           {/* Logo compact */}
           <Link to={createPageUrl("Home")} className="flex-shrink-0 mr-2">
