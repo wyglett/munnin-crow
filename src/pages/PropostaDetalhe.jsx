@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { ArrowLeft, FileText, Upload, Sparkles, Loader2, ExternalLink, Users, CheckCircle, XCircle, Send, Trophy, Activity } from "lucide-react";
 import IAChatBalloon from "@/components/ai/IAChatBalloon";
+import NorseBackground from "@/components/layout/NorseBackground";
 import FormularioSubmissao from "../components/proposta/FormularioSubmissao";
 import SigfapesFormulario from "../components/proposta/SigfapesFormulario";
 import ReactMarkdown from "react-markdown";
