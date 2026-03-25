@@ -561,6 +561,13 @@ function CampoTextoComImagem({ campo, onChange, instrucaoIA }) {
           <Textarea value={campo.resposta || ""} onChange={e => onChange({ ...campo, resposta: e.target.value })} placeholder="Descreva detalhadamente..." className="min-h-[120px] text-sm" />
           <div className="flex items-center gap-2 flex-wrap">
             <BotaoMelhorarIA texto={campo.resposta} onMelhorado={txt => onChange({ ...campo, resposta: txt })} instrucao={instrucaoIA} />
+            <AIChatField
+              pergunta={campo.pergunta}
+              contexto={`Seção: ${campo.secao}`}
+              instrucao_ia={instrucaoIA}
+              respostaAtual={campo.resposta}
+              onApprove={(txt) => onChange({ ...campo, resposta: txt })}
+            />
             <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-600 hover:bg-gray-50">
               {uploadingImg ? <Loader2 className="w-3 h-3 animate-spin" /> : <ImageIcon className="w-3 h-3" />}
               {uploadingImg ? "Enviando..." : "Adicionar Imagem"}
