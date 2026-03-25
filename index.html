@@ -2,6 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      // Apply appearance preferences before React mounts (prevents flash)
+      try {
+        var prefs = JSON.parse(localStorage.getItem('munnin_appearance') || '{}');
+        if (prefs.tema) document.documentElement.setAttribute('data-tema', prefs.tema);
+        if (prefs.layout) document.documentElement.setAttribute('data-layout', prefs.layout);
+      } catch(e) {}
+    </script>
     <link rel="icon" type="image/svg+xml" href="https://base44.com/logo_v2.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="manifest" href="/manifest.json" />
