@@ -402,8 +402,17 @@ function CampoJustificativa({ campo, onChange, placeholder, instrucaoIA }) {
       {aberto && !campo.concluido && (
         <div className="px-4 pb-4 border-t border-gray-100 pt-3 space-y-3">
           <Textarea value={campo.resposta || ""} onChange={e => onChange({ ...campo, resposta: e.target.value })} placeholder={placeholder || "Descreva..."} className="min-h-[120px] text-sm" />
-          <div className="flex items-center justify-between">
-            <BotaoMelhorarIA texto={campo.resposta} onMelhorado={txt => onChange({ ...campo, resposta: txt })} instrucao={instrucaoIA} />
+          <div className="flex items-center justify-between mt-1">
+            <div className="flex items-center gap-2">
+              <BotaoMelhorarIA texto={campo.resposta} onMelhorado={txt => onChange({ ...campo, resposta: txt })} instrucao={instrucaoIA} />
+              <AIChatField
+                pergunta={campo.pergunta}
+                contexto={`Seção: ${campo.secao}`}
+                instrucao_ia={instrucaoIA}
+                respostaAtual={campo.resposta}
+                onApprove={(txt) => onChange({ ...campo, resposta: txt })}
+              />
+            </div>
             <Button type="button" size="sm" onClick={() => { onChange({ ...campo, concluido: true }); setAberto(false); }} className="bg-green-600 hover:bg-green-700" disabled={!campo.resposta}>
               <CheckCircle2 className="w-4 h-4 mr-1" /> Concluir
             </Button>
