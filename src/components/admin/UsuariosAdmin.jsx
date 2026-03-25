@@ -26,40 +26,40 @@ export default function UsuariosAdmin() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">Usuários</h2>
-          <p className="text-sm text-slate-600 mt-1">Gerencie usuários e solicitações de cadastro</p>
+          <h3 className="text-2xl font-bold text-slate-900">Gerenciar Usuários</h3>
+          <p className="text-sm text-slate-500 mt-1">Usuários e solicitações</p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2 shadow-lg">
           <Plus className="w-4 h-4" /> Convidar Usuário
         </Button>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 p-1 bg-slate-100 rounded-lg w-fit">
         <button
           onClick={() => setAbaModo("usuarios")}
-          className={`px-4 py-2 rounded-lg transition-all ${
+          className={`px-6 py-2.5 rounded-md font-medium transition-all ${
             abaModo === "usuarios"
-              ? "bg-indigo-600 text-white"
-              : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+              ? "bg-white text-indigo-600 shadow-sm"
+              : "text-slate-600 hover:text-slate-900"
           }`}
         >
           Usuários Ativos
         </button>
         <button
           onClick={() => setAbaModo("solicitacoes")}
-          className={`px-4 py-2 rounded-lg transition-all ${
+          className={`px-6 py-2.5 rounded-md font-medium transition-all ${
             abaModo === "solicitacoes"
-              ? "bg-indigo-600 text-white"
-              : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+              ? "bg-white text-indigo-600 shadow-sm"
+              : "text-slate-600 hover:text-slate-900"
           }`}
         >
-          Solicitações de Cadastro
+          Solicitações
         </button>
       </div>
 
-      <div className="border border-slate-200 rounded-lg overflow-hidden">
+      <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
         {abaModo === "usuarios" ? (
           <table className="w-full">
             <thead className="bg-slate-50 border-b border-slate-200">

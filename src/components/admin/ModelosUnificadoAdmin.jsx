@@ -34,40 +34,40 @@ export default function ModelosUnificadoAdmin() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">Modelos</h2>
-          <p className="text-sm text-slate-600 mt-1">Gerencie modelos de propostas e relatórios</p>
+          <h3 className="text-2xl font-bold text-slate-900">Gerenciar Modelos</h3>
+          <p className="text-sm text-slate-500 mt-1">Propostas e relatórios</p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2 shadow-lg">
           <Plus className="w-4 h-4" /> Novo Modelo
         </Button>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 p-1 bg-slate-100 rounded-lg w-fit">
         <button
           onClick={() => setTipoFiltro("proposta")}
-          className={`px-4 py-2 rounded-lg transition-all ${
+          className={`px-6 py-2.5 rounded-md font-medium transition-all ${
             tipoFiltro === "proposta"
-              ? "bg-indigo-600 text-white"
-              : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+              ? "bg-white text-indigo-600 shadow-sm"
+              : "text-slate-600 hover:text-slate-900"
           }`}
         >
-          Modelos de Propostas
+          Propostas
         </button>
         <button
           onClick={() => setTipoFiltro("relatorio")}
-          className={`px-4 py-2 rounded-lg transition-all ${
+          className={`px-6 py-2.5 rounded-md font-medium transition-all ${
             tipoFiltro === "relatorio"
-              ? "bg-indigo-600 text-white"
-              : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+              ? "bg-white text-indigo-600 shadow-sm"
+              : "text-slate-600 hover:text-slate-900"
           }`}
         >
-          Modelos de Relatórios
+          Relatórios
         </button>
       </div>
 
-      <div className="border border-slate-200 rounded-lg overflow-hidden">
+      <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
         <table className="w-full">
           <thead className="bg-slate-50 border-b border-slate-200">
             <tr>
