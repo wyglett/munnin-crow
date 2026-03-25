@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { FileText, Plus, ArrowLeft, Trash2, Loader2, Pencil, ChevronDown, ChevronRight } from "lucide-react";
 import IAChatBalloon from "@/components/ai/IAChatBalloon";
+import NorseBackground from "@/components/layout/NorseBackground";
 
 const STATUS_MAP = {
   rascunho: { label: "Rascunho", color: "bg-gray-100 text-gray-700" },
@@ -97,7 +98,8 @@ export default function MinhasPropostas() {
 
   return (
     <div className={`min-h-screen ${pageBg} p-6 relative`}>
-      <div className="max-w-4xl mx-auto">
+      <NorseBackground isLight={isLight} intensity="subtle" />
+      <div className="relative z-10 max-w-4xl mx-auto">
         <Link to={createPageUrl("Home")}>
           <Button variant="ghost" className={`mb-4 -ml-2 ${isLight ? "" : "text-slate-300 hover:text-white hover:bg-white/10"}`}>
             <ArrowLeft className="w-4 h-4 mr-2" /> Voltar para Editais
@@ -241,6 +243,7 @@ export default function MinhasPropostas() {
           </div>
         )}
       </div>
+      </div>{/* end z-10 */}
       <IAChatBalloon
         contextTitle="Minhas Propostas"
         contextText={`O usuário está gerenciando suas propostas de editais de fomento.\n\nPropostas cadastradas:\n${propostas.map(p => `- "${p.titulo}" (${p.edital_titulo || "sem edital"}, status: ${p.status})`).join("\n")}`}
