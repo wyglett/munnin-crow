@@ -240,9 +240,13 @@ function NavBlock({ block, index, isLight }) {
           <div
             className="absolute inset-0 transition-all duration-200"
             style={{
-              background: hovered
-                ? `radial-gradient(ellipse at ${mousePos.x}% ${mousePos.y}%, ${c1}ff 0%, ${c2}dd 40%, ${c3}bb 100%)`
-                : `linear-gradient(135deg, ${c1}cc, ${c2}aa, ${c3}99)`,
+              background: isLight
+                ? hovered
+                  ? `radial-gradient(ellipse at ${mousePos.x}% ${mousePos.y}%, ${c1}33 0%, ${c2}22 40%, ${c3}11 100%)`
+                  : `linear-gradient(135deg, ${c1}22, ${c2}18, ${c3}10)`
+                : hovered
+                  ? `radial-gradient(ellipse at ${mousePos.x}% ${mousePos.y}%, ${c1}ff 0%, ${c2}dd 40%, ${c3}bb 100%)`
+                  : `linear-gradient(135deg, ${c1}cc, ${c2}aa, ${c3}99)`,
             }}
           />
 
