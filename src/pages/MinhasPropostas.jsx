@@ -42,16 +42,21 @@ export default function MinhasPropostas() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["propostas"] }),
   });
 
+  const pageBg = isLight ? "bg-slate-50" : "bg-[#0f172a]";
+  const textH = isLight ? "text-gray-900" : "text-white";
+  const textS = isLight ? "text-gray-500" : "text-slate-400";
+  const cardBg = isLight ? "bg-white border-gray-200" : "bg-white/5 border-white/10";
+
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
+    <div className={`min-h-screen ${pageBg} p-6`}>
       <div className="max-w-4xl mx-auto">
         <Link to={createPageUrl("Home")}>
-          <Button variant="ghost" className="mb-4 -ml-2">
+          <Button variant="ghost" className={`mb-4 -ml-2 ${isLight ? "" : "text-slate-300 hover:text-white hover:bg-white/10"}`}>
             <ArrowLeft className="w-4 h-4 mr-2" /> Voltar para Editais
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">Minhas Propostas</h1>
-        <p className="text-gray-500 text-sm mb-6">Gerencie todas as suas propostas em um só lugar</p>
+        <h1 className={`text-2xl font-bold mb-1 ${textH}`}>Minhas Propostas</h1>
+        <p className={`text-sm mb-6 ${textS}`}>Gerencie todas as suas propostas em um só lugar</p>
 
         {isLoading ? (
           <div className="flex justify-center py-16"><Loader2 className="w-6 h-6 animate-spin text-indigo-600" /></div>
