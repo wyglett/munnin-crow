@@ -35,33 +35,34 @@ function GrupoEstado({ estado, editais, onEdit, onDelete, onDocs, onAbsorver }) 
   const [aberto, setAberto] = useState(true);
   const label = ESTADO_LABELS[estado] || estado;
   return (
-    <div className="border rounded-lg overflow-hidden bg-white">
+    <div className="border border-white/10 rounded-lg overflow-hidden" style={{ background: "rgba(15, 23, 42, 0.5)" }}>
       <button
-        className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 transition-colors"
+        style={{ background: "rgba(255, 255, 255, 0.05)" }}
         onClick={() => setAberto(v => !v)}
       >
         <div className="flex items-center gap-2">
-          {aberto ? <ChevronDown className="w-4 h-4 text-gray-500" /> : <ChevronRight className="w-4 h-4 text-gray-500" />}
-          <span className="font-semibold text-gray-800">{label}</span>
-          <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">{editais.length}</span>
+          {aberto ? <ChevronDown className="w-4 h-4 text-slate-400" /> : <ChevronRight className="w-4 h-4 text-slate-400" />}
+          <span className="font-semibold text-slate-100">{label}</span>
+          <span className="text-xs bg-indigo-600/30 text-indigo-300 px-2 py-0.5 rounded-full">{editais.length}</span>
         </div>
       </button>
       {aberto && (
-        <div className="divide-y">
+        <div className="divide-y divide-white/5">
           {editais.map(e => (
-            <div key={e.id} className="px-4 py-3 flex items-center justify-between gap-3 hover:bg-gray-50">
+            <div key={e.id} className="px-4 py-3 flex items-center justify-between gap-3 hover:bg-white/5">
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-gray-900 text-sm truncate">{e.titulo}</p>
+                <p className="font-medium text-slate-100 text-sm truncate">{e.titulo}</p>
                 <div className="flex gap-2 mt-0.5 flex-wrap">
-                  <span className={`text-xs px-1.5 py-0.5 rounded ${e.status === "encerrado" ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>{e.status}</span>
-                  {e.area && <Badge className="bg-blue-100 text-blue-800 text-xs">{e.area}</Badge>}
+                  <span className={`text-xs px-1.5 py-0.5 rounded ${e.status === "encerrado" ? "bg-red-600/30 text-red-300" : "bg-green-600/30 text-green-300"}`}>{e.status}</span>
+                  {e.area && <Badge className="bg-blue-600/30 text-blue-300 text-xs">{e.area}</Badge>}
                 </div>
               </div>
               <div className="flex gap-1">
-                <Button size="sm" variant="ghost" onClick={() => onDocs(e)} title="Documentos & IA"><BookOpen className="w-4 h-4 text-indigo-500" /></Button>
-                <Button size="sm" variant="ghost" onClick={() => onAbsorver(e)} title="Absorver Conhecimento"><Brain className="w-4 h-4 text-purple-500" /></Button>
-                <Button size="sm" variant="ghost" onClick={() => onEdit(e)}><Pencil className="w-4 h-4" /></Button>
-                <Button size="sm" variant="ghost" className="text-red-500" onClick={() => onDelete(e.id)}><Trash2 className="w-4 h-4" /></Button>
+                <Button size="sm" variant="ghost" onClick={() => onDocs(e)} title="Documentos & IA"><BookOpen className="w-4 h-4 text-indigo-400" /></Button>
+                <Button size="sm" variant="ghost" onClick={() => onAbsorver(e)} title="Absorver Conhecimento"><Brain className="w-4 h-4 text-purple-400" /></Button>
+                <Button size="sm" variant="ghost" onClick={() => onEdit(e)}><Pencil className="w-4 h-4 text-slate-400" /></Button>
+                <Button size="sm" variant="ghost" className="text-red-400" onClick={() => onDelete(e.id)}><Trash2 className="w-4 h-4" /></Button>
               </div>
             </div>
           ))}
