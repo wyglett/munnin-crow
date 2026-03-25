@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import ExportarRelatorio from "./ExportarRelatorio";
 import SeletorModeloRelatorio from "./SeletorModeloRelatorio";
+import AIChatField from "@/components/ai/AIChatField";
 
 const fmt = (v) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0);
 
