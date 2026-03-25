@@ -339,7 +339,7 @@ function V2Layout({ user, isAdmin, effectiveRole, viewAsRole, setViewAsRole, cur
       </main>
 
       {/* Footer with admin "Ver Como" option */}
-      {isAdmin && !viewAsRole && currentPageName !== "Home" && (
+      {isAdmin && !viewAsRole && (
         <footer className={`flex-shrink-0 border-t ${isLight ? "bg-white border-slate-200" : "bg-[#0c0f1a]/50 border-white/5"} px-4 py-3`}>
           <div className="flex items-center justify-center gap-2">
             <button
