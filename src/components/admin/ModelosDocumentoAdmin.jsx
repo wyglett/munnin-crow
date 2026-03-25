@@ -1,0 +1,130 @@
+import React, { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { base44 } from "@/api/base44Client";
+import { Button } from "@/components/ui/button";
+import { Plus, Trash2, Edit, Upload } from "lucide-react";
+import moment from "moment";
+
+export default function ModelosDocumentoAdmin() {
+  const [showForm, setShowForm] = useState(false);
+  const [tipoFiltro, setTipoFiltro] = useState("proposta");
+  const queryClient = useQueryClient();
+
+  const { data: modelos = [] } = useQuery({
+    queryKey: ["modelos-documento"],
+    queryFn: () => base44.asServiceRole.entities.ModeloDocumento.list("-created_date", 100),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id) => base44.asServiceRole.entities.ModeloDocumento.delete(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["modelos-documento"] })
+  });
+
+  const modelosFiltrados = modelos.filter(m => {
+    if (tipoFiltro === "proposta") {
+      return ["proposta", "ambos"].includes(m.tipos_uso?.[0]);
+    }
+    return ["relatorio_acompanhamento", "ambos"].includes(m.tipos_uso?.[0]);
+  });
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-xl font-bold text-slate-900">Modelos de Documentos</h2>
+          <p className="text-sm text-slate-600 mt-1">Gerencie modelos para propostas e relatórios</p>
+        </div>
+        <Button onClick={() => setShowForm(true)} className="gap-2">
+          <Plus className="w-4 h-4" /> Novo Modelo
+        </Button>
+      </div>
+
+      {/* Filtros */}
+      <div className="flex gap-2">
+        <button
+          onClick={() => setTipoFiltro("proposta")}
+          className={`px-4 py-2 rounded-lg transition-all ${
+            tipoFiltro === "proposta"
+              ? "bg-indigo-600 text-white"
+              : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+          }`}
+        >
+          Modelos de Propostas
+        </button>
+        <button
+          onClick={() => setTipoFiltro("relatorio")}
+          className={`px-4 py-2 rounded-lg transition-all ${
+            tipoFiltro === "relatorio"
+              ? "bg-indigo-600 text-white"
+              : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+          }`}
+        >
+          Modelos de Relatórios
+        </button>
+      </div>
+
+      {/* Tabela */}
+      <div className="border border-slate-200 rounded-lg overflow-hidden">
+        <table className="w-full">
+          <thead className="bg-slate-50 border-b border-slate-200">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-slate-700">Nome</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-slate-700">Órgão</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-slate-700">Tipo</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-slate-700">Status</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-slate-700">Usos</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-slate-700">Data</th>
+              <th className="px-6 py-3 text-center text-xs font-semibold text-slate-700">Ações</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-200">
+            {modelosFiltrados.map(modelo => (
+              <tr key={modelo.id} className="hover:bg-slate-50">
+                <td className="px-6 py-3">
+                  <p className="font-medium text-slate-900">{modelo.nome}</p>
+                </td>
+                <td className="px-6 py-3 text-sm text-slate-600">{modelo.orgao}</td>
+                <td className="px-6 py-3">
+                  <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700">
+                    {modelo.categoria_proposta || modelo.tipo_relatorio}
+                  </span>
+                </td>
+                <td className="px-6 py-3">
+                  <span className={`text-xs px-2 py-1 rounded-full ${
+                    modelo.status === "publicado"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-amber-100 text-amber-700"
+                  }`}>
+                    {modelo.status}
+                  </span>
+                </td>
+                <td className="px-6 py-3 text-sm text-slate-600">{modelo.usos || 0}</td>
+                <td className="px-6 py-3 text-sm text-slate-600">
+                  {moment(modelo.created_date).format("DD/MM/YY")}
+                </td>
+                <td className="px-6 py-3 text-center space-x-1">
+                  <button className="p-1 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded">
+                    <Edit className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => deleteMutation.mutate(modelo.id)}
+                    className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {modelosFiltrados.length === 0 && (
+          <div className="text-center py-8 text-slate-500">
+            Nenhum modelo encontrado
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
