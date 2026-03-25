@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import {
   ArrowLeft, FolderOpen, Info, Loader2, Users, CheckCircle2
 } from "lucide-react";
+import IAChatBalloon from "@/components/ai/IAChatBalloon";
 import ConsultorTab from "../components/acompanhamento/ConsultorTab";
 import GastosFinanceiro from "../components/acompanhamento/GastosFinanceiro";
 import OrcamentoTab from "../components/acompanhamento/OrcamentoTab";
@@ -125,7 +126,7 @@ export default function ProjetoDetalhe() {
   if (!projeto) return <div className="flex items-center justify-center h-64"><Loader2 className="w-6 h-6 animate-spin text-indigo-600" /></div>;
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-6">
+    <div className="min-h-screen bg-slate-50 p-4 md:p-6 relative">
       <div className="max-w-5xl mx-auto">
         <Link to={createPageUrl("Acompanhamento")}><Button variant="ghost" className="mb-4 -ml-2"><ArrowLeft className="w-4 h-4 mr-2" /> Voltar</Button></Link>
 
@@ -192,6 +193,13 @@ export default function ProjetoDetalhe() {
           </TabsContent>
         </Tabs>
       </div>
+
+      <IAChatBalloon
+        contextTitle={`Projeto: ${projeto.titulo}`}
+        contextText={`Projeto: "${projeto.titulo}"\nÓrgão: ${projeto.orgao_financiador || ""}\nEdital: ${projeto.numero_edital || ""}\nStatus: ${projeto.status}\nValor contratado: R$${projeto.valor_contratado || "N/I"}\nInício: ${projeto.data_inicio || "N/I"} — Fim previsto: ${projeto.data_fim_prevista || "N/I"}\n${projeto.descricao_projeto ? `\nDescrição: ${projeto.descricao_projeto.substring(0,300)}` : ""}`}
+        editalTitulo={projeto.numero_edital ? `${projeto.orgao_financiador} ${projeto.numero_edital}` : projeto.orgao_financiador}
+        editalOrgao={projeto.orgao_financiador}
+      />
 
       {/* Drive Dialog */}
       <Dialog open={driveDialog} onOpenChange={(v) => { if (!criandoDrive) { setDriveDialog(v); setDriveStatus(null); } }}>
