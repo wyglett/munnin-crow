@@ -9,7 +9,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Plus, Trash2, Pencil, Upload, Loader2, Sparkles, CheckCircle2, FileText, ChevronDown, ChevronRight, Eye, EyeOff, RefreshCw } from "lucide-react";
+import { Plus, Trash2, Pencil, Upload, Loader2, Sparkles, CheckCircle2, FileText, ChevronDown, ChevronRight, Eye, EyeOff, LayoutTemplate } from "lucide-react";
+import ModeloTemplateEditor from "./ModeloTemplateEditor";
 
 const TIPO_LABELS = { parcial: "Relatório Parcial", final: "Relatório Final", prestacao_contas: "Prestação de Contas", outro: "Outro" };
 const TIPO_COLORS = { parcial: "bg-blue-100 text-blue-700", final: "bg-green-100 text-green-700", prestacao_contas: "bg-amber-100 text-amber-700", outro: "bg-gray-100 text-gray-600" };
