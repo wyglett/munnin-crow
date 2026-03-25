@@ -98,6 +98,7 @@ export const PAGES = {
     "VooDoCorvo": VooDoCorvo,
     "Orientacoes": Orientacoes,
     "GrupoConsultores": GrupoConsultores,
+    "BuscarEditais": BuscarEditais,
 }
 
 export const pagesConfig = {
