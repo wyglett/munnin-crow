@@ -394,11 +394,11 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
             {activeTab === "configuracoes" && (
             <Card className="border-white/10 shadow-sm" style={{ background: "rgba(15, 23, 42, 0.5)" }}>
               <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2 text-slate-900">
-                  <Zap className="w-4 h-4 text-indigo-600" />
+                <CardTitle className="text-base flex items-center gap-2 text-slate-100">
+                  <Zap className="w-4 h-4 text-indigo-400" />
                   Aparência Padrão
                 </CardTitle>
-                <p className="text-xs text-slate-500 font-normal mt-1">
+                <p className="text-xs text-slate-400 font-normal mt-1">
                   Configure como novos usuários veem a plataforma.
                 </p>
               </CardHeader>
