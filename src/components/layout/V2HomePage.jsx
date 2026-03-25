@@ -231,13 +231,20 @@ function NavBlock({ block, index, isLight }) {
               >
                 <Icon className="w-5 h-5" style={{ color: block.accent }} />
               </motion.div>
-              <AnimatePresence>
-                {hovered && (
-                  <motion.div initial={{ opacity: 0, x: -4 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -4 }}>
-                    <ChevronRight className="w-4 h-4 text-white/60" />
-                  </motion.div>
+              <div className="flex items-start gap-2">
+                {block.bgImage && (
+                  <div className="text-2xl opacity-30 select-none pointer-events-none">
+                    {block.bgImage}
+                  </div>
                 )}
-              </AnimatePresence>
+                <AnimatePresence>
+                  {hovered && (
+                    <motion.div initial={{ opacity: 0, x: -4 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -4 }}>
+                      <ChevronRight className="w-4 h-4 text-white/60" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
             <div>
               <p className="text-white font-bold text-base leading-tight">{block.label}</p>
