@@ -225,11 +225,11 @@ export default function Home() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5 }}
-              className="bg-gradient-to-r from-indigo-600/20 to-purple-600/20 backdrop-blur-sm border border-indigo-500/20 rounded-2xl p-6 mb-6 relative overflow-hidden"
+              className={`rounded-2xl p-6 mb-6 relative overflow-hidden ${isLight ? "bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200" : "bg-gradient-to-r from-indigo-600/20 to-purple-600/20 backdrop-blur-sm border border-indigo-500/20"}`}
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-3xl" />
-              <p className="text-white/90 text-lg italic leading-relaxed mb-2 relative z-10">"{randomQuote.text}"</p>
-              <p className="text-indigo-300 text-sm relative z-10">— {randomQuote.author}</p>
+              <p className={`text-lg italic leading-relaxed mb-2 relative z-10 ${isLight ? "text-slate-700" : "text-white/90"}`}>"{randomQuote.text}"</p>
+              <p className="text-indigo-500 text-sm relative z-10">— {randomQuote.author}</p>
             </motion.div>
 
             {/* Fact */}
