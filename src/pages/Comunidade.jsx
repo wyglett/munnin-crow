@@ -156,10 +156,40 @@ export default function Comunidade() {
     queryFn: () => base44.entities.Edital.filter({ status: "aberto" }, "-created_date", 100),
   });
 
+  // Propostas e acompanhamentos do usuário
+  const { data: userProposals = [] } = useQuery({
+    queryKey: ["user-proposals-for-community", user?.email],
+    queryFn: () => user ? base44.entities.Proposta.filter({ created_by: user.email }, "-created_date", 50) : Promise.resolve([]),
+    enabled: !!user,
+  });
+
+  const { data: userProjects = [] } = useQuery({
+    queryKey: ["user-projects-for-community", user?.email],
+    queryFn: () => user ? base44.entities.AcompanhamentoProjeto.filter({ created_by: user.email }, "-created_date", 50) : Promise.resolve([]),
+    enabled: !!user,
+  });
+
   const [expandedStates, setExpandedStates] = useState({});
   const toggleState = (uf) => setExpandedStates(prev => ({ ...prev, [uf]: !prev[uf] }));
 
-  const editaisPorEstado = editais.reduce((acc, e) => {
+  // IDs de editais com propostas ou projetos em aberto/andamento
+  const activeEditalIds = new Set();
+  userProposals.forEach(p => {
+    if (["rascunho", "em_analise", "em_julgamento"].includes(p.status)) {
+      activeEditalIds.add(p.edital_id);
+    }
+  });
+  userProjects.forEach(proj => {
+    if (["ativo", "suspenso"].includes(proj.status)) {
+      const editalId = editais.find(e => e.numero === proj.numero_edital)?.id;
+      if (editalId) activeEditalIds.add(editalId);
+    }
+  });
+
+  // Filtra editais: apenas aqueles com propostas/projetos ativos
+  const filteredEditais = editais.filter(e => activeEditalIds.has(e.id));
+
+  const editaisPorEstado = filteredEditais.reduce((acc, e) => {
     const uf = e.estado || "Outros";
     if (!acc[uf]) acc[uf] = [];
     acc[uf].push(e);
@@ -205,7 +235,7 @@ export default function Comunidade() {
     setTimeout(() => inputRef.current?.focus(), 100);
   };
 
-  const channels = [{ id: "geral", titulo: "Geral" }, ...editais.map(e => ({ id: e.id, titulo: e.titulo }))];
+  const channels = [{ id: "geral", titulo: "Geral" }, ...filteredEditais.map(e => ({ id: e.id, titulo: e.titulo }))];
   const currentChannel = channels.find(c => c.id === selectedChannel) || { id: selectedChannel, titulo: "Canal" };
 
   const groupedByDate = groupMessagesByDate(messages);

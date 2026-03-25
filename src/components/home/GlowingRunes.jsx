@@ -7,8 +7,8 @@ export default function GlowingRunes({ isLight = false, intensity = "normal" }) 
     ? (intensity === "subtle" ? 0.18 : 0.28)
     : (intensity === "subtle" ? 0.45 : 0.65);
 
-  const color = isLight ? "#3730a3" : "#818cf8";
-  const color2 = isLight ? "#6d28d9" : "#e879f9";
+  const color = isLight ? "#6d28d9" : "#818cf8";
+  const color2 = isLight ? "#7c3aed" : "#e879f9";
 
   // Paleta de cores para brilho de cada runa
   const runeGlows = {
