@@ -18,18 +18,18 @@ export default function ModelosUnificadoAdmin() {
 
   const { data: modelos = [] } = useQuery({
     queryKey: ["modelos-documento"],
-    queryFn: () => base44.asServiceRole.entities.ModeloDocumento.list("-created_date", 100),
+    queryFn: () => base44.entities.ModeloDocumento.list("-created_date", 100),
   });
 
   const { data: modelosRelatorio = [] } = useQuery({
     queryKey: ["modelos-relatorio"],
-    queryFn: () => base44.asServiceRole.entities.ModeloRelatorio.list("-created_date", 100),
+    queryFn: () => base44.entities.ModeloRelatorio.list("-created_date", 100),
   });
 
   const deleteMutation = useMutation({
     mutationFn: ({ tipo, id }) => {
       const entity = tipo === "proposta" ? "ModeloDocumento" : "ModeloRelatorio";
-      return base44.asServiceRole.entities[entity].delete(id);
+      return base44.entities[entity].delete(id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["modelos-documento"] });
