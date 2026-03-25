@@ -155,13 +155,20 @@ function NavBlock({ block, index, isLight }) {
                 >
                   <Icon className="w-5 h-5" style={{ color: c1 }} />
                 </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: hovered ? 1 : 0, scale: hovered ? 1 : 0.8 }}
-                  transition={{ duration: 0.15 }}
-                >
-                  <ArrowUpRight className="w-4 h-4" style={{ color: c1 }} />
-                </motion.div>
+                <div className="flex items-start gap-2">
+                  {block.bgImage && (
+                    <div className="text-2xl opacity-40 select-none pointer-events-none">
+                      {block.bgImage}
+                    </div>
+                  )}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: hovered ? 1 : 0, scale: hovered ? 1 : 0.8 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    <ArrowUpRight className="w-4 h-4" style={{ color: c1 }} />
+                  </motion.div>
+                </div>
               </div>
 
               <div>
