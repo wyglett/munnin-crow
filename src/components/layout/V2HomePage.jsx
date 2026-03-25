@@ -321,7 +321,12 @@ export default function V2HomePage({ user, isAdmin, effectiveRole }) {
     `Olá, ${firstName}. O que vamos explorar hoje?`,
     `E aí, ${firstName}. Qual o próximo passo?`,
   ];
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
+  // Use useMemo so greeting stays stable between re-renders
+  const greeting = React.useMemo(
+    () => greetings[Math.floor(Math.random() * greetings.length)],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [firstName]
+  );
 
   return (
     <div
