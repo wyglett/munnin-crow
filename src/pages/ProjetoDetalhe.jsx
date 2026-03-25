@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
@@ -14,6 +14,8 @@ import {
   ArrowLeft, FolderOpen, Info, Loader2, Users, CheckCircle2
 } from "lucide-react";
 import IAChatBalloon from "@/components/ai/IAChatBalloon";
+import NorseBackground from "@/components/layout/NorseBackground";
+import { getAppearance } from "@/hooks/useAppearance";
 import ConsultorTab from "../components/acompanhamento/ConsultorTab";
 import GastosFinanceiro from "../components/acompanhamento/GastosFinanceiro";
 import OrcamentoTab from "../components/acompanhamento/OrcamentoTab";
@@ -49,6 +51,7 @@ function extrairFolderId(url) {
 export default function ProjetoDetalhe() {
   const id = new URLSearchParams(window.location.search).get("id");
   const [user, setUser] = useState(null);
+  const [isLight, setIsLight] = useState(() => getAppearance().tema === "light");
   const [driveDialog, setDriveDialog] = useState(false);
   const [driveUrl, setDriveUrl] = useState("");
   const [criandoDrive, setCriandoDrive] = useState(false);
@@ -56,6 +59,10 @@ export default function ProjetoDetalhe() {
   const queryClient = useQueryClient();
 
   useEffect(() => { base44.auth.me().then(setUser).catch(() => {}); }, []);
+  useEffect(() => {
+    const iv = setInterval(() => setIsLight(getAppearance().tema === "light"), 300);
+    return () => clearInterval(iv);
+  }, []);
 
   const { data: projetos = [] } = useQuery({ queryKey: ["acompanhamentos"], queryFn: () => base44.entities.AcompanhamentoProjeto.list() });
   const projeto = projetos.find(p => p.id === id);
@@ -126,8 +133,9 @@ export default function ProjetoDetalhe() {
   if (!projeto) return <div className="flex items-center justify-center h-64"><Loader2 className="w-6 h-6 animate-spin text-indigo-600" /></div>;
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-6 relative">
-      <div className="max-w-5xl mx-auto">
+    <div className={`min-h-screen p-4 md:p-6 relative ${isLight ? "bg-slate-50" : "bg-[#0f172a]"}`}>
+      <NorseBackground isLight={isLight} intensity="subtle" />
+      <div className="relative z-10 max-w-5xl mx-auto">
         <Link to={createPageUrl("Acompanhamento")}><Button variant="ghost" className="mb-4 -ml-2"><ArrowLeft className="w-4 h-4 mr-2" /> Voltar</Button></Link>
 
         <div className="flex items-start justify-between mb-6 flex-wrap gap-3">
