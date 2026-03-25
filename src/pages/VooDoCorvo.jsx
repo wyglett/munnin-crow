@@ -255,7 +255,7 @@ export default function VooDoCorvo() {
     setSaving(false);
   };
 
-  if (!user) return <div className="flex items-center justify-center h-64 text-gray-400">Carregando...</div>;
+  if (!user) return <div className={`flex items-center justify-center h-64 ${isLight ? "text-slate-400" : "text-gray-400"}`}>Carregando...</div>;
 
   const proximo = NIVEIS.find(n => n.min > pontos);
 
