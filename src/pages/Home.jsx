@@ -30,8 +30,12 @@ const STATE_NAMES = {
   RR: "Roraima", SC: "Santa Catarina", SP: "São Paulo", SE: "Sergipe", TO: "Tocantins",
 };
 
-function EditaisLista({ editais, category, onBack, onSelect }) {
+function EditaisLista({ editais, category, onBack, onSelect, isLight }) {
   const [mostrarAntigos, setMostrarAntigos] = useState(false);
+  const textMain = isLight ? "text-slate-900" : "text-white";
+  const textMuted = isLight ? "text-slate-400" : "text-white/50";
+  const btnBack = isLight ? "text-slate-400 hover:text-slate-700" : "text-white/40 hover:text-white";
+  const oldToggle = isLight ? "text-slate-400 hover:text-slate-600" : "text-white/30 hover:text-white/50";
   const abertos = editais.filter(e => {
     if (e.status === "encerrado") return false;
     if (e.data_encerramento && moment(e.data_encerramento).isBefore(moment(), "day")) return false;
