@@ -11,6 +11,15 @@ import AparenciaConfig from "@/components/layout/AparenciaConfig";
 
 const ROLE_LABELS = { admin: "ADMINISTRADOR", empreendedor: "EMPREENDEDOR", consultor: "CONSULTOR", user: "EMPREENDEDOR" };
 
+const fmt = (v) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0);
+const STATUS_RECIBO = {
+  pendente: { label: "Pendente", color: "bg-yellow-100 text-yellow-800", icon: Clock },
+  enviado: { label: "Disponível", color: "bg-blue-100 text-blue-800", icon: FileText },
+  confirmado: { label: "Confirmado", color: "bg-green-100 text-green-800", icon: CheckCircle },
+  rejeitado: { label: "Com Problema", color: "bg-red-100 text-red-800", icon: AlertCircle },
+};
+const TIPO_LABELS = { recibo: "Recibo", nf: "NF", nfse: "NF-e/NFS-e", outro: "Outro" };
+
 export default function Perfil() {
   const [user, setUser] = useState(null);
   const [uploading, setUploading] = useState(false);
