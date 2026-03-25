@@ -61,11 +61,11 @@ export default function MinhasPropostas() {
         {isLoading ? (
           <div className="flex justify-center py-16"><Loader2 className="w-6 h-6 animate-spin text-indigo-600" /></div>
         ) : propostas.length === 0 ? (
-          <Card>
+          <Card className={cardBg}>
             <CardContent className="text-center py-16">
-              <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-500 font-medium">Nenhuma proposta ainda</p>
-              <p className="text-sm text-gray-400 mt-1">Comece criando uma proposta para um edital aberto</p>
+              <FileText className={`w-12 h-12 mx-auto mb-3 ${isLight ? "text-gray-300" : "text-slate-600"}`} />
+              <p className={`font-medium ${textS}`}>Nenhuma proposta ainda</p>
+              <p className={`text-sm mt-1 ${isLight ? "text-gray-400" : "text-slate-500"}`}>Comece criando uma proposta para um edital aberto</p>
               <Link to={createPageUrl("Home")}>
                 <Button className="mt-4 bg-indigo-600 hover:bg-indigo-700">
                   <Plus className="w-4 h-4 mr-2" /> Ver Editais Disponíveis
