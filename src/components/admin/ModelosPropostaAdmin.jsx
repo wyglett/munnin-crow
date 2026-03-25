@@ -218,6 +218,12 @@ export default function ModelosPropostaAdmin() {
     }
   });
 
+  const salvarTemplate = async ({ template_blocos }) => {
+    if (!templateModelo) return;
+    await base44.entities.ModeloProposta.update(templateModelo.id, { template_blocos });
+    qc.invalidateQueries({ queryKey: ["modelos_proposta"] });
+  };
+
   const excluir = useMutation({
     mutationFn: (id) => base44.entities.ModeloProposta.delete(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["modelos_proposta"] })
