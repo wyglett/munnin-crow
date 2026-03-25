@@ -1,6 +1,7 @@
 /**
  * useAppearance
- * Manages theme (edgy | light) and layout (default | v2) preferences.
+ * Manages theme (dark | light) preference only.
+ * Layout is always v2 (forced).
  * Persisted in localStorage. Applied as data attributes on <html>.
  */
 import { useState, useEffect } from "react";
@@ -12,11 +13,11 @@ const defaults = { tema: "dark", layout: "v2" };
 function load() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return { ...defaults, ...JSON.parse(raw) };
+    if (raw) return { ...defaults, ...JSON.parse(raw), layout: "v2" };
     
     // Use default appearance set by admin if available
     const defaultApp = localStorage.getItem("default_appearance");
-    if (defaultApp) return { ...defaults, ...JSON.parse(defaultApp) };
+    if (defaultApp) return { ...defaults, ...JSON.parse(defaultApp), layout: "v2" };
     
     return { ...defaults };
   } catch { return { ...defaults }; }
@@ -24,7 +25,7 @@ function load() {
 
 function apply(prefs) {
   document.documentElement.setAttribute("data-tema", prefs.tema);
-  document.documentElement.setAttribute("data-layout", prefs.layout);
+  document.documentElement.setAttribute("data-layout", "v2");
 }
 
 export function useAppearance() {
@@ -32,16 +33,15 @@ export function useAppearance() {
 
   useEffect(() => {
     apply(prefs);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ tema: prefs.tema }));
   }, [prefs]);
 
   // Apply on first render
   useEffect(() => { apply(load()); }, []);
 
   const setTema = (tema) => setPrefs(p => ({ ...p, tema }));
-  const setLayout = (layout) => setPrefs(p => ({ ...p, layout }));
 
-  return { prefs, setTema, setLayout };
+  return { prefs, setTema };
 }
 
 // Standalone reader (no re-render) for Layout
