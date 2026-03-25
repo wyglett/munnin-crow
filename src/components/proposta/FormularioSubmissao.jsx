@@ -173,8 +173,8 @@ Retorne o documento completo em texto puro, bem estruturado com títulos de seç
   const secoes = [...new Set(campos.map(c => c.secao))];
   const concluidos = campos.filter(c => c.concluido).length;
   const todosCompletos = campos.length > 0 && concluidos === campos.length;
-  const chatCampo = campos.find(c => c.id === chatCampoId);
   const temPerguntasAnexo = !!perguntasDoEdital();
+  const contextoIA = `Edital: ${edital?.titulo || ""} | Órgão: ${edital?.orgao || ""} | Área: ${edital?.area || ""}`;
 
   if (campos.length === 0) {
     return (
