@@ -217,7 +217,7 @@ export default function Acompanhamento() {
             })}
           </div>
         )}
-      </div>
+      </div>{/* end z-10 */}
 
       <IAChatBalloon
         contextTitle="Acompanhamento de Projetos"
