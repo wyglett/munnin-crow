@@ -296,83 +296,83 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
             {activeTab === "financeiro" && <ReceitaUsoTab />}
 
             {activeTab === "notificacoes" && (
-              <div className="bg-white/5 backdrop-blur-xl rounded-xl border border-slate-700/50 p-6">
+              <div className="bg-white/60 backdrop-blur-sm rounded-xl border border-slate-200/60 p-6 shadow-sm">
                 <NotificacoesAdminPanel />
               </div>
             )}
 
             {activeTab === "informativos" && (
-              <div className="bg-white/5 backdrop-blur-xl rounded-xl border border-slate-700/50 p-6">
+              <div className="bg-white/60 backdrop-blur-sm rounded-xl border border-slate-200/60 p-6 shadow-sm">
                 <InformativosTab />
               </div>
             )}
 
             {activeTab === "configuracoes" && (
-            <Card className="border-slate-700/50 bg-slate-800/40 backdrop-blur-xl">
+            <Card className="border-slate-200/60 bg-white/70 backdrop-blur-sm shadow-sm">
               <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2 text-white">
-                  <Zap className="w-4 h-4 text-indigo-400" />
-                  Aparência Padrão da Plataforma
+                <CardTitle className="text-base flex items-center gap-2 text-slate-900">
+                  <Zap className="w-4 h-4 text-indigo-600" />
+                  Aparência Padrão
                 </CardTitle>
-                <p className="text-xs text-slate-400 font-normal mt-1">
-                  Configure a aparência padrão para novos usuários.
+                <p className="text-xs text-slate-500 font-normal mt-1">
+                  Configure como novos usuários veem a plataforma.
                 </p>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label className="mb-3 block">Layout Padrão:</Label>
-                  <div className="grid grid-cols-2 gap-3">
+                  <Label className="mb-3 block text-slate-700">Layout:</Label>
+                  <div className="grid grid-cols-2 gap-2">
                     <Button
                       variant={defaultAppearance.layout === "v2" ? "default" : "outline"}
                       onClick={() => setDefaultAppearance({ ...defaultAppearance, layout: "v2" })}
-                      className="justify-start"
+                      className="justify-start text-sm h-9"
                     >
-                      <LayoutGrid className="w-4 h-4 mr-2" />
-                      Aparência 2 (Topo)
+                      <LayoutGrid className="w-3.5 h-3.5 mr-2" />
+                      Topo
                     </Button>
                     <Button
                       variant={defaultAppearance.layout === "edgy" ? "default" : "outline"}
                       onClick={() => setDefaultAppearance({ ...defaultAppearance, layout: "edgy" })}
-                      className="justify-start"
+                      className="justify-start text-sm h-9"
                     >
-                      <LayoutList className="w-4 h-4 mr-2" />
-                      Aparência 1 (Sidebar)
+                      <LayoutList className="w-3.5 h-3.5 mr-2" />
+                      Sidebar
                     </Button>
                   </div>
                 </div>
 
                 <div>
-                  <Label className="mb-3 block">Tema Padrão:</Label>
-                  <div className="grid grid-cols-2 gap-3">
+                  <Label className="mb-3 block text-slate-700">Tema:</Label>
+                  <div className="grid grid-cols-2 gap-2">
                     <Button
                       variant={defaultAppearance.tema === "dark" ? "default" : "outline"}
                       onClick={() => setDefaultAppearance({ ...defaultAppearance, tema: "dark" })}
-                      className="justify-start"
+                      className="justify-start text-sm h-9"
                     >
-                      <Moon className="w-4 h-4 mr-2" />
+                      <Moon className="w-3.5 h-3.5 mr-2" />
                       Escuro
                     </Button>
                     <Button
                       variant={defaultAppearance.tema === "light" ? "default" : "outline"}
                       onClick={() => setDefaultAppearance({ ...defaultAppearance, tema: "light" })}
-                      className="justify-start"
+                      className="justify-start text-sm h-9"
                     >
-                      <Sun className="w-4 h-4 mr-2" />
+                      <Sun className="w-3.5 h-3.5 mr-2" />
                       Claro
                     </Button>
                   </div>
                 </div>
 
-                <div className="flex gap-2 pt-2">
+                <div>
                   <Button
                     onClick={() => {
                       localStorage.setItem("default_appearance", JSON.stringify(defaultAppearance));
                       setAppearanceSaved(true);
                       setTimeout(() => setAppearanceSaved(false), 3000);
                     }}
-                    className="bg-indigo-600 hover:bg-indigo-700"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white w-full text-sm h-9"
                   >
-                    {appearanceSaved ? "✓ Salvo!" : "Salvar como Padrão"}
+                    {appearanceSaved ? "✓ Salvo!" : "Salvar"}
                   </Button>
                 </div>
               </CardContent>
