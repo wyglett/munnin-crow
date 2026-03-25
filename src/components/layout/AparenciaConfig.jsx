@@ -1,47 +1,33 @@
 import React from "react";
 import { useAppearance } from "@/hooks/useAppearance";
-import { Monitor, Sun, LayoutGrid, Layers } from "lucide-react";
+import { Sun } from "lucide-react";
 
 /**
  * AparenciaConfig
- * Shown inside the Perfil page. Lets the user pick tema + layout.
+ * Shown inside the Perfil page. Lets the user pick tema (light/dark only).
+ * Layout is always v2.0.
  */
 export default function AparenciaConfig() {
-  const { prefs, setTema, setLayout } = useAppearance();
+  const { prefs, setTema } = useAppearance();
 
   const temas = [
     {
-      id: "edgy",
-      label: "Edgy (Padrão)",
+      id: "dark",
+      label: "Escuro",
       desc: "Tema escuro e imersivo com tons de índigo e slate.",
-      icon: Monitor,
+      icon: Sun,
       preview: "bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900",
       textColor: "text-slate-100",
       badge: "bg-indigo-600 text-white",
     },
     {
       id: "light",
-      label: "Light",
+      label: "Claro",
       desc: "Tema claro com fundo branco, tipografia limpa e toques de índigo.",
       icon: Sun,
       preview: "bg-gradient-to-br from-white via-indigo-50 to-slate-100",
       textColor: "text-slate-800",
       badge: "bg-indigo-500 text-white",
-    },
-  ];
-
-  const layouts = [
-    {
-      id: "default",
-      label: "Padrão",
-      desc: "Sidebar lateral fixa com navegação vertical.",
-      icon: LayoutGrid,
-    },
-    {
-      id: "v2",
-      label: "Aparência 2.0",
-      desc: "Layout imersivo com nav em abas no topo e sidebar minimizada — mais foco no conteúdo.",
-      icon: Layers,
     },
   ];
 
