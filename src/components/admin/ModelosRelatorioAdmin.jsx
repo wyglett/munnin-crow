@@ -133,6 +133,12 @@ export default function ModelosRelatorioAdmin() {
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["modelos_relatorio"] }); setDialogOpen(false); setEditando(null); }
   });
 
+  const salvarTemplate = async ({ template_blocos }) => {
+    if (!templateModelo) return;
+    await base44.entities.ModeloRelatorio.update(templateModelo.id, { template_blocos });
+    qc.invalidateQueries({ queryKey: ["modelos_relatorio"] });
+  };
+
   const excluir = useMutation({
     mutationFn: (id) => base44.entities.ModeloRelatorio.delete(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["modelos_relatorio"] })
