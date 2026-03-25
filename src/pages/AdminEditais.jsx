@@ -367,9 +367,12 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
               </CardContent>
             </Card>
             )}
-          </div>
-        </div>
-      {/* Documentos & IA Dialog */}
+            </div>
+            </div>
+            </main>
+            </div>
+
+            {/* Documentos & IA Dialog */}
       <Dialog open={!!docsEdital} onOpenChange={() => setDocsEdital(null)}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
