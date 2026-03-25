@@ -310,10 +310,10 @@ export default function Home() {
                 <ArrowLeft className="w-5 h-5" />
               </button>
               <div>
-                <h2 className="text-xl font-bold text-white">
+                <h2 className={`text-xl font-bold ${textMain}`}>
                   Editais — {STATE_NAMES[selectedState]}
                 </h2>
-                <p className="text-sm text-white/40">Escolha a área de interesse para filtrar os editais</p>
+                <p className={`text-sm ${textSub}`}>Escolha a área de interesse para filtrar os editais</p>
               </div>
             </div>
             <CategoryCards editais={stateEditais} onSelectCategory={setSelectedCategory} />
