@@ -241,27 +241,59 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
           </TabsContent>
 
           <TabsContent value="usuarios" className="space-y-4">
-            <Card>
-              <CardHeader><CardTitle className="text-base">Convidar Novo Usuário</CardTitle></CardHeader>
-              <CardContent className="flex gap-3">
-                <Input value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} placeholder="email@exemplo.com" className="flex-1" />
-                <Select value={inviteRole} onValueChange={setInviteRole}>
-                  <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="empreendedor">Empreendedor</SelectItem>
-                    <SelectItem value="consultor">Consultor</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Button onClick={async () => {
-                  if (!inviteEmail || inviting) return;
-                  setInviting(true);
-                  await base44.users.inviteUser(inviteEmail, inviteRole);
-                  setInviteEmail("");
-                  setInviting(false);
-                }} disabled={inviting} className="bg-indigo-600 hover:bg-indigo-700">
-                  {inviting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Convidando...</> : <><UserPlus className="w-4 h-4 mr-2" /> Convidar</>}
-                </Button>
+            {/* ── Criar Acesso (sem convite manual) ── */}
+            <Card className="border-indigo-200 bg-indigo-50/40">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-indigo-600" />
+                  Criar Acesso Direto
+                </CardTitle>
+                <p className="text-xs text-slate-500 font-normal">
+                  Envia o convite <strong>e já define o tipo de usuário</strong> — assim que ele entrar pela primeira vez o role já estará configurado automaticamente.
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="flex gap-3 flex-wrap">
+                  <Input value={inviteEmail} onChange={(e) => { setInviteEmail(e.target.value); setInviteMsg(null); }} placeholder="email@exemplo.com" className="flex-1 min-w-[200px]" />
+                  <Select value={inviteRole} onValueChange={setInviteRole}>
+                    <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="empreendedor">Empreendedor</SelectItem>
+                      <SelectItem value="consultor">Consultor</SelectItem>
+                      <SelectItem value="admin">Administrador</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    onClick={async () => {
+                      if (!inviteEmail || inviting) return;
+                      setInviting(true);
+                      setInviteMsg(null);
+                      // Convida o usuário com a role escolhida
+                      await base44.users.inviteUser(inviteEmail, inviteRole);
+                      // Tenta atualizar o tipo_usuario caso o usuário já exista na lista
+                      const existente = users.find(u => u.email === inviteEmail);
+                      if (existente) {
+                        await base44.entities.User.update(existente.id, {
+                          role: inviteRole,
+                          tipo_usuario: inviteRole !== "admin" ? inviteRole : existente.tipo_usuario,
+                          perfil_concluido: true,
+                          acesso_liberado: true,
+                        });
+                        queryClient.invalidateQueries({ queryKey: ["users"] });
+                      }
+                      setInviteMsg({ ok: true, text: `Acesso criado para ${inviteEmail} como ${inviteRole}.` });
+                      setInviteEmail("");
+                      setInviting(false);
+                    }}
+                    disabled={inviting || !inviteEmail}
+                    className="bg-indigo-600 hover:bg-indigo-700"
+                  >
+                    {inviting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Criando...</> : <><Zap className="w-4 h-4 mr-2" />Criar Acesso</>}
+                  </Button>
+                </div>
+                {inviteMsg && (
+                  <p className={`text-xs mt-2 ${inviteMsg.ok ? "text-green-600" : "text-red-600"}`}>{inviteMsg.text}</p>
+                )}
               </CardContent>
             </Card>
 
