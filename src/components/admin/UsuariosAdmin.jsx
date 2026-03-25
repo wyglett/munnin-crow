@@ -7,6 +7,9 @@ import moment from "moment";
 
 export default function UsuariosAdmin() {
   const [abaModo, setAbaModo] = useState("usuarios");
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteRole, setInviteRole] = useState("user");
   const queryClient = useQueryClient();
 
   const { data: usuarios = [] } = useQuery({
