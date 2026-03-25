@@ -242,7 +242,6 @@ export default function MinhasPropostas() {
             })}
           </div>
         )}
-      </div>
       </div>{/* end z-10 */}
       <IAChatBalloon
         contextTitle="Minhas Propostas"
