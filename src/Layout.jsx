@@ -307,8 +307,13 @@ function V2Layout({ user, isAdmin, effectiveRole, viewAsRole, setViewAsRole, cur
         </div>
       )}
 
-      {/* Page content */}
-      <main className={`flex-1 overflow-y-auto ${mainBg}`}>{children}</main>
+      {/* Page content — V2 home shows its own full-screen experience */}
+      <main className={`flex-1 overflow-y-auto ${mainBg}`}>
+        {currentPageName === "Home"
+          ? <V2HomePage user={user} isAdmin={isAdmin} effectiveRole={effectiveRole} />
+          : children
+        }
+      </main>
     </div>
   );
 }
