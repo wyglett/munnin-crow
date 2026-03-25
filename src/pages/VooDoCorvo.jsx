@@ -268,8 +268,17 @@ export default function VooDoCorvo() {
   const diariasConcluidas = diariasHoje.filter(d => d.concluida).length;
   const bonusDiariasHoje  = diariasHoje.filter(d => d.concluida).reduce((s, d) => s + d.pontos, 0);
 
+  const pageBg = isLight ? "bg-slate-50" : "bg-[#0f172a]";
+  const textH = isLight ? "text-gray-800" : "text-white";
+  const textM = isLight ? "text-gray-700" : "text-slate-300";
+  const textS = isLight ? "text-gray-500" : "text-slate-400";
+  const abaActive = "bg-indigo-600 text-white";
+  const abaInact = isLight ? "bg-white border text-gray-600 hover:bg-gray-50" : "bg-white/10 border border-white/10 text-slate-300 hover:bg-white/15";
+  const rankingActive = (r) => r === "empreendedor" ? "bg-indigo-600 text-white" : "bg-emerald-600 text-white";
+  const rankingInact = isLight ? "bg-white border text-gray-600 hover:bg-gray-50" : "bg-white/10 border border-white/10 text-slate-300 hover:bg-white/15";
+
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className={`min-h-screen ${pageBg}`}>
       {/* Hero */}
       <div className="relative overflow-hidden" style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 60%, #0f172a 100%)" }}>
         <div className="absolute inset-0 opacity-10">
