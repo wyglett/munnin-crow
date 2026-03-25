@@ -178,10 +178,12 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
   const [activeTab, setActiveTab] = useState("editais");
 
   const MENU_ITEMS = [
+    { id: "dashboard", icon: BarChart3, label: "Dashboard" },
     { id: "editais", icon: Download, label: "Editais" },
     { id: "usuarios", icon: Users, label: "Usuários" },
     { id: "modelos", icon: FileText, label: "Modelos" },
     { id: "financeiro", icon: BarChart3, label: "Financeiro" },
+    { id: "logs", icon: BookOpen, label: "Logs" },
     { id: "notificacoes", icon: Bell, label: "Notificações" },
     { id: "informativos", icon: BookOpen, label: "Informativos" },
     { id: "configuracoes", icon: Zap, label: "Configurações" },
