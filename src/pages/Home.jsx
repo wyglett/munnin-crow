@@ -9,6 +9,7 @@ import CategoryCards from "../components/home/CategoryCards";
 import EditalCard from "../components/home/EditalCard";
 import EditalDetailModal from "../components/home/EditalDetailModal";
 import EditalQAPanel from "../components/home/EditalQAPanel";
+import GlowingRunes from "../components/home/GlowingRunes";
 import PreLoginModal from "../components/onboarding/PreLoginModal";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -175,6 +176,8 @@ export default function Home() {
         />
       </div>
 
+      <GlowingRunes isLight={isLight} intensity="subtle" />
+      
       <div className="relative max-w-5xl mx-auto px-6 py-10">
         {/* Hero */}
         {!showMap && !selectedState && (
