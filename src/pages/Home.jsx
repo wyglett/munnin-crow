@@ -73,7 +73,7 @@ function EditaisLista({ editais, category, onBack, onSelect, isLight }) {
         <div className="mt-6">
           <button
             onClick={() => setMostrarAntigos(v => !v)}
-            className="flex items-center gap-2 text-xs text-white/30 hover:text-white/50 transition-colors py-2"
+            className={`flex items-center gap-2 text-xs transition-colors py-2 ${oldToggle}`}
           >
             <ChevronRight className={`w-3.5 h-3.5 transition-transform ${mostrarAntigos ? "rotate-90" : ""}`} />
             Editais Antigos ({encerrados.length})
