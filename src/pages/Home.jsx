@@ -267,11 +267,11 @@ export default function Home() {
         {(showMap || selectedState) && (
           <div className="mb-10">
             <p className="text-[10px] uppercase tracking-[0.2em] text-indigo-400 font-bold mb-3">Plataforma Munnin Crow</p>
-            <h1 className="text-4xl md:text-5xl font-black text-white leading-tight">
+            <h1 className={`text-4xl md:text-5xl font-black leading-tight ${textMain}`}>
               Encontre o edital<br />
-              <span className="text-indigo-400">certo para você.</span>
+              <span className="text-indigo-500">certo para você.</span>
             </h1>
-            <p className="text-white/40 mt-4 max-w-xl text-lg">
+            <p className={`mt-4 max-w-xl text-lg ${textSub}`}>
               Selecione seu estado, escolha a área de interesse e descubra oportunidades abertas de fomento.
             </p>
           </div>
