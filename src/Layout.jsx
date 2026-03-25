@@ -209,7 +209,12 @@ function EdgyLayout({ user, isAdmin, effectiveRole, viewAsRole, setViewAsRole, c
         <header className={`md:hidden flex items-center gap-3 px-4 py-3 border-b ${isLight ? "bg-white border-slate-200" : "bg-[#0c0f1a] border-white/5"}`}>
           <button onClick={() => setMobileOpen(true)} className={`${isLight ? "text-slate-600" : "text-slate-400"} hover:text-indigo-600 p-1`}><Menu className="w-5 h-5" /></button>
           <div className="relative flex-1 flex justify-center">
-            {!isLight && <div className="absolute -inset-1 bg-white/10 blur-md" />}
+            {!isLight && (
+              <>
+                <div className="absolute -inset-2 bg-indigo-500/25 blur-xl rounded-full" />
+                <div className="absolute -inset-0.5 bg-white/10 blur-md rounded-full" />
+              </>
+            )}
             <img src={LOGO_URL} alt="Munnin Crow" className="relative h-8 w-auto object-contain" style={{ filter: logoFilter }} />
           </div>
           <NotificacoesPanel user={user} />
