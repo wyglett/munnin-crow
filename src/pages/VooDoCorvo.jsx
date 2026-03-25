@@ -368,7 +368,7 @@ export default function VooDoCorvo() {
           <div className="pb-10">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                <h2 className={`text-lg font-bold flex items-center gap-2 ${textH}`}>
                   <CalendarDays className="w-5 h-5 text-indigo-500" />
                   Missões de Hoje — {new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}
                 </h2>
