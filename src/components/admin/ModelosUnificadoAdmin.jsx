@@ -188,7 +188,7 @@ export default function ModelosUnificadoAdmin() {
                 setCreatingModel(true);
                 try {
                   const entity = tipoFiltro === "proposta" ? "ModeloDocumento" : "ModeloRelatorio";
-                  await base44.asServiceRole.entities[entity].create({
+                  await base44.entities[entity].create({
                     nome: modelForm.nome,
                     orgao: modelForm.orgao,
                     file_tipo: modelForm.file_tipo,
