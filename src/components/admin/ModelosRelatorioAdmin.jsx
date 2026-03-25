@@ -356,6 +356,13 @@ export default function ModelosRelatorioAdmin() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <ModeloTemplateEditor
+        open={!!templateModelo}
+        onClose={() => setTemplateModelo(null)}
+        modelo={templateModelo}
+        onSave={salvarTemplate}
+      />
     </div>
   );
 }
