@@ -262,8 +262,14 @@ export default function Comunidade() {
   const inputText  = isLight ? "text-slate-800 placeholder-slate-400" : "text-[#c9c9e3] placeholder-[#5c5c7a]";
   const userBarBg  = isLight ? "bg-slate-50 border-t border-slate-200" : "bg-[#13132b] border-t border-[#2e2e47]";
 
+  useEffect(() => {
+    document.title = "Comunidade | Munnin Crow";
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc) desc.setAttribute('content', "Conecte-se com outros consultores e empreendedores. Compartilhe experiências e tire dúvidas sobre editais.");
+  }, []);
+
   return (
-    <div className={`flex h-screen overflow-hidden ${rootBg}`}>
+     <div className={`flex h-screen overflow-hidden ${rootBg}`}>
 
       {/* Sidebar */}
       <div className={`${sidebarOpen ? "w-60" : "w-0"} flex-shrink-0 transition-all duration-200 overflow-hidden ${sidebarBg} flex flex-col`}>
