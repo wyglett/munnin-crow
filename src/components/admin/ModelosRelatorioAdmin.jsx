@@ -70,7 +70,8 @@ function CampoEditor({ campo, idx, onChange, onDelete }) {
   );
 }
 
-function ModeloCard({ modelo, onEdit, onDelete, onToggleStatus }) {
+function ModeloCard({ modelo, onEdit, onDelete, onToggleStatus, onEditTemplate }) {
+  const temTemplate = (modelo.template_blocos?.length || 0) > 0;
   return (
     <div className="bg-white border rounded-xl p-4 flex items-start justify-between gap-3">
       <div className="flex-1 min-w-0">
@@ -82,6 +83,11 @@ function ModeloCard({ modelo, onEdit, onDelete, onToggleStatus }) {
           <Badge className={modelo.status === "publicado" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}>
             {modelo.status === "publicado" ? "Publicado" : "Rascunho"}
           </Badge>
+          {temTemplate && (
+            <Badge className="bg-indigo-100 text-indigo-700">
+              <LayoutTemplate className="w-3 h-3 mr-1" />{modelo.template_blocos.length} blocos
+            </Badge>
+          )}
         </div>
         <p className="text-xs text-gray-500 mt-1">{modelo.orgao} {modelo.versao && `• v${modelo.versao}`} • {modelo.campos_mapeados?.length || 0} campos • {modelo.usos || 0} usos</p>
         {modelo.descricao && <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{modelo.descricao}</p>}
@@ -94,6 +100,9 @@ function ModeloCard({ modelo, onEdit, onDelete, onToggleStatus }) {
       <div className="flex gap-1 flex-shrink-0">
         <Button size="sm" variant="ghost" onClick={() => onToggleStatus(modelo)} title={modelo.status === "publicado" ? "Despublicar" : "Publicar"}>
           {modelo.status === "publicado" ? <EyeOff className="w-4 h-4 text-amber-500" /> : <Eye className="w-4 h-4 text-green-500" />}
+        </Button>
+        <Button size="sm" variant="ghost" onClick={() => onEditTemplate(modelo)} title="Montar Template de Exportação">
+          <LayoutTemplate className={`w-4 h-4 ${temTemplate ? "text-indigo-500" : "text-gray-400"}`} />
         </Button>
         <Button size="sm" variant="ghost" onClick={() => onEdit(modelo)}><Pencil className="w-4 h-4" /></Button>
         <Button size="sm" variant="ghost" className="text-red-400" onClick={() => onDelete(modelo.id)}><Trash2 className="w-4 h-4" /></Button>
