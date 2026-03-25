@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, Camera, User, Mail, Shield, CheckCircle } from "lucide-react";
+import { Loader2, Camera, User, Mail, Shield, CheckCircle, Palette } from "lucide-react";
+import AparenciaConfig from "@/components/layout/AparenciaConfig";
 
 const ROLE_LABELS = { admin: "ADMINISTRADOR", empreendedor: "EMPREENDEDOR", consultor: "CONSULTOR", user: "EMPREENDEDOR" };
 
@@ -45,6 +46,7 @@ export default function Perfil() {
       <div className="max-w-2xl mx-auto">
         <h1 className="text-2xl font-bold text-gray-900 mb-6">Meu Perfil</h1>
 
+        {/* Avatar */}
         <Card className="mb-4">
           <CardContent className="p-6 flex items-center gap-6">
             <div className="relative">
@@ -70,6 +72,7 @@ export default function Perfil() {
           </CardContent>
         </Card>
 
+        {/* Informações */}
         <Card className="mb-4">
           <CardHeader><CardTitle className="text-base">Informações da Conta</CardTitle></CardHeader>
           <CardContent className="space-y-4">
@@ -90,11 +93,24 @@ export default function Perfil() {
           </CardContent>
         </Card>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end mb-8">
           <Button onClick={handleSave} disabled={saving} className="bg-indigo-600 hover:bg-indigo-700">
             {saving ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Salvando...</> : saved ? <><CheckCircle className="w-4 h-4 mr-2" />Salvo!</> : "Salvar Foto de Perfil"}
           </Button>
         </div>
+
+        {/* Aparência */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Palette className="w-4 h-4 text-indigo-500" />
+              Aparência
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <AparenciaConfig />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
