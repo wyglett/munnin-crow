@@ -43,7 +43,7 @@ const getBlocks = (role, user, isAdmin) => {
     ];
   }
   if (isAdmin && role === "admin") {
-    blocks = [...blocks, { name: "AdminEditais", label: "Administração", sub: "Painel de administração", icon: Settings, grad: ["#dc2626","#b91c1c","#450a0a"], accent: "#fca5a5", pastel: ["#fee2e2","#fecaca","#fca5a5"], bgImage: "💰" }];
+    blocks = [...blocks, { name: "AdminEditais", label: "Administração", sub: "Painel de administração", icon: Settings, grad: ["#dc2626","#b91c1c","#450a0a"], accent: "#fca5a5", pastel: ["#fee2e2","#fecaca","#fca5a5"], bgImage: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=200&h=200&fit=crop" }];
   }
   return blocks;
 };
