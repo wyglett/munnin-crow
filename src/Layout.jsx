@@ -79,14 +79,21 @@ function EdgyLayout({ user, isAdmin, effectiveRole, viewAsRole, setViewAsRole, c
     );
   };
 
-  const logoFilter = isLight ? "none" : "drop-shadow(0 0 1px rgba(255,255,255,0.9)) drop-shadow(0 0 4px rgba(255,255,255,0.6))";
+  const logoFilter = isLight
+    ? "none"
+    : "drop-shadow(0 0 2px rgba(255,255,255,1)) drop-shadow(0 0 8px rgba(165,180,252,0.9)) drop-shadow(0 0 20px rgba(99,102,241,0.6))";
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
       <div className={`px-5 py-5 border-b ${isLight ? "border-slate-100" : "border-white/5"}`}>
         <Link to={createPageUrl("Home")} className="flex items-center justify-center" onClick={() => setMobileOpen(false)}>
           <div className="relative">
-            {!isLight && <div className="absolute -inset-2 bg-white/10 blur-xl" />}
+            {!isLight && (
+              <>
+                <div className="absolute -inset-3 bg-indigo-500/20 blur-2xl rounded-full" />
+                <div className="absolute -inset-1 bg-white/8 blur-lg rounded-full" />
+              </>
+            )}
             <img src={LOGO_URL} alt="Munnin Crow" className="relative h-12 w-auto object-contain" style={{ filter: logoFilter }} />
           </div>
         </Link>
