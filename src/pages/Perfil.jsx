@@ -27,6 +27,12 @@ export default function Perfil() {
   const [saved, setSaved] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState("");
 
+  const { data: recibos = [] } = useQuery({
+    queryKey: ["recibos-perfil", user?.email],
+    queryFn: () => base44.entities.ReciboPagamento.filter({ empreendedor_email: user.email }, "-created_date", 100),
+    enabled: !!user?.email && user?.tipo_usuario !== "consultor" && user?.role !== "consultor",
+  });
+
   useEffect(() => {
     base44.auth.me()
       .then((u) => { setUser(u); setAvatarUrl(u?.avatar_url || ""); })
