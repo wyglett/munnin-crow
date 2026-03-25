@@ -367,6 +367,7 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
               </CardContent>
             </Card>
             )}
+            </div>
           </div>
         </div>
       </main>
