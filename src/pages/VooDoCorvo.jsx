@@ -83,7 +83,7 @@ function TarefaItem({ tarefa, concluida, onMarcar, loading, isDiaria, isLight = 
       <div className="text-2xl flex-shrink-0 mt-0.5">{tarefa.icone}</div>
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
-          <p className={`text-sm font-semibold ${concluida ? "text-green-800 line-through" : "text-gray-800"}`}>{tarefa.titulo}</p>
+          <p className={`text-sm font-semibold ${concluida ? "text-green-700 line-through" : isLight ? "text-gray-800" : "text-slate-200"}`}>{tarefa.titulo}</p>
           <div className="flex items-center gap-1 flex-shrink-0">
             {tarefa.dificuldade && (
               <Badge className={`text-[10px] ${tarefa.dificuldade === "facil" ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"}`}>
