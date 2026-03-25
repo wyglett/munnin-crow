@@ -18,7 +18,7 @@ import InformativosTab from "../components/admin/InformativosTab";
 import ReceitaUsoTab from "../components/admin/ReceitasUsoTab";
 import ModelosRelatorioAdmin from "../components/admin/ModelosRelatorioAdmin";
 import ModelosPropostaAdmin from "../components/admin/ModelosPropostaAdmin";
-import NotificarUsuariosAdmin from "../components/admin/NotificarUsuariosAdmin";
+import NotificacoesAdminPanel from "../components/notificacoes/NotificacoesAdminPanel";
 import AbsorverConhecimentoModal from "../components/admin/AbsorverConhecimentoModal";
 
 const ESTADO_LABELS = {
