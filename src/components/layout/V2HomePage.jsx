@@ -157,9 +157,11 @@ function NavBlock({ block, index, isLight }) {
                 </motion.div>
                 <div className="flex items-start gap-2">
                   {block.bgImage && (
-                    <div className="text-2xl opacity-40 select-none pointer-events-none">
-                      {block.bgImage}
-                    </div>
+                    <img 
+                      src={block.bgImage} 
+                      alt="" 
+                      className="w-12 h-12 rounded-lg object-cover opacity-40"
+                    />
                   )}
                   <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
