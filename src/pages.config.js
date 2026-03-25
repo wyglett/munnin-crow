@@ -70,6 +70,7 @@ import VooCorvo from './pages/VooCorvo';
 import VooDoCorvo from './pages/VooDoCorvo';
 import Orientacoes from './pages/Orientacoes';
 import GrupoConsultores from './pages/GrupoConsultores';
+import BuscarEditais from './pages/BuscarEditais';
 import __Layout from './Layout.jsx';
 
 
