@@ -192,7 +192,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-5xl md:text-6xl font-black text-white leading-tight mb-6"
+              className={`text-5xl md:text-6xl font-black leading-tight mb-6 ${textMain}`}
             >
               Encontre o edital<br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">certo para você.</span>
