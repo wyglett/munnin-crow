@@ -225,17 +225,17 @@ export default function GlowingRunes({ isLight = false, intensity = "normal" }) 
           style={{
             cursor: "pointer",
             filter: hoveredRune === "right-1"
-              ? `drop-shadow(0 0 12px #00e676) drop-shadow(0 0 24px #00e67680)`
+              ? `drop-shadow(0 0 8px #00e676) drop-shadow(0 0 16px #00e676) drop-shadow(0 0 24px #00e676)`
               : "none",
-            transition: "filter 0.3s ease"
+            transition: "filter 0.2s ease"
           }}
         >
           {hoveredRune === "right-1" && (
-            <circle cx="0" cy="0" r="22" fill="none" stroke="#00e676" strokeWidth="1" opacity="0.3" />
+            <circle cx="0" cy="0" r="22" fill="none" stroke="#00e676" strokeWidth="1" opacity="0.4" />
           )}
-          <line x1="-2" y1="-14" x2="-2" y2="14" stroke={color2} strokeWidth="1.8" />
-          <path d="M-2 -14 L9 -7 L-2 0" stroke={color2} strokeWidth="1.8" fill="none" />
-          <line x1="-2" y1="0" x2="9" y2="14" stroke={color2} strokeWidth="1.8" />
+          <line x1="-2" y1="-14" x2="-2" y2="14" stroke={hoveredRune === "right-1" ? "#00e676" : color2} strokeWidth={hoveredRune === "right-1" ? "2.2" : "1.8"} />
+          <path d="M-2 -14 L9 -7 L-2 0" stroke={hoveredRune === "right-1" ? "#00e676" : color2} strokeWidth={hoveredRune === "right-1" ? "2.2" : "1.8"} fill="none" />
+          <line x1="-2" y1="0" x2="9" y2="14" stroke={hoveredRune === "right-1" ? "#00e676" : color2} strokeWidth={hoveredRune === "right-1" ? "2.2" : "1.8"} />
         </g>
 
         {/* Mannaz */}
