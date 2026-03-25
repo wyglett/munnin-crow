@@ -31,6 +31,15 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
+/* ─── V2 Home: immune to light theme overrides ────────────────────────────── */
+html[data-tema="light"] .v2-home .bg-white,
+html[data-tema="light"] .v2-home .bg-slate-50,
+html[data-tema="light"] .v2-home .bg-slate-100,
+html[data-tema="light"] .v2-home .bg-gray-50,
+html[data-tema="light"] .v2-home .bg-gray-100 {
+  background-color: unset !important;
+}
+
 /* ─── Light theme: content page overrides ─────────────────────────────────── */
 /* Pages like Perfil, MinhasPropostas, Acompanhamento etc. use bg-slate-50 / bg-white.
    Home, Comunidade keep their own inline backgrounds (edgy stays edgy). */
