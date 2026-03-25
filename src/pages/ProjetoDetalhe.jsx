@@ -177,15 +177,19 @@ export default function ProjetoDetalhe() {
            </TabsList>
 
           <TabsContent value="financeiro">
-            <GastosFinanceiro
-              projeto={projeto}
-              gastos={gastos}
-              isConsultor={isConsultor}
-              projetoId={id}
-            />
-          </TabsContent>
+             <GastosFinanceiro
+               projeto={projeto}
+               gastos={gastos}
+               isConsultor={isConsultor}
+               projetoId={id}
+             />
+           </TabsContent>
 
-          <TabsContent value="orcamento">
+           <TabsContent value="milestones">
+             <MilestonePagamentoTab projectId={id} consultor={projeto.consultor_email} />
+           </TabsContent>
+
+           <TabsContent value="orcamento">
             <OrcamentoTab
               projeto={projeto}
               gastos={gastos}
