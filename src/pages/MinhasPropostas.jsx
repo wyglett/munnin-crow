@@ -78,11 +78,11 @@ export default function MinhasPropostas() {
             {propostas.map((p) => {
               const status = STATUS_MAP[p.status] || STATUS_MAP.rascunho;
               return (
-                <Card key={p.id} className="hover:shadow-md transition-shadow border-l-4 border-l-indigo-200">
+                <Card key={p.id} className={`hover:shadow-md transition-shadow border-l-4 border-l-indigo-400 ${cardBg}`}>
                   <CardContent className="p-5 flex items-center justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-gray-900 truncate">{p.titulo}</h3>
+                        <h3 className={`font-semibold truncate ${textH}`}>{p.titulo}</h3>
                         <Badge className={status.color}>{status.label}</Badge>
                         {p.consultor_status === "em_apoio" && <Badge className="bg-purple-100 text-purple-700 text-xs">Com Consultor</Badge>}
                       </div>
