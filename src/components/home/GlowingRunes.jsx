@@ -114,17 +114,17 @@ export default function GlowingRunes({ isLight = false, intensity = "normal" }) 
           style={{
             cursor: "pointer",
             filter: hoveredRune === "left-2"
-              ? `drop-shadow(0 0 12px #95e1d3) drop-shadow(0 0 24px #95e1d380)`
+              ? `drop-shadow(0 0 8px #95e1d3) drop-shadow(0 0 16px #95e1d3) drop-shadow(0 0 24px #95e1d3)`
               : "none",
-            transition: "filter 0.3s ease"
+            transition: "filter 0.2s ease"
           }}
         >
           {hoveredRune === "left-2" && (
-            <circle cx="0" cy="0" r="22" fill="none" stroke="#95e1d3" strokeWidth="1" opacity="0.3" />
+            <circle cx="0" cy="0" r="22" fill="none" stroke="#95e1d3" strokeWidth="1" opacity="0.4" />
           )}
-          <line x1="0" y1="14" x2="0" y2="4" stroke={color} strokeWidth="1.8" />
-          <line x1="-7" y1="4" x2="7" y2="4" stroke={color} strokeWidth="1.8" />
-          <path d="M-7 4 L-11 -7 L0 -14 L11 -7 L7 4" stroke={color} strokeWidth="1.8" fill="none" />
+          <line x1="0" y1="14" x2="0" y2="4" stroke={hoveredRune === "left-2" ? "#95e1d3" : color} strokeWidth={hoveredRune === "left-2" ? "2.2" : "1.8"} />
+          <line x1="-7" y1="4" x2="7" y2="4" stroke={hoveredRune === "left-2" ? "#95e1d3" : color} strokeWidth={hoveredRune === "left-2" ? "2.2" : "1.8"} />
+          <path d="M-7 4 L-11 -7 L0 -14 L11 -7 L7 4" stroke={hoveredRune === "left-2" ? "#95e1d3" : color} strokeWidth={hoveredRune === "left-2" ? "2.2" : "1.8"} fill="none" />
         </g>
 
         {/* Ingwaz */}
