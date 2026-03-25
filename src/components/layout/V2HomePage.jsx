@@ -314,6 +314,16 @@ function NavBlock({ block, index }) {
 const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/user_699eeda5be72b683e3bedcf3/7507bc7bf_e6e55591-30ba-4237-91e5-2d46775150cf.png";
 
 export default function V2HomePage({ user, isAdmin, effectiveRole }) {
+  const [isLight, setIsLight] = useState(() => getAppearance().tema === "light");
+
+  // React to theme changes in real-time
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsLight(getAppearance().tema === "light");
+    }, 300);
+    return () => clearInterval(interval);
+  }, []);
+
   const blocks = getBlocks(effectiveRole, user, isAdmin);
   const firstName = user?.full_name?.split(" ")[0] || "por aqui";
 
