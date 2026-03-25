@@ -40,7 +40,7 @@ const getNavItems = (role, user) => {
   }
   return [
     { key: "s1", label_section: "Descoberta" },
-    { name: "Home", label: "Editais", icon: Home, needsMap: true },
+    { name: "BuscarEditais", label: "Editais", icon: Home },
     { key: "s2", label_section: "Meus Projetos" },
     { name: "MinhasPropostas", label: "Minhas Propostas", icon: FileText },
     { name: "Acompanhamento", label: "Acompanhamento", icon: Activity },
