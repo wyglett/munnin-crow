@@ -112,7 +112,12 @@ function EdgyLayout({ user, isAdmin, effectiveRole, viewAsRole, setViewAsRole, c
           <>
             <div className="pt-4" />
             <p className={`text-[10px] font-bold ${sidebar.sectionCls} uppercase tracking-[0.15em] px-4 pb-2`}>Gestão</p>
-            {renderNavItem({ name: "AdminEditais", label: "Administração", icon: Settings })}
+            {renderNavItem({ name: "AdminEditais", label: "Admin Clássico", icon: Settings })}
+            <Link to="/admin-v2" onClick={() => setMobileOpen(false)}
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${currentPageName === "AdminV2" ? sidebar.activeCls : sidebar.inactiveCls}`}>
+              <Settings className="w-[18px] h-[18px] flex-shrink-0" />
+              <span>Admin V2 (Novo)</span>
+            </Link>
           </>
         )}
       </nav>
