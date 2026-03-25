@@ -9,7 +9,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Plus, Trash2, Pencil, Upload, Loader2, Sparkles, CheckCircle2, FileText, ChevronDown, ChevronRight, Eye, EyeOff } from "lucide-react";
+import { Plus, Trash2, Pencil, Upload, Loader2, Sparkles, CheckCircle2, FileText, ChevronDown, ChevronRight, Eye, EyeOff, LayoutTemplate } from "lucide-react";
+import ModeloTemplateEditorProposta from "./ModeloTemplateEditorProposta";
 
 const TIPO_LABELS = {
   inovacao: "Inovação & Startup",
