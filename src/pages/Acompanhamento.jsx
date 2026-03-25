@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Activity, Calendar, DollarSign, Loader2, ArrowRight, Users, Clock, CheckCircle, Upload, FileText, Sparkles, Link2 } from "lucide-react";
+import IAChatBalloon from "@/components/ai/IAChatBalloon";
 import moment from "moment";
 
 const STATUS_MAP = {
@@ -137,7 +138,7 @@ export default function Acompanhamento() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
+    <div className="min-h-screen bg-slate-50 p-6 relative">
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -209,6 +210,11 @@ export default function Acompanhamento() {
           </div>
         )}
       </div>
+
+      <IAChatBalloon
+        contextTitle="Acompanhamento de Projetos"
+        contextText={`O usuário está gerenciando projetos contratados de editais de fomento.\n\nProjetos cadastrados:\n${projetosFiltrados.map(p => `- "${p.titulo}" (${p.orgao_financiador || "sem órgão"}, valor: R$${p.valor_contratado || "N/I"}, status: ${p.status})`).join("\n")}`}
+      />
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
