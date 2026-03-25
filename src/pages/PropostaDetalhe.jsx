@@ -333,7 +333,7 @@ Faça uma análise crítica da proposta, aponte pontos fortes, lacunas e dê sug
             </TabsContent>
           )}
         </Tabs>
-      </div>
+      </div>{/* end relative z-10 */}
 
       <IAChatBalloon
         contextTitle={`Proposta: ${proposta.titulo}`}
