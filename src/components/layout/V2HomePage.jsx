@@ -42,8 +42,8 @@ const getBlocks = (role, user, isAdmin) => {
       ...blocks.slice(4),
     ];
   }
-  if (isAdmin) {
-    blocks = [...blocks, { name: "AdminEditais", label: "Administração", sub: "Painel de administração", icon: Settings, grad: ["#dc2626","#b91c1c","#450a0a"], accent: "#fca5a5", pastel: ["#fee2e2","#fecaca","#fca5a5"] }];
+  if (isAdmin && role === "admin") {
+    blocks = [...blocks, { name: "AdminEditais", label: "Administração", sub: "Painel de administração", icon: Settings, grad: ["#dc2626","#b91c1c","#450a0a"], accent: "#fca5a5", pastel: ["#fee2e2","#fecaca","#fca5a5"], bgImage: "💰" }];
   }
   return blocks;
 };
