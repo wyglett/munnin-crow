@@ -122,30 +122,30 @@ function TarefaItem({ tarefa, concluida, onMarcar, loading, isDiaria, isLight = 
 }
 
 // ─── Ranking ──────────────────────────────────────────────────────────────────
-function Ranking({ todosTrilhas, roleFilter }) {
+function Ranking({ todosTrilhas, roleFilter, isLight = true }) {
   const filtered = todosTrilhas
     .filter(t => t.role === roleFilter)
     .sort((a, b) => (b.pontos || 0) - (a.pontos || 0))
     .slice(0, 20);
   const medalhas = ["🥇", "🥈", "🥉"];
-  if (filtered.length === 0) return <div className="text-center py-12 text-gray-400 text-sm">Nenhum participante nesta trilha ainda. Seja o primeiro!</div>;
+  if (filtered.length === 0) return <div className={`text-center py-12 text-sm ${isLight ? "text-gray-400" : "text-slate-500"}`}>Nenhum participante nesta trilha ainda. Seja o primeiro!</div>;
   return (
     <div className="space-y-2">
       {filtered.map((t, i) => {
         const nivel = getNivel(t.pontos || 0);
         return (
-          <div key={t.id} className={`flex items-center gap-3 p-3 rounded-xl border ${i < 3 ? "border-yellow-200 bg-yellow-50/50" : "border-gray-200 bg-white"}`}>
+          <div key={t.id} className={`flex items-center gap-3 p-3 rounded-xl border ${i < 3 ? "border-yellow-200 bg-yellow-50/50" : isLight ? "border-gray-200 bg-white" : "border-white/10 bg-white/5"}`}>
             <div className="w-8 text-center flex-shrink-0"><span className="text-lg">{medalhas[i] || `#${i + 1}`}</span></div>
             <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0" style={{ background: nivel.cor + "30" }}>
               <span>{nivel.icone}</span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-gray-800 truncate">{t.user_nome || t.user_email}</p>
-              <p className="text-xs text-gray-400">{nivel.nome}</p>
+              <p className={`text-sm font-semibold truncate ${isLight ? "text-gray-800" : "text-slate-200"}`}>{t.user_nome || t.user_email}</p>
+              <p className={`text-xs ${isLight ? "text-gray-400" : "text-slate-500"}`}>{nivel.nome}</p>
             </div>
             <div className="text-right flex-shrink-0">
-              <p className="text-sm font-bold text-indigo-700">{t.pontos || 0} pts</p>
-              <p className="text-xs text-gray-400">{t.tarefas_concluidas?.length || 0} tarefas</p>
+              <p className="text-sm font-bold text-indigo-400">{t.pontos || 0} pts</p>
+              <p className={`text-xs ${isLight ? "text-gray-400" : "text-slate-500"}`}>{t.tarefas_concluidas?.length || 0} tarefas</p>
             </div>
           </div>
         );
