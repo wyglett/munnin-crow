@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import GerenciadorLandingPages from './pages/GerenciadorLandingPages';
 import EditorLandingPage from './pages/EditorLandingPage';
+import AdminV2 from './pages/AdminV2';
 
 const LayoutWrapper = ({ children, currentPageName }) => {
   const Layout = pagesConfig.Layout;
@@ -70,6 +71,11 @@ const AuthenticatedApp = () => {
       <Route path="/landing-pages/:id" element={
         <LayoutWrapper currentPageName="EditorLandingPage">
           <EditorLandingPage />
+        </LayoutWrapper>
+      } />
+      <Route path="/admin-v2" element={
+        <LayoutWrapper currentPageName="AdminV2">
+          <AdminV2 />
         </LayoutWrapper>
       } />
       <Route path="*" element={<PageNotFound />} />
