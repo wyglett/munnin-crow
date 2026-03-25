@@ -2,23 +2,26 @@ import React, { useState, useRef, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Sparkles, Send, Loader2, CheckCircle2, X, Wand2 } from "lucide-react";
+import { Sparkles, Send, Loader2, CheckCircle2, X, Wand2, RefreshCw } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 /**
  * GerarPropostaCompleta
  *
  * A IA conduz uma conversa exploratória natural para entender o projeto.
- * Ela faz perguntas abertas sobre contexto, problema e visão — sem pedir
- * que o usuário responda campos do formulário. Quando tiver informações
- * suficientes, ela mesma interpreta e preenche todos os campos.
+ * A conversa é salva no localStorage por proposta_id, então se o usuário
+ * fechar/recarregar a página, a conversa é recuperada.
+ * O usuário pode iniciar nova conversa clicando em "Gerar Nova Proposta".
  *
  * Props:
- *   edital    – edital object
- *   campos    – current campos_formulario array
- *   onApply   – (newCampos: array) => void
- *   disabled  – boolean
+ *   edital      – edital object
+ *   propostaId  – string ID da proposta (para chave de autosave)
+ *   campos      – current campos_formulario array
+ *   onApply     – (newCampos: array) => void
+ *   disabled    – boolean
  */
+
+const STORAGE_KEY = (propostaId) => `gerar_proposta_chat_${propostaId}`;
 
 const SYSTEM_PROMPT = (edital, camposStr) => `Você é um consultor especialista em elaboração de propostas para editais de fomento.
 
@@ -60,14 +63,34 @@ Instruções:
 - Para cronograma e objetivos, gere texto descritivo estruturado.
 - Retorne JSON com "campos_preenchidos": array de { pergunta, resposta }.`;
 
-export default function GerarPropostaCompleta({ edital, campos, onApply, disabled }) {
+export default function GerarPropostaCompleta({ edital, propostaId, campos, onApply, disabled }) {
   const [open, setOpen] = useState(false);
-  const [history, setHistory] = useState([]); // { role, content }
+  const [history, setHistory] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [propostaGerada, setPropostaGerada] = useState(null);
   const [gerando, setGerando] = useState(false);
+  const [temHistoricoSalvo, setTemHistoricoSalvo] = useState(false);
   const endRef = useRef(null);
+
+  // Check for saved history on mount
+  useEffect(() => {
+    if (!propostaId) return;
+    const saved = localStorage.getItem(STORAGE_KEY(propostaId));
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.history?.length > 0) setTemHistoricoSalvo(true);
+      } catch {}
+    }
+  }, [propostaId]);
+
+  // Autosave whenever history changes
+  useEffect(() => {
+    if (!propostaId || history.length === 0) return;
+    localStorage.setItem(STORAGE_KEY(propostaId), JSON.stringify({ history, propostaGerada }));
+    if (history.length > 0) setTemHistoricoSalvo(true);
+  }, [history, propostaGerada, propostaId]);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -79,20 +102,44 @@ export default function GerarPropostaCompleta({ edital, campos, onApply, disable
         .join("\n")
     : "Gere proposta padrão com: Identificação, Resumo Executivo, Problema, Solução, Diferencial, Objetivos, Metodologia, Resultados Esperados, Impacto.";
 
-  const openDialog = async () => {
+  const iniciarNovaConversa = async () => {
+    // Clear saved state
+    if (propostaId) localStorage.removeItem(STORAGE_KEY(propostaId));
     setHistory([]);
     setPropostaGerada(null);
     setInput("");
     setOpen(true);
     setLoading(true);
 
-    // AI sends the first message
     const r = await base44.integrations.Core.InvokeLLM({
       prompt: `${SYSTEM_PROMPT(edital, camposStr)}\n\nInicie a conversa com uma mensagem de boas-vindas curta e a sua primeira pergunta exploratória sobre o projeto. Não mencione o edital pelo nome completo — apenas diga que vai ajudar a montar a proposta.`
     });
 
     setHistory([{ role: "assistant", content: r }]);
     setLoading(false);
+  };
+
+  const abrirHistoricoSalvo = () => {
+    if (!propostaId) return;
+    const saved = localStorage.getItem(STORAGE_KEY(propostaId));
+    if (!saved) return;
+    try {
+      const parsed = JSON.parse(saved);
+      setHistory(parsed.history || []);
+      setPropostaGerada(parsed.propostaGerada || null);
+      setInput("");
+      setOpen(true);
+    } catch {
+      iniciarNovaConversa();
+    }
+  };
+
+  const openDialog = () => {
+    if (temHistoricoSalvo) {
+      abrirHistoricoSalvo();
+    } else {
+      iniciarNovaConversa();
+    }
   };
 
   const gerarProposta = async (historico) => {
@@ -158,18 +205,12 @@ export default function GerarPropostaCompleta({ edital, campos, onApply, disable
     setHistory(novoHistorico);
     setLoading(true);
 
-    const mensagensParaIA = novoHistorico.map(m => ({
-      role: m.role,
-      content: m.content
-    }));
-
-    const systemPrompt = SYSTEM_PROMPT(edital, camposStr);
-    const conversaFormatada = mensagensParaIA
+    const conversaFormatada = novoHistorico
       .map(m => `${m.role === "user" ? "Usuário" : "Assistente"}: ${m.content}`)
       .join("\n\n");
 
     const r = await base44.integrations.Core.InvokeLLM({
-      prompt: `${systemPrompt}\n\nCONVERSA ATÉ AGORA:\n${conversaFormatada}\n\nResponda ao usuário. Se já tiver informação suficiente para montar a proposta, finalize com [GERAR_PROPOSTA] ao final da mensagem.`
+      prompt: `${SYSTEM_PROMPT(edital, camposStr)}\n\nCONVERSA ATÉ AGORA:\n${conversaFormatada}\n\nResponda ao usuário. Se já tiver informação suficiente para montar a proposta, finalize com [GERAR_PROPOSTA] ao final da mensagem.`
     });
 
     setLoading(false);
@@ -186,6 +227,9 @@ export default function GerarPropostaCompleta({ edital, campos, onApply, disable
   const aplicar = () => {
     if (!propostaGerada) return;
     onApply(propostaGerada);
+    // Clear saved state after applying
+    if (propostaId) localStorage.removeItem(STORAGE_KEY(propostaId));
+    setTemHistoricoSalvo(false);
     setOpen(false);
   };
 
@@ -193,14 +237,28 @@ export default function GerarPropostaCompleta({ edital, campos, onApply, disable
 
   return (
     <>
-      <Button
-        type="button"
-        onClick={openDialog}
-        className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-md"
-      >
-        <Wand2 className="w-4 h-4 mr-2" />
-        Gerar Proposta Completa com IA
-      </Button>
+      <div className="flex items-center gap-2">
+        <Button
+          type="button"
+          onClick={openDialog}
+          className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-md"
+        >
+          <Wand2 className="w-4 h-4 mr-2" />
+          {temHistoricoSalvo ? "Continuar Proposta com IA" : "Gerar Proposta Completa com IA"}
+        </Button>
+        {temHistoricoSalvo && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={iniciarNovaConversa}
+            className="text-gray-500 border-gray-300 h-9"
+            title="Descartar conversa salva e iniciar do zero"
+          >
+            <RefreshCw className="w-3.5 h-3.5 mr-1" /> Nova Proposta
+          </Button>
+        )}
+      </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0 overflow-hidden">
@@ -213,9 +271,20 @@ export default function GerarPropostaCompleta({ edital, campos, onApply, disable
                 </DialogTitle>
                 <p className="text-xs text-gray-500 mt-0.5 truncate">{edital?.titulo}</p>
               </div>
-              <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600 flex-shrink-0 mt-0.5">
-                <X className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                {history.length > 0 && !propostaGerada && (
+                  <button
+                    onClick={iniciarNovaConversa}
+                    className="text-xs text-gray-400 hover:text-red-500 flex items-center gap-1 px-2 py-1 rounded hover:bg-red-50 transition-colors"
+                    title="Descartar e iniciar nova conversa"
+                  >
+                    <RefreshCw className="w-3 h-3" /> Reiniciar
+                  </button>
+                )}
+                <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600 mt-0.5">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </DialogHeader>
 
