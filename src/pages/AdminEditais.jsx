@@ -402,28 +402,6 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label className="mb-3 block text-slate-700">Layout:</Label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Button
-                      variant={defaultAppearance.layout === "v2" ? "default" : "outline"}
-                      onClick={() => setDefaultAppearance({ ...defaultAppearance, layout: "v2" })}
-                      className="justify-start text-sm h-9"
-                    >
-                      <LayoutGrid className="w-3.5 h-3.5 mr-2" />
-                      Topo
-                    </Button>
-                    <Button
-                      variant={defaultAppearance.layout === "edgy" ? "default" : "outline"}
-                      onClick={() => setDefaultAppearance({ ...defaultAppearance, layout: "edgy" })}
-                      className="justify-start text-sm h-9"
-                    >
-                      <LayoutList className="w-3.5 h-3.5 mr-2" />
-                      Sidebar
-                    </Button>
-                  </div>
-                </div>
-
-                <div>
                   <Label className="mb-3 block text-slate-700">Tema:</Label>
                   <div className="grid grid-cols-2 gap-2">
                     <Button
