@@ -295,14 +295,14 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
       <main className="flex-1 overflow-y-auto relative">
         {/* Background nórdico decorativo */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-200/20 rounded-full blur-3xl -z-10" />
-          <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-purple-200/15 rounded-full blur-3xl -z-10" />
-          <svg className="absolute top-12 right-20 w-32 h-32 opacity-5" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20 50 L30 40 L40 45 L50 30 L60 50 L70 35 L80 50" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            <circle cx="35" cy="60" r="3" fill="currentColor"/>
-            <circle cx="65" cy="70" r="2" fill="currentColor"/>
-          </svg>
+          {/* Gradient glow effects — edgy dark theme */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl -z-10" />
+          <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-purple-600/15 rounded-full blur-3xl -z-10" />
+          <div className="absolute top-1/2 left-1/4 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -z-10" />
         </div>
+
+        {/* NorseBackground component */}
+        <NorseBackground isLight={false} intensity="subtle" />
 
         <div className="p-8 relative">
           <div className="max-w-6xl mx-auto">
