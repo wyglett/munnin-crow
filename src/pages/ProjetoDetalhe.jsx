@@ -200,7 +200,7 @@ export default function ProjetoDetalhe() {
             />
           </TabsContent>
         </Tabs>
-      </div>
+      </div>{/* end z-10 */}
 
       <IAChatBalloon
         contextTitle={`Projeto: ${projeto.titulo}`}
