@@ -348,7 +348,7 @@ export default function VooDoCorvo() {
         {aba === "trilha" && (
           <div className="space-y-3 pb-10">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-bold text-gray-700">{trilha.filter(t => tarefasAutoDetectadas.includes(t.id)).length} de {trilha.length} tarefas concluídas</p>
+              <p className={`text-sm font-bold ${textM}`}>{trilha.filter(t => tarefasAutoDetectadas.includes(t.id)).length} de {trilha.length} tarefas concluídas</p>
               <Badge className="bg-indigo-100 text-indigo-700">
                 <Zap className="w-3 h-3 mr-1" />{pontos} pts acumulados
               </Badge>
