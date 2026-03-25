@@ -380,7 +380,7 @@ export default function VooDoCorvo() {
             </div>
             <div className="space-y-3">
               {diariasHoje.map(d => (
-                <TarefaItem key={d.id} tarefa={{ ...d, tipo: "auto", link: d.base_id === "diaria_comunidade" ? "Comunidade" : d.base_id === "diaria_tiraduvidas" ? "TiraDuvidas" : d.base_id === "diaria_orientacao" ? "Orientacoes" : undefined }} concluida={d.concluida} onMarcar={() => {}} loading={false} isDiaria />
+                <TarefaItem key={d.id} tarefa={{ ...d, tipo: "auto", link: d.base_id === "diaria_comunidade" ? "Comunidade" : d.base_id === "diaria_tiraduvidas" ? "TiraDuvidas" : d.base_id === "diaria_orientacao" ? "Orientacoes" : undefined }} concluida={d.concluida} onMarcar={() => {}} loading={false} isDiaria isLight={isLight} />
               ))}
             </div>
             <div className="mt-5 p-4 bg-blue-50 border border-blue-200 rounded-xl text-xs text-blue-700">
