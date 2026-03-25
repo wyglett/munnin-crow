@@ -338,7 +338,7 @@ export default function VooDoCorvo() {
         <div className="flex gap-2 -mt-4 mb-6 relative z-10">
           {["trilha", "diarias", "ranking"].map(a => (
             <button key={a} onClick={() => setAba(a)}
-              className={`px-5 py-2 rounded-lg text-sm font-medium shadow-sm transition-all ${aba === a ? "bg-indigo-600 text-white" : "bg-white border text-gray-600 hover:bg-gray-50"}`}>
+              className={`px-5 py-2 rounded-lg text-sm font-medium shadow-sm transition-all ${aba === a ? abaActive : abaInact}`}>
               {a === "trilha" ? "🐦‍⬛ Minha Trilha" : a === "diarias" ? "☀️ Missões Diárias" : "🏆 Ranking"}
             </button>
           ))}
