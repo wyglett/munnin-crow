@@ -167,6 +167,9 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
 
   const ROLE_LABELS = { admin: "Administrador", empreendedor: "Empreendedor", consultor: "Consultor" };
   const ROLE_COLORS = { admin: "bg-red-100 text-red-800", empreendedor: "bg-blue-100 text-blue-800", consultor: "bg-purple-100 text-purple-800" };
+  
+  const [defaultAppearance, setDefaultAppearance] = useState({ layout: "v2", tema: "dark" });
+  const [appearanceSaved, setAppearanceSaved] = useState(false);
 
   return (
     <div className="min-h-screen bg-slate-50 p-6">
@@ -183,6 +186,7 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
             <TabsTrigger value="modelos">Modelos de Relatório</TabsTrigger>
             <TabsTrigger value="modelos_proposta">Modelos de Proposta</TabsTrigger>
             <TabsTrigger value="informativos">Informativos</TabsTrigger>
+            <TabsTrigger value="configuracoes">Configurações</TabsTrigger>
           </TabsList>
 
           <TabsContent value="editais" className="space-y-4">
@@ -238,6 +242,78 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
 
           <TabsContent value="informativos">
             <InformativosTab />
+          </TabsContent>
+
+          <TabsContent value="configuracoes" className="space-y-4">
+            <Card className="border-indigo-200 bg-indigo-50/40">
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-indigo-600" />
+                  Aparência Padrão da Plataforma
+                </CardTitle>
+                <p className="text-xs text-slate-500 font-normal mt-1">
+                  Configure a aparência padrão que será mostrada para novos usuários ao acessar pela primeira vez.
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label className="mb-3 block">Layout Padrão:</Label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button
+                      variant={defaultAppearance.layout === "v2" ? "default" : "outline"}
+                      onClick={() => setDefaultAppearance({ ...defaultAppearance, layout: "v2" })}
+                      className="justify-start"
+                    >
+                      <LayoutGrid className="w-4 h-4 mr-2" />
+                      Aparência 2 (Topo)
+                    </Button>
+                    <Button
+                      variant={defaultAppearance.layout === "edgy" ? "default" : "outline"}
+                      onClick={() => setDefaultAppearance({ ...defaultAppearance, layout: "edgy" })}
+                      className="justify-start"
+                    >
+                      <LayoutList className="w-4 h-4 mr-2" />
+                      Aparência 1 (Sidebar)
+                    </Button>
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="mb-3 block">Tema Padrão:</Label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button
+                      variant={defaultAppearance.tema === "dark" ? "default" : "outline"}
+                      onClick={() => setDefaultAppearance({ ...defaultAppearance, tema: "dark" })}
+                      className="justify-start"
+                    >
+                      <Moon className="w-4 h-4 mr-2" />
+                      Escuro
+                    </Button>
+                    <Button
+                      variant={defaultAppearance.tema === "light" ? "default" : "outline"}
+                      onClick={() => setDefaultAppearance({ ...defaultAppearance, tema: "light" })}
+                      className="justify-start"
+                    >
+                      <Sun className="w-4 h-4 mr-2" />
+                      Claro
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    onClick={() => {
+                      localStorage.setItem("default_appearance", JSON.stringify(defaultAppearance));
+                      setAppearanceSaved(true);
+                      setTimeout(() => setAppearanceSaved(false), 3000);
+                    }}
+                    className="bg-indigo-600 hover:bg-indigo-700"
+                  >
+                    {appearanceSaved ? "✓ Salvo!" : "Salvar como Padrão"}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="usuarios" className="space-y-4">
