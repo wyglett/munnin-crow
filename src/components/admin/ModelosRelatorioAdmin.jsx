@@ -48,6 +48,10 @@ function CampoEditor({ campo, idx, onChange, onDelete }) {
                   <SelectItem value="numero">Número</SelectItem>
                   <SelectItem value="data">Data</SelectItem>
                   <SelectItem value="tabela_itens">Tabela de Itens</SelectItem>
+                  <SelectItem value="membros_equipe">Membros da Equipe</SelectItem>
+                  <SelectItem value="objetivos">Objetivos</SelectItem>
+                  <SelectItem value="cronograma">Cronograma</SelectItem>
+                  <SelectItem value="tabela_valores">Tabela de Valores</SelectItem>
                 </SelectContent>
               </Select>
             </div>
