@@ -127,7 +127,36 @@ export default function AdminEditais() {
   });
 
   const deleteEdital = useMutation({
-    mutationFn: (id) => base44.entities.Edital.delete(id),
+    mutationFn: async (id) => {
+      const start = Date.now();
+      try {
+        const edital = editais.find(e => e.id === id);
+        const result = await base44.entities.Edital.delete(id);
+        
+        const tempoExecucao = Date.now() - start;
+        await base44.functions.invoke("registrarLogAcao", {
+          tipo_acao: "edital_deletado",
+          entidade_tipo: "Edital",
+          entidade_id: id,
+          entidade_nome: edital?.titulo,
+          descricao: `Edital deletado: ${edital?.titulo}`,
+          tempo_execucao_ms: tempoExecucao,
+        });
+        
+        return result;
+      } catch (error) {
+        const tempoExecucao = Date.now() - start;
+        await base44.functions.invoke("registrarLogAcao", {
+          tipo_acao: "edital_deletado",
+          entidade_tipo: "Edital",
+          entidade_id: id,
+          status: "erro",
+          descricao: `Erro ao deletar edital: ${error.message}`,
+          tempo_execucao_ms: tempoExecucao,
+        });
+        throw error;
+      }
+    },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["editais"] }),
   });
 
