@@ -301,6 +301,8 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
 
             {activeTab === "financeiro" && <ReceitaUsoTab />}
 
+            {activeTab === "logs" && <LogsAdmin />}
+
             {activeTab === "notificacoes" && (
               <div className="bg-white/60 backdrop-blur-sm rounded-xl border border-slate-200/60 p-6 shadow-sm">
                 <NotificacoesAdminPanel />
