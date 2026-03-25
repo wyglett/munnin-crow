@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 
 const STORAGE_KEY = "munnin_appearance";
 
-const defaults = { tema: "edgy", layout: "default" };
+const defaults = { tema: "dark", layout: "v2" };
 
 function load() {
   try {
