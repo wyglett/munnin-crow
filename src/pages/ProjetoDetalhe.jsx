@@ -20,6 +20,7 @@ import ConsultorTab from "../components/acompanhamento/ConsultorTab";
 import GastosFinanceiro from "../components/acompanhamento/GastosFinanceiro";
 import OrcamentoTab from "../components/acompanhamento/OrcamentoTab";
 import RelatorioTab from "../components/acompanhamento/RelatorioTab";
+import MilestonePagamentoTab from "../components/consultoria/MilestonePagamentoTab";
 
 const STATUS_MAP = { ativo: "bg-green-100 text-green-800", concluido: "bg-blue-100 text-blue-800", suspenso: "bg-yellow-100 text-yellow-800" };
 
