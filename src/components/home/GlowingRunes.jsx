@@ -268,17 +268,17 @@ export default function GlowingRunes({ isLight = false, intensity = "normal" }) 
           style={{
             cursor: "pointer",
             filter: hoveredRune === "right-3"
-              ? `drop-shadow(0 0 12px #e91e63) drop-shadow(0 0 24px #e91e6380)`
+              ? `drop-shadow(0 0 8px #e91e63) drop-shadow(0 0 16px #e91e63) drop-shadow(0 0 24px #e91e63)`
               : "none",
-            transition: "filter 0.3s ease"
+            transition: "filter 0.2s ease"
           }}
         >
           {hoveredRune === "right-3" && (
-            <circle cx="0" cy="0" r="22" fill="none" stroke="#e91e63" strokeWidth="1" opacity="0.3" />
+            <circle cx="0" cy="0" r="22" fill="none" stroke="#e91e63" strokeWidth="1" opacity="0.4" />
           )}
-          <path d="M0 -13 L-6 -1 L6 -1 Z" stroke={color2} strokeWidth="1.4" fill="none" />
-          <path d="M-7 -1 L-13 11 L-1 11 Z" stroke={color2} strokeWidth="1.4" fill="none" />
-          <path d="M7 -1 L1 11 L13 11 Z" stroke={color2} strokeWidth="1.4" fill="none" />
+          <path d="M0 -13 L-6 -1 L6 -1 Z" stroke={hoveredRune === "right-3" ? "#e91e63" : color2} strokeWidth={hoveredRune === "right-3" ? "1.8" : "1.4"} fill="none" />
+          <path d="M-7 -1 L-13 11 L-1 11 Z" stroke={hoveredRune === "right-3" ? "#e91e63" : color2} strokeWidth={hoveredRune === "right-3" ? "1.8" : "1.4"} fill="none" />
+          <path d="M7 -1 L1 11 L13 11 Z" stroke={hoveredRune === "right-3" ? "#e91e63" : color2} strokeWidth={hoveredRune === "right-3" ? "1.8" : "1.4"} fill="none" />
         </g>
 
         {/* Isa + Nauthiz */}
