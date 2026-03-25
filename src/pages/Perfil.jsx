@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, Camera, User, Mail, Shield, CheckCircle, Palette } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Loader2, Camera, User, Mail, Shield, CheckCircle, Palette, Receipt, Eye, FileText, Clock, AlertCircle } from "lucide-react";
 import AparenciaConfig from "@/components/layout/AparenciaConfig";
 
 const ROLE_LABELS = { admin: "ADMINISTRADOR", empreendedor: "EMPREENDEDOR", consultor: "CONSULTOR", user: "EMPREENDEDOR" };
