@@ -28,10 +28,6 @@ export default function FormularioSubmissao({ proposta, edital, onSave }) {
     return () => clearTimeout(t);
   }, [campos]);
 
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chatHistory, chatLoading]);
-
   const perguntasDoEdital = () => {
     if (!edital?.etapas?.length) return null;
     const todas = [];
