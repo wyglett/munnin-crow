@@ -95,7 +95,7 @@ function TarefaItem({ tarefa, concluida, onMarcar, loading, isDiaria, isLight = 
             </Badge>
           </div>
         </div>
-        <p className="text-xs text-gray-500 mt-0.5">{tarefa.descricao}</p>
+        <p className={`text-xs mt-0.5 ${isLight ? "text-gray-500" : "text-slate-400"}`}>{tarefa.descricao}</p>
         {tarefa.tipo === "selfReport" && !concluida && (
           <div className="flex items-center gap-2 mt-2">
             <span className="text-[10px] text-amber-600 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full font-medium">Auto-declarado</span>
