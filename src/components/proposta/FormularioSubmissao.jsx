@@ -276,11 +276,19 @@ Retorne o documento completo em texto puro, bem estruturado com títulos de seç
                           autoFocus={isActive && expandedId === campo.id}
                           className={`resize-none transition-all ${campo.concluido ? "bg-green-50 text-gray-600" : "bg-white"}`}
                         />
-                        <div className="flex items-center justify-between mt-1">
+                        <div className="flex items-center justify-between mt-1.5">
                           {campo.concluido ? (
                             <span className="flex items-center gap-1 text-xs text-green-600"><CheckCircle className="w-3 h-3" /> Concluído</span>
                           ) : (
                             <span className="text-[10px] text-gray-400">{chars}/{max} caracteres</span>
+                          )}
+                          {!campo.concluido && (
+                            <AIChatField
+                              pergunta={campo.pergunta}
+                              contexto={contextoIA}
+                              respostaAtual={campo.resposta}
+                              onApprove={(txt) => updateCampo(campo.id, txt.slice(0, max))}
+                            />
                           )}
                         </div>
                       </div>
