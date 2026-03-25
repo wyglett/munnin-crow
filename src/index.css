@@ -92,6 +92,64 @@
   /* reset any light-theme bg overrides so gradient blocks render correctly */
 }
 
+/* ─── Dark theme (escuro) ────────────────────────────────────────────────── */
+html[data-tema="dark"] {
+  color-scheme: dark;
+}
+
+html[data-tema="dark"] body {
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+  color: #f1f5f9;
+}
+
+html[data-tema="dark"] .bg-white,
+html[data-tema="dark"] .bg-slate-50,
+html[data-tema="dark"] .bg-slate-100,
+html[data-tema="dark"] .bg-gray-50,
+html[data-tema="dark"] .bg-gray-100 {
+  background-color: rgba(15, 23, 42, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+html[data-tema="dark"] .text-gray-900,
+html[data-tema="dark"] .text-gray-800,
+html[data-tema="dark"] .text-gray-700,
+html[data-tema="dark"] .text-slate-900,
+html[data-tema="dark"] .text-slate-800,
+html[data-tema="dark"] .text-slate-700 {
+  color: #f1f5f9 !important;
+}
+
+html[data-tema="dark"] .text-gray-600,
+html[data-tema="dark"] .text-gray-500,
+html[data-tema="dark"] .text-slate-600,
+html[data-tema="dark"] .text-slate-500 {
+  color: #cbd5e1 !important;
+}
+
+html[data-tema="dark"] .border-slate-200,
+html[data-tema="dark"] .border-gray-200 {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+html[data-tema="dark"] .hover\:bg-slate-100,
+html[data-tema="dark"] .hover\:bg-slate-50 {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+html[data-tema="dark"] input,
+html[data-tema="dark"] textarea,
+html[data-tema="dark"] select {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #f1f5f9 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+html[data-tema="dark"] input::placeholder,
+html[data-tema="dark"] textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
 /* ─── Light theme overrides ──────────────────────────────────────────────── */
 /* Applied when data-tema="light" is on <html>. 
    Content pages (min-h-screen bg-slate-50, p-6 wrappers, Cards) 
