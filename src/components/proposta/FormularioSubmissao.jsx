@@ -214,7 +214,12 @@ Retorne o documento completo em texto puro, bem estruturado com títulos de seç
           <div className="h-2 w-32 bg-gray-100 rounded-full overflow-hidden">
             <div className="h-full bg-indigo-600 rounded-full transition-all" style={{ width: `${campos.length ? (concluidos / campos.length) * 100 : 0}%` }} />
           </div>
-          <div className="flex gap-2 ml-auto">
+          <div className="flex gap-2 ml-auto flex-wrap">
+            <GerarPropostaCompleta
+              edital={edital}
+              campos={campos}
+              onApply={(novosCampos) => setCampos(novosCampos)}
+            />
             <Button size="sm" variant="outline" onClick={downloadRespostas} className="h-7 text-xs">
               <Download className="w-3 h-3 mr-1" /> Baixar Respostas
             </Button>
