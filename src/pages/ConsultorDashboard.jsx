@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Inbox, Users, Clock, CheckCircle, DollarSign, MessageSquare, Send, Receipt } from "lucide-react";
+import { Inbox, Users, Clock, CheckCircle, DollarSign, MessageSquare, Send, Receipt, Bell } from "lucide-react";
 import CobrancasTab from "../components/consultor/CobrancasTab";
 import NotificacoesConsultorPanel from "../components/notificacoes/NotificacoesConsultorPanel";
 
