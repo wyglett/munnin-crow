@@ -138,14 +138,14 @@ Faça uma análise crítica da proposta, aponte pontos fortes, lacunas e dê sug
   const status = STATUS_MAP[proposta.status] || STATUS_MAP.rascunho;
 
   // Coleta URLs de arquivos do edital para contexto da IA
-  const editalFileUrls = React.useMemo(() => {
+  const editalFileUrls = (() => {
     if (!edital) return [];
     const urls = [];
     const ok = (u) => u && /\.(pdf|png|jpg|jpeg)(\?|$)/i.test(u);
     edital.documentos_modelo?.forEach(d => { if (ok(d.url)) urls.push(d.url); });
     edital.etapas?.forEach(et => et.documentos?.forEach(d => { if (ok(d.url)) urls.push(d.url); }));
     return urls;
-  }, [edital]);
+  })();
 
   return (
     <div className="min-h-screen bg-slate-50 p-6 relative">
