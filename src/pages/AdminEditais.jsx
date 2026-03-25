@@ -231,6 +231,10 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
             <ModelosRelatorioAdmin />
           </TabsContent>
 
+          <TabsContent value="modelos_proposta">
+            <ModelosPropostaAdmin />
+          </TabsContent>
+
           <TabsContent value="informativos">
             <InformativosTab />
           </TabsContent>
