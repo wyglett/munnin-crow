@@ -129,11 +129,90 @@ export default function ModelosUnificadoAdmin() {
         </table>
 
         {dados.length === 0 && (
-          <div className="text-center py-8 text-slate-500">
-            Nenhum modelo encontrado
+           <div className="text-center py-8 text-slate-500">
+             Nenhum modelo encontrado
+           </div>
+         )}
+        </div>
+
+        {/* New Model Dialog */}
+        <Dialog open={modelOpen} onOpenChange={setModelOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Novo Modelo</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="model-nome">Nome</Label>
+              <Input
+                id="model-nome"
+                value={modelForm.nome}
+                onChange={(e) => setModelForm({ ...modelForm, nome: e.target.value })}
+                placeholder="Ex: FAPES Genesis - Proposta"
+              />
+            </div>
+            <div>
+              <Label htmlFor="model-orgao">Órgão</Label>
+              <Select value={modelForm.orgao} onValueChange={(v) => setModelForm({ ...modelForm, orgao: v })}>
+                <SelectTrigger id="model-orgao">
+                  <SelectValue placeholder="Selecione um órgão" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="FAPES">FAPES</SelectItem>
+                  <SelectItem value="FAPERJ">FAPERJ</SelectItem>
+                  <SelectItem value="FAPESP">FAPESP</SelectItem>
+                  <SelectItem value="FAPEMIG">FAPEMIG</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="model-tipo">Tipo de Arquivo</Label>
+              <Select value={modelForm.file_tipo} onValueChange={(v) => setModelForm({ ...modelForm, file_tipo: v })}>
+                <SelectTrigger id="model-tipo">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pdf">PDF</SelectItem>
+                  <SelectItem value="docx">DOCX</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-        )}
-      </div>
-    </div>
-  );
-}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setModelOpen(false)}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={async () => {
+                if (!modelForm.nome || !modelForm.orgao) return;
+                setCreatingModel(true);
+                try {
+                  const entity = tipoFiltro === "proposta" ? "ModeloDocumento" : "ModeloRelatorio";
+                  await base44.asServiceRole.entities[entity].create({
+                    nome: modelForm.nome,
+                    orgao: modelForm.orgao,
+                    file_tipo: modelForm.file_tipo,
+                    status: "rascunho",
+                  });
+                  queryClient.invalidateQueries({ queryKey: ["modelos-documento"] });
+                  queryClient.invalidateQueries({ queryKey: ["modelos-relatorio"] });
+                  setModelForm({ nome: "", orgao: "", file_tipo: "pdf" });
+                  setModelOpen(false);
+                } catch (error) {
+                  console.error("Erro ao criar modelo:", error);
+                } finally {
+                  setCreatingModel(false);
+                }
+              }}
+              disabled={creatingModel}
+              className="bg-indigo-600 hover:bg-indigo-700"
+            >
+              {creatingModel && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Criar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+        </Dialog>
+        </div>
+        );
+        }
