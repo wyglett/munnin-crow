@@ -254,14 +254,14 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
     <div className="flex h-screen" style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)" }}>
       {/* Sidebar refinado */}
       <aside className="w-64 border-r border-white/10 flex flex-col shadow-sm" style={{ background: "rgba(15, 23, 42, 0.8)" }}>
-        <div className="p-5 border-b border-slate-100">
+        <div className="p-5 border-b border-white/10">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-md bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shadow-md shadow-indigo-500/30">
               <Zap className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h2 className="font-semibold text-slate-900 text-sm">Administração</h2>
-              <p className="text-xs text-slate-500">Painel</p>
+              <h2 className="font-semibold text-slate-100 text-sm">Administração</h2>
+              <p className="text-xs text-slate-400">Painel</p>
             </div>
           </div>
         </div>
@@ -275,8 +275,8 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
                 onClick={() => setActiveTab(item.id)}
                 className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition-all duration-150 text-sm ${
                   activeTab === item.id
-                    ? "bg-indigo-50 text-indigo-700 font-medium border border-indigo-200/60"
-                    : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900"
+                    ? "bg-indigo-600/30 text-indigo-300 font-medium border border-indigo-500/30"
+                    : "text-slate-400 hover:bg-white/5 hover:text-slate-300"
                 }`}
               >
                 <Icon className="w-4 h-4 flex-shrink-0" />
@@ -286,8 +286,8 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
           })}
         </nav>
 
-        <div className="p-3 border-t border-slate-100">
-          <p className="text-xs text-slate-400 text-center">v3.0</p>
+        <div className="p-3 border-t border-white/10">
+          <p className="text-xs text-slate-500 text-center">v3.0</p>
         </div>
       </aside>
 
