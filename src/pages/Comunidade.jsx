@@ -263,7 +263,7 @@ export default function Comunidade() {
   const userBarBg  = isLight ? "bg-slate-50 border-t border-slate-200" : "bg-[#13132b] border-t border-[#2e2e47]";
 
   return (
-    <div className={`flex h-full overflow-hidden ${rootBg}`}>
+    <div className={`flex h-screen overflow-hidden ${rootBg}`}>
 
       {/* Sidebar */}
       <div className={`${sidebarOpen ? "w-60" : "w-0"} flex-shrink-0 transition-all duration-200 overflow-hidden ${sidebarBg} flex flex-col`}>
