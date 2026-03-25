@@ -180,6 +180,7 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
             <TabsTrigger value="notificacoes">Notificações</TabsTrigger>
             <TabsTrigger value="receitas">Receitas & Uso</TabsTrigger>
             <TabsTrigger value="modelos">Modelos de Relatório</TabsTrigger>
+            <TabsTrigger value="modelos_proposta">Modelos de Proposta</TabsTrigger>
             <TabsTrigger value="informativos">Informativos</TabsTrigger>
           </TabsList>
 
