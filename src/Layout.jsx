@@ -113,6 +113,10 @@ function EdgyLayout({ user, isAdmin, effectiveRole, viewAsRole, setViewAsRole, c
 
       <div className="px-3 pb-1">
         <div className={`flex items-center gap-2 px-4 py-2 ${isLight ? "text-slate-500" : "text-slate-400"}`}>
+          <PontosButton user={user} />
+          <span className="text-xs">Pontos</span>
+        </div>
+        <div className={`flex items-center gap-2 px-4 py-2 ${isLight ? "text-slate-500" : "text-slate-400"}`}>
           <NotificacoesPanel user={user} />
           <span className="text-xs">Notificações</span>
         </div>
