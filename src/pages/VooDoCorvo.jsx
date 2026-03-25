@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { getAppearance } from "@/hooks/useAppearance";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Card, CardContent } from "@/components/ui/card";
