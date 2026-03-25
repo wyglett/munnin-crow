@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Inbox, Users, Clock, CheckCircle, DollarSign, MessageSquare, Send, Receipt } from "lucide-react";
 import CobrancasTab from "../components/consultor/CobrancasTab";
+import NotificacoesConsultorPanel from "../components/notificacoes/NotificacoesConsultorPanel";
 
 const fmt = (v) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0);
 
