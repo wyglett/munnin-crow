@@ -46,9 +46,9 @@ export default function ModelosUnificadoAdmin() {
           <h3 className="text-2xl font-bold text-slate-900">Gerenciar Modelos</h3>
           <p className="text-sm text-slate-500 mt-1">Propostas e relatórios</p>
         </div>
-        <Button className="gap-2 shadow-lg">
-          <Plus className="w-4 h-4" /> Novo Modelo
-        </Button>
+        <Button className="gap-2 shadow-lg" onClick={() => setModelOpen(true)}>
+           <Plus className="w-4 h-4" /> Novo Modelo
+         </Button>
       </div>
 
       <div className="flex gap-2 p-1 bg-slate-100 rounded-lg w-fit">
