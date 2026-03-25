@@ -143,17 +143,28 @@ export default function Home() {
     else setSelectedState(null);
   };
 
+  const rootStyle = isLight
+    ? { background: "linear-gradient(160deg, #eef2ff 0%, #f1f5f9 45%, #faf5ff 100%)" }
+    : { background: "linear-gradient(180deg, #0f172a 0%, #1a1040 40%, #0f172a 100%)" };
+  const textMain  = isLight ? "text-slate-900" : "text-white";
+  const textSub   = isLight ? "text-slate-500" : "text-white/40";
+  const textMuted = isLight ? "text-slate-400" : "text-white/30";
+  const cardBg    = isLight ? "bg-white border border-slate-200 shadow-sm" : "bg-white/5 backdrop-blur-sm border border-white/10";
+  const breadCrumbBtn = isLight ? "text-slate-400 hover:text-slate-700" : "text-white/40 hover:text-white";
+  const orbColor1 = isLight ? "bg-indigo-400/10" : "bg-indigo-600/10";
+  const orbColor2 = isLight ? "bg-purple-400/10" : "bg-purple-600/10";
+
   return (
-    <div className="min-h-screen relative overflow-hidden" style={{ background: "linear-gradient(180deg, #0f172a 0%, #1a1040 40%, #0f172a 100%)" }}>
+    <div className="min-h-screen relative overflow-hidden" style={rootStyle}>
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div 
-          className="absolute top-20 left-10 w-72 h-72 bg-indigo-600/10 rounded-full blur-3xl"
+        <motion.div
+          className={`absolute top-20 left-10 w-72 h-72 ${orbColor1} rounded-full blur-3xl`}
           animate={{ x: [0, 100, 0], y: [0, 50, 0] }}
           transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
         />
-        <motion.div 
-          className="absolute bottom-20 right-10 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl"
+        <motion.div
+          className={`absolute bottom-20 right-10 w-96 h-96 ${orbColor2} rounded-full blur-3xl`}
           animate={{ x: [0, -80, 0], y: [0, -60, 0] }}
           transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
         />
