@@ -442,7 +442,6 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
           setAbsorverEdital(null);
         }}
       />
-      </main>
     </div>
   );
 }
