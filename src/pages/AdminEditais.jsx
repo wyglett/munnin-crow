@@ -358,7 +358,20 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
 
             {activeTab === "usuarios" && <UsuariosAdmin />}
 
-            {activeTab === "modelos" && <ModelosUnificadoAdmin />}
+            {activeTab === "modelos" && (
+              <Tabs defaultValue="propostas" className="w-full">
+                <TabsList className="grid w-full max-w-md grid-cols-2">
+                  <TabsTrigger value="propostas">Propostas</TabsTrigger>
+                  <TabsTrigger value="relatorios">Relatórios</TabsTrigger>
+                </TabsList>
+                <TabsContent value="propostas" className="mt-6">
+                  <ModelosPropostaAdmin />
+                </TabsContent>
+                <TabsContent value="relatorios" className="mt-6">
+                  <ModelosRelatorioAdmin />
+                </TabsContent>
+              </Tabs>
+            )}
 
             {activeTab === "financeiro" && <ReceitaUsoTab />}
 
