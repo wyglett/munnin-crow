@@ -88,6 +88,11 @@ function EditaisLista({ editais, category, onBack, onSelect }) {
 }
 
 export default function Home() {
+  const [isLight, setIsLight] = useState(() => getAppearance().tema === "light");
+  useEffect(() => {
+    const iv = setInterval(() => setIsLight(getAppearance().tema === "light"), 300);
+    return () => clearInterval(iv);
+  }, []);
   const [selectedState, setSelectedState] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedEdital, setSelectedEdital] = useState(null);
