@@ -6,14 +6,19 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
+import GerenciadorLandingPages from './pages/GerenciadorLandingPages';
+import EditorLandingPage from './pages/EditorLandingPage';
+
+const LayoutWrapper = ({ children, currentPageName }) => {
+  const Layout = pagesConfig.Layout;
+  return Layout ?
+    <Layout currentPageName={currentPageName}>{children}</Layout>
+    : <>{children}</>;
+};
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
 const MainPage = mainPageKey ? Pages[mainPageKey] : <></>;
-
-const LayoutWrapper = ({ children, currentPageName }) => Layout ?
-  <Layout currentPageName={currentPageName}>{children}</Layout>
-  : <>{children}</>;
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -57,6 +62,16 @@ const AuthenticatedApp = () => {
           }
         />
       ))}
+      <Route path="/landing-pages" element={
+        <LayoutWrapper currentPageName="GerenciadorLandingPages">
+          <GerenciadorLandingPages />
+        </LayoutWrapper>
+      } />
+      <Route path="/landing-pages/:id" element={
+        <LayoutWrapper currentPageName="EditorLandingPage">
+          <EditorLandingPage />
+        </LayoutWrapper>
+      } />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
