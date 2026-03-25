@@ -380,19 +380,19 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
             {activeTab === "logs" && <LogsAdmin />}
 
             {activeTab === "notificacoes" && (
-              <div className="bg-white/60 backdrop-blur-sm rounded-xl border border-slate-200/60 p-6 shadow-sm">
+              <div className="rounded-xl border border-white/10 p-6 shadow-sm" style={{ background: "rgba(15, 23, 42, 0.5)" }}>
                 <NotificacoesAdminPanel />
               </div>
             )}
 
             {activeTab === "informativos" && (
-              <div className="bg-white/60 backdrop-blur-sm rounded-xl border border-slate-200/60 p-6 shadow-sm">
+              <div className="rounded-xl border border-white/10 p-6 shadow-sm" style={{ background: "rgba(15, 23, 42, 0.5)" }}>
                 <InformativosTab />
               </div>
             )}
 
             {activeTab === "configuracoes" && (
-            <Card className="border-slate-200/60 bg-white/70 backdrop-blur-sm shadow-sm">
+            <Card className="border-white/10 shadow-sm" style={{ background: "rgba(15, 23, 42, 0.5)" }}>
               <CardHeader>
                 <CardTitle className="text-base flex items-center gap-2 text-slate-900">
                   <Zap className="w-4 h-4 text-indigo-600" />
