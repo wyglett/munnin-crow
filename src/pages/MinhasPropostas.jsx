@@ -20,7 +20,12 @@ const STATUS_MAP = {
 
 export default function MinhasPropostas() {
   const [user, setUser] = React.useState(null);
+  const [isLight, setIsLight] = useState(() => getAppearance().tema === "light");
   React.useEffect(() => { base44.auth.me().then(setUser).catch(() => {}); }, []);
+  useEffect(() => {
+    const iv = setInterval(() => setIsLight(getAppearance().tema === "light"), 300);
+    return () => clearInterval(iv);
+  }, []);
   const queryClient = useQueryClient();
   const { data: todasPropostas = [], isLoading } = useQuery({
     queryKey: ["propostas", user?.email],
