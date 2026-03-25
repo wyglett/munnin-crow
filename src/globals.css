@@ -31,6 +31,60 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
+/* ─── Light theme: content page overrides ─────────────────────────────────── */
+/* Pages like Perfil, MinhasPropostas, Acompanhamento etc. use bg-slate-50 / bg-white.
+   Home, Comunidade keep their own inline backgrounds (edgy stays edgy). */
+
+html[data-tema="light"] body {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* Cards and white surfaces */
+html[data-tema="light"] .bg-white     { background-color: #ffffff !important; }
+html[data-tema="light"] .bg-slate-50  { background-color: #f8fafc !important; }
+html[data-tema="light"] .bg-slate-100 { background-color: #f1f5f9 !important; }
+html[data-tema="light"] .bg-gray-50   { background-color: #f8fafc !important; }
+html[data-tema="light"] .bg-gray-100  { background-color: #f1f5f9 !important; }
+
+/* Text colors in content areas */
+html[data-tema="light"] .text-gray-900 { color: #0f172a !important; }
+html[data-tema="light"] .text-gray-800 { color: #1e293b !important; }
+html[data-tema="light"] .text-gray-700 { color: #334155 !important; }
+html[data-tema="light"] .text-gray-600 { color: #475569 !important; }
+html[data-tema="light"] .text-gray-500 { color: #64748b !important; }
+html[data-tema="light"] .text-gray-400 { color: #94a3b8 !important; }
+
+html[data-tema="light"] .text-slate-900 { color: #0f172a !important; }
+html[data-tema="light"] .text-slate-800 { color: #1e293b !important; }
+html[data-tema="light"] .text-slate-700 { color: #334155 !important; }
+html[data-tema="light"] .text-slate-600 { color: #475569 !important; }
+html[data-tema="light"] .text-slate-500 { color: #64748b !important; }
+html[data-tema="light"] .text-slate-400 { color: #94a3b8 !important; }
+
+/* Border softening */
+html[data-tema="light"] .border-slate-200 { border-color: #e2e8f0 !important; }
+html[data-tema="light"] .border-gray-200  { border-color: #e2e8f0 !important; }
+
+/* Card elevation */
+html[data-tema="light"] .shadow-sm {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04) !important;
+}
+html[data-tema="light"] .shadow {
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05) !important;
+}
+
+/* Inputs */
+html[data-tema="light"] input:not([type="checkbox"]):not([type="radio"]),
+html[data-tema="light"] textarea,
+html[data-tema="light"] select {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+html[data-tema="light"] input::placeholder,
+html[data-tema="light"] textarea::placeholder { color: #94a3b8 !important; }
+
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
