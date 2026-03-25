@@ -289,16 +289,16 @@ export default function GlowingRunes({ isLight = false, intensity = "normal" }) 
           style={{
             cursor: "pointer",
             filter: hoveredRune === "right-4"
-              ? `drop-shadow(0 0 12px #3f51b5) drop-shadow(0 0 24px #3f51b580)`
+              ? `drop-shadow(0 0 8px #3f51b5) drop-shadow(0 0 16px #3f51b5) drop-shadow(0 0 24px #3f51b5)`
               : "none",
-            transition: "filter 0.3s ease"
+            transition: "filter 0.2s ease"
           }}
         >
           {hoveredRune === "right-4" && (
-            <circle cx="0" cy="0" r="22" fill="none" stroke="#3f51b5" strokeWidth="1" opacity="0.3" />
+            <circle cx="0" cy="0" r="22" fill="none" stroke="#3f51b5" strokeWidth="1" opacity="0.4" />
           )}
-          <line x1="0" y1="-14" x2="0" y2="14" stroke={color} strokeWidth="1.8" />
-          <line x1="-8" y1="-6" x2="8" y2="6" stroke={color} strokeWidth="1.3" />
+          <line x1="0" y1="-14" x2="0" y2="14" stroke={hoveredRune === "right-4" ? "#3f51b5" : color} strokeWidth={hoveredRune === "right-4" ? "2.2" : "1.8"} />
+          <line x1="-8" y1="-6" x2="8" y2="6" stroke={hoveredRune === "right-4" ? "#3f51b5" : color} strokeWidth={hoveredRune === "right-4" ? "1.8" : "1.3"} />
         </g>
 
         {/* Hagalaz */}
