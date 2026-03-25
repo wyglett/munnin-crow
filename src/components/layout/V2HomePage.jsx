@@ -187,7 +187,7 @@ const getBlocks = (role, user, isAdmin) => {
 };
 
 // Individual animated block
-function NavBlock({ block, index }) {
+function NavBlock({ block, index, isLight }) {
   const ref = useRef(null);
   const mouseX = useMotionValue(0.5);
   const mouseY = useMotionValue(0.5);
