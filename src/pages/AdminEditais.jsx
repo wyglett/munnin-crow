@@ -253,7 +253,7 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
   return (
     <div className="flex h-screen" style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)" }}>
       {/* Sidebar refinado */}
-      <aside className="w-64 bg-white/80 backdrop-blur-sm border-r border-slate-200/60 flex flex-col shadow-sm">
+      <aside className="w-64 border-r border-white/10 flex flex-col shadow-sm" style={{ background: "rgba(15, 23, 42, 0.8)" }}>
         <div className="p-5 border-b border-slate-100">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-md bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shadow-md shadow-indigo-500/30">
