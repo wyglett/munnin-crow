@@ -90,7 +90,39 @@ export default function AdminEditais() {
   const { data: users = [] } = useQuery({ queryKey: ["users"], queryFn: () => base44.entities.User.list() });
 
   const createEdital = useMutation({
-    mutationFn: (d) => editando ? base44.entities.Edital.update(editando.id, d) : base44.entities.Edital.create(d),
+    mutationFn: async (d) => {
+      const start = Date.now();
+      try {
+        const result = editando ? await base44.entities.Edital.update(editando.id, d) : await base44.entities.Edital.create(d);
+        
+        // Registrar log
+        const tempoExecucao = Date.now() - start;
+        await base44.functions.invoke("registrarLogAcao", {
+          tipo_acao: editando ? "edital_atualizado" : "edital_criado",
+          entidade_tipo: "Edital",
+          entidade_id: result.id,
+          entidade_nome: d.titulo,
+          descricao: `Edital ${editando ? "atualizado" : "criado"}: ${d.titulo}`,
+          dados_antes: editando ? editando : null,
+          dados_depois: result,
+          tempo_execucao_ms: tempoExecucao,
+        });
+        
+        return result;
+      } catch (error) {
+        const tempoExecucao = Date.now() - start;
+        await base44.functions.invoke("registrarLogAcao", {
+          tipo_acao: editando ? "edital_atualizado" : "edital_criado",
+          entidade_tipo: "Edital",
+          entidade_id: editando?.id,
+          entidade_nome: d.titulo,
+          descricao: `Erro ao ${editando ? "atualizar" : "criar"} edital: ${error.message}`,
+          status: "erro",
+          tempo_execucao_ms: tempoExecucao,
+        });
+        throw error;
+      }
+    },
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["editais"] }); setFormOpen(false); setEditando(null); },
   });
 
