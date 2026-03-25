@@ -34,9 +34,9 @@ export default function UsuariosAdmin() {
           <h3 className="text-2xl font-bold text-slate-900">Gerenciar Usuários</h3>
           <p className="text-sm text-slate-500 mt-1">Usuários e solicitações</p>
         </div>
-        <Button className="gap-2 shadow-lg">
-          <Plus className="w-4 h-4" /> Convidar Usuário
-        </Button>
+        <Button className="gap-2 shadow-lg" onClick={() => setInviteOpen(true)}>
+           <Plus className="w-4 h-4" /> Convidar Usuário
+         </Button>
       </div>
 
       <div className="flex gap-2 p-1 bg-slate-100 rounded-lg w-fit">
