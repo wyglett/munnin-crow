@@ -237,10 +237,10 @@ export default function Home() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.6 }}
-              className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-5 mb-8 flex items-start gap-3"
+              className={`rounded-xl p-5 mb-8 flex items-start gap-3 ${cardBg}`}
             >
-              <Target className="w-5 h-5 text-indigo-400 flex-shrink-0 mt-0.5" />
-              <p className="text-white/70 text-sm leading-relaxed">{randomFact}</p>
+              <Target className="w-5 h-5 text-indigo-500 flex-shrink-0 mt-0.5" />
+              <p className={`text-sm leading-relaxed ${isLight ? "text-slate-600" : "text-white/70"}`}>{randomFact}</p>
             </motion.div>
 
             {/* CTA */}
