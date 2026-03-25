@@ -213,7 +213,7 @@ function EdgyLayout({ user, isAdmin, effectiveRole, viewAsRole, setViewAsRole, c
 }
 
 // ─── V2 Layout (immersive top-nav) ───────────────────────────────────────────
-function V2Layout({ user, isAdmin, effectiveRole, viewAsRole, setViewAsRole, currentPageName, children, mobileOpen, setMobileOpen }) {
+function V2Layout({ user, isAdmin, effectiveRole, viewAsRole, setViewAsRole, currentPageName, children, mobileOpen, setMobileOpen, setUser, showOnboarding, setShowOnboarding, showTour, setShowTour, verComoRef, showVerComo, setShowVerComo }) {
   const isLight = getAppearance().tema === "light";
 
   const navItems = getNavItems(effectiveRole, user).filter(i => i.name); // only real nav items
