@@ -263,7 +263,7 @@ function V2Layout({ user, isAdmin, effectiveRole, viewAsRole, setViewAsRole, cur
               const isActive = currentPageName === item.name;
               return (
                 <Link key={item.name} to={createPageUrl(item.name)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap flex-shrink-0 ${isActive ? activeCls : inactiveCls}`}>
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap flex-shrink-0 ${isActive ? "bg-indigo-600 text-white" : inactiveCls}`}>
                   <Icon className="w-3.5 h-3.5 flex-shrink-0" />
                   {item.label}
                 </Link>
