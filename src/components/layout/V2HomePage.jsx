@@ -15,7 +15,7 @@ import { getAppearance } from "@/hooks/useAppearance";
 // Block definitions
 const getBlocks = (role, user, isAdmin) => {
   const empreendedorBlocks = [
-    { name: "Home",            label: "Editais",           sub: "Descubra oportunidades de fomento",  icon: Home,         grad: ["#4f46e5","#7c3aed","#312e81"], accent: "#a78bfa", pastel: ["#ede9fe","#ddd6fe","#c4b5fd"] },
+    { name: "BuscarEditais",   label: "Editais",           sub: "Descubra oportunidades de fomento",  icon: Home,         grad: ["#4f46e5","#7c3aed","#312e81"], accent: "#a78bfa", pastel: ["#ede9fe","#ddd6fe","#c4b5fd"] },
     { name: "MinhasPropostas", label: "Minhas Propostas",  sub: "Gerencie suas submissões",            icon: FileText,     grad: ["#0ea5e9","#0284c7","#0c4a6e"], accent: "#38bdf8", pastel: ["#e0f2fe","#bae6fd","#7dd3fc"] },
     { name: "Acompanhamento",  label: "Acompanhamento",    sub: "Monitore projetos contratados",       icon: Activity,     grad: ["#10b981","#059669","#064e3b"], accent: "#6ee7b7", pastel: ["#d1fae5","#a7f3d0","#6ee7b7"] },
     { name: "TiraDuvidas",     label: "Tira-dúvidas IA",   sub: "Converse com a inteligência artificial", icon: Bot,       grad: ["#f59e0b","#d97706","#78350f"], accent: "#fcd34d", pastel: ["#fef3c7","#fde68a","#fcd34d"] },
