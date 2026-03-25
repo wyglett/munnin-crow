@@ -186,49 +186,60 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
   ];
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      {/* Sidebar Nórdico */}
-      <aside className="w-72 bg-slate-900/95 backdrop-blur-xl border-r border-slate-700/50 flex flex-col">
-        <div className="p-6 border-b border-slate-700/50">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-600/50">
-              <Zap className="w-6 h-6 text-white" />
+    <div className="flex h-screen bg-gradient-to-br from-slate-50 via-slate-100 to-slate-50">
+      {/* Sidebar refinado */}
+      <aside className="w-64 bg-white/80 backdrop-blur-sm border-r border-slate-200/60 flex flex-col shadow-sm">
+        <div className="p-5 border-b border-slate-100">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-md bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shadow-md shadow-indigo-500/30">
+              <Zap className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h2 className="font-bold text-white">Administração</h2>
-              <p className="text-xs text-slate-400">Painel de controle</p>
+              <h2 className="font-semibold text-slate-900 text-sm">Administração</h2>
+              <p className="text-xs text-slate-500">Painel</p>
             </div>
           </div>
         </div>
 
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+        <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
           {MENU_ITEMS.map(item => {
             const Icon = item.icon;
             return (
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition-all duration-150 text-sm ${
                   activeTab === item.id
-                    ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-600/30"
-                    : "text-slate-300 hover:bg-slate-700/40 hover:text-white"
+                    ? "bg-indigo-50 text-indigo-700 font-medium border border-indigo-200/60"
+                    : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900"
                 }`}
               >
-                <Icon className="w-5 h-5 flex-shrink-0" />
-                <span className="text-sm font-medium text-left">{item.label}</span>
+                <Icon className="w-4 h-4 flex-shrink-0" />
+                <span className="text-left">{item.label}</span>
               </button>
             );
           })}
         </nav>
 
-        <div className="p-4 border-t border-slate-700/50">
-          <p className="text-xs text-slate-500 text-center">Admin v3.0</p>
+        <div className="p-3 border-t border-slate-100">
+          <p className="text-xs text-slate-400 text-center">v3.0</p>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
-        <div className="p-8">
+      <main className="flex-1 overflow-y-auto relative">
+        {/* Background nórdico decorativo */}
+        <div className="fixed inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-200/20 rounded-full blur-3xl -z-10" />
+          <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-purple-200/15 rounded-full blur-3xl -z-10" />
+          <svg className="absolute top-12 right-20 w-32 h-32 opacity-5" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 50 L30 40 L40 45 L50 30 L60 50 L70 35 L80 50" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            <circle cx="35" cy="60" r="3" fill="currentColor"/>
+            <circle cx="65" cy="70" r="2" fill="currentColor"/>
+          </svg>
+        </div>
+
+        <div className="p-8 relative">
           <div className="max-w-6xl mx-auto">
             {/* Header */}
             <div className="mb-8">
