@@ -383,7 +383,7 @@ export default function VooDoCorvo() {
                 <TarefaItem key={d.id} tarefa={{ ...d, tipo: "auto", link: d.base_id === "diaria_comunidade" ? "Comunidade" : d.base_id === "diaria_tiraduvidas" ? "TiraDuvidas" : d.base_id === "diaria_orientacao" ? "Orientacoes" : undefined }} concluida={d.concluida} onMarcar={() => {}} loading={false} isDiaria isLight={isLight} />
               ))}
             </div>
-            <div className="mt-5 p-4 bg-blue-50 border border-blue-200 rounded-xl text-xs text-blue-700">
+            <div className={`mt-5 p-4 rounded-xl text-xs ${isLight ? "bg-blue-50 border border-blue-200 text-blue-700" : "bg-blue-900/20 border border-blue-700/30 text-blue-300"}`}>
               <p><strong>🐦‍⬛ Missões Diárias</strong> são detectadas automaticamente: login é detectado ao entrar na plataforma, participação na comunidade ao enviar mensagem hoje, tira-dúvidas e materiais ao usar cada seção.</p>
             </div>
           </div>
