@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { motion, useMotionValue, useTransform, AnimatePresence } from "framer-motion";
 import NotificacoesPanel from "@/components/notificacoes/NotificacoesPanel";
+import PontosButton from "@/components/gamification/PontosButton";
 import { getAppearance } from "@/hooks/useAppearance";
 
 // Block definitions
