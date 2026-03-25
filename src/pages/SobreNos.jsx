@@ -133,7 +133,7 @@ export default function SobreNos() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
           >
-            <h1 className="text-5xl md:text-7xl font-black text-white mb-4 leading-none tracking-tight">
+            <h1 className={`text-5xl md:text-7xl font-black mb-4 leading-none tracking-tight ${textMain}`}>
               Munnin Crow
             </h1>
             <motion.p
@@ -144,7 +144,7 @@ export default function SobreNos() {
             >
               Sabedoria & Memória
             </motion.p>
-            <p className="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+            <p className={`text-lg max-w-2xl mx-auto leading-relaxed ${textSub}`}>
               Conectamos empreendedores a oportunidades de fomento, transformando ideias em projetos reais através de inteligência e orientação especializada.
             </p>
           </motion.div>
@@ -162,11 +162,11 @@ export default function SobreNos() {
                 <motion.div
                   key={stat.label}
                   whileHover={{ scale: 1.05, y: -4 }}
-                  className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 text-center"
+                  className={`backdrop-blur-xl rounded-2xl p-4 text-center border ${cardBg}`}
                 >
                   <Icon className="w-5 h-5 text-indigo-400 mx-auto mb-2" />
-                  <div className="text-2xl font-black text-white">{stat.value}</div>
-                  <div className="text-xs text-slate-400 mt-1">{stat.label}</div>
+                  <div className={`text-2xl font-black ${textMain}`}>{stat.value}</div>
+                  <div className={`text-xs mt-1 ${textSub}`}>{stat.label}</div>
                 </motion.div>
               );
             })}
@@ -184,13 +184,13 @@ export default function SobreNos() {
                 key={f.title}
                 whileHover={{ scale: 1.02, y: -4 }}
                 transition={{ duration: 0.2 }}
-                className={`bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-7 group shadow-2xl ${f.glow}`}
+                className={`backdrop-blur-xl rounded-2xl p-7 group shadow-2xl border ${cardBg} ${f.glow}`}
               >
                 <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${f.color} flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                   <Icon className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-3">{f.title}</h3>
-                <p className="text-slate-400 leading-relaxed text-sm">{f.text}</p>
+                <h3 className={`text-lg font-bold mb-3 ${textMain}`}>{f.title}</h3>
+                <p className={`leading-relaxed text-sm ${textSub}`}>{f.text}</p>
               </motion.div>
             );
           })}
@@ -199,8 +199,8 @@ export default function SobreNos() {
         {/* Origin Story */}
         <FadeIn delay={0.1}>
           <div className="relative rounded-3xl overflow-hidden mb-14">
-            <div className="absolute inset-0 bg-gradient-to-r from-indigo-900/60 to-purple-900/60 backdrop-blur-xl" />
-            <div className="absolute inset-0 border border-indigo-500/20 rounded-3xl" />
+            <div className={`absolute inset-0 backdrop-blur-xl ${isLight ? "bg-gradient-to-r from-indigo-100/80 to-purple-100/80" : "bg-gradient-to-r from-indigo-900/60 to-purple-900/60"}`} />
+            <div className={`absolute inset-0 border rounded-3xl ${isLight ? "border-indigo-300/40" : "border-indigo-500/20"}`} />
             {/* Animated border glow */}
             <motion.div
               className="absolute inset-0 rounded-3xl"
@@ -222,13 +222,13 @@ export default function SobreNos() {
                 <div>
                   <div className="flex items-center gap-2 mb-4">
                     <Star className="w-5 h-5 text-indigo-400" />
-                    <h3 className="text-2xl font-black text-white">A Origem do Nome</h3>
+                    <h3 className={`text-2xl font-black ${textMain}`}>A Origem do Nome</h3>
                   </div>
-                  <p className="text-slate-300 leading-relaxed mb-4">
-                    Na mitologia nórdica, <span className="text-white font-bold">Muninn</span> (memória) e <span className="text-white font-bold">Huginn</span> (pensamento) são os dois corvos de Odin, deus da sabedoria. Todos os dias, eles voam pelo mundo inteiro trazendo notícias e conhecimento ao seu senhor.
+                  <p className={`leading-relaxed mb-4 ${textSub}`}>
+                    Na mitologia nórdica, <span className={`font-bold ${textMain}`}>Muninn</span> (memória) e <span className={`font-bold ${textMain}`}>Huginn</span> (pensamento) são os dois corvos de Odin, deus da sabedoria. Todos os dias, eles voam pelo mundo inteiro trazendo notícias e conhecimento ao seu senhor.
                   </p>
-                  <p className="text-slate-300 leading-relaxed">
-                    A <span className="text-white font-bold">Munnin Crow</span> nasce inspirada nesse conceito: ser a <span className="text-indigo-300">memória e a inteligência</span> que ajudam empreendedores a navegar pelo universo dos editais, transformando oportunidades em projetos reais com impacto duradouro.
+                  <p className={`leading-relaxed ${textSub}`}>
+                    A <span className={`font-bold ${textMain}`}>Munnin Crow</span> nasce inspirada nesse conceito: ser a <span className="text-indigo-500 font-medium">memória e a inteligência</span> que ajudam empreendedores a navegar pelo universo dos editais, transformando oportunidades em projetos reais com impacto duradouro.
                   </p>
                 </div>
               </div>
@@ -238,33 +238,33 @@ export default function SobreNos() {
 
         {/* Contact */}
         <FadeIn delay={0.2}>
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8">
-            <h3 className="text-2xl font-bold text-white mb-2">Entre em Contato</h3>
-            <p className="text-slate-400 text-sm mb-6">Estamos aqui para tirar suas dúvidas e ajudar no que precisar.</p>
+          <div className={`backdrop-blur-xl border rounded-3xl p-8 ${cardBg}`}>
+            <h3 className={`text-2xl font-bold mb-2 ${textMain}`}>Entre em Contato</h3>
+            <p className={`text-sm mb-6 ${textSub}`}>Estamos aqui para tirar suas dúvidas e ajudar no que precisar.</p>
             <div className="grid md:grid-cols-2 gap-4">
               <motion.a
                 href="mailto:contato@munnincrow.com.br"
                 whileHover={{ scale: 1.02, backgroundColor: "rgba(99,102,241,0.1)" }}
-                className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 transition-colors group"
+                className={`flex items-center gap-4 p-4 rounded-2xl border transition-colors group ${cardBg}`}
               >
                 <div className="w-11 h-11 rounded-xl bg-indigo-500/20 flex items-center justify-center group-hover:bg-indigo-500/30 transition-colors flex-shrink-0">
                   <Mail className="w-5 h-5 text-indigo-300" />
                 </div>
                 <div>
                   <p className="text-xs text-indigo-400 mb-0.5">E-mail</p>
-                  <p className="text-white font-medium text-sm">contato@munnincrow.com.br</p>
+                  <p className={`font-medium text-sm ${textMain}`}>contato@munnincrow.com.br</p>
                 </div>
               </motion.a>
               <motion.div
                 whileHover={{ scale: 1.02 }}
-                className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/10"
+                className={`flex items-center gap-4 p-4 rounded-2xl border ${cardBg}`}
               >
                 <div className="w-11 h-11 rounded-xl bg-purple-500/20 flex items-center justify-center flex-shrink-0">
                   <span className="text-purple-300 text-lg">🐦</span>
                 </div>
                 <div>
                   <p className="text-xs text-purple-400 mb-0.5">Plataforma</p>
-                  <p className="text-white font-medium text-sm">munnincrow.com.br</p>
+                  <p className={`font-medium text-sm ${textMain}`}>munnincrow.com.br</p>
                 </div>
               </motion.div>
             </div>
