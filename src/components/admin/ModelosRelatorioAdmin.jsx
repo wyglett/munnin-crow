@@ -120,6 +120,7 @@ export default function ModelosRelatorioAdmin() {
   const [uploading, setUploading] = useState(false);
   const [extraindo, setExtraindo] = useState(false);
   const [tagInput, setTagInput] = useState("");
+  const [templateModelo, setTemplateModelo] = useState(null);
   const qc = useQueryClient();
 
   const { data: modelos = [] } = useQuery({
