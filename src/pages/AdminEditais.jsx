@@ -76,6 +76,7 @@ export default function AdminEditais() {
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState("empreendedor");
   const [inviting, setInviting] = useState(false);
+  const [inviteMsg, setInviteMsg] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const queryClient = useQueryClient();
 
