@@ -210,7 +210,10 @@ function EdgyLayout({ user, isAdmin, effectiveRole, viewAsRole, setViewAsRole, c
         {user && user.role !== "admin" && user.tipo_usuario === "consultor" && !user.acesso_liberado && (
           <BannerPendente tipoUsuario={user.tipo_usuario} acesso_liberado={user.acesso_liberado} />
         )}
-        <main className={`flex-1 overflow-y-auto ${isLight ? "bg-slate-50" : "bg-slate-50"}`}>{children}</main>
+        <main className={`flex-1 overflow-y-auto relative ${isLight ? "bg-slate-50" : "bg-[#0b0f1c]"}`}>
+          <NorseBackground isLight={isLight} intensity="subtle" />
+          <div className="relative z-10">{children}</div>
+        </main>
       </div>
     </div>
   );
