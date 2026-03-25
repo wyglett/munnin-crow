@@ -372,7 +372,7 @@ export default function VooDoCorvo() {
                   <CalendarDays className="w-5 h-5 text-indigo-500" />
                   Missões de Hoje — {new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}
                 </h2>
-                <p className="text-xs text-gray-500 mt-0.5">Resetam todo dia. Pontos acumulam no total geral.</p>
+                <p className={`text-xs mt-0.5 ${textS}`}>Resetam todo dia. Pontos acumulam no total geral.</p>
               </div>
               <Badge className="bg-yellow-100 text-yellow-700 text-sm font-bold">
                 {diariasConcluidas}/{diariasHoje.length} feitas
