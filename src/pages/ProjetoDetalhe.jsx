@@ -161,16 +161,20 @@ export default function ProjetoDetalhe() {
         )}
 
         <Tabs defaultValue="financeiro">
-          <TabsList className="mb-6 flex-wrap h-auto gap-1">
-            <TabsTrigger value="financeiro">💰 Financeiro</TabsTrigger>
-            <TabsTrigger value="orcamento">📊 Orçamento</TabsTrigger>
-            <TabsTrigger value="consultor">
-              <Users className="w-4 h-4 mr-1.5" />
-              Consultor
-              {projeto.consultor_status === "em_negociacao" && <span className="ml-1.5 w-2 h-2 rounded-full bg-yellow-400 inline-block" />}
-            </TabsTrigger>
-            <TabsTrigger value="relatorio">Relatório</TabsTrigger>
-          </TabsList>
+           <TabsList className="mb-6 flex-wrap h-auto gap-1">
+             <TabsTrigger value="financeiro">💰 Financeiro</TabsTrigger>
+             <TabsTrigger value="milestones">
+               <DollarSign className="w-4 h-4 mr-1.5" />
+               Milestones
+             </TabsTrigger>
+             <TabsTrigger value="orcamento">📊 Orçamento</TabsTrigger>
+             <TabsTrigger value="consultor">
+               <Users className="w-4 h-4 mr-1.5" />
+               Consultor
+               {projeto.consultor_status === "em_negociacao" && <span className="ml-1.5 w-2 h-2 rounded-full bg-yellow-400 inline-block" />}
+             </TabsTrigger>
+             <TabsTrigger value="relatorio">Relatório</TabsTrigger>
+           </TabsList>
 
           <TabsContent value="financeiro">
             <GastosFinanceiro
