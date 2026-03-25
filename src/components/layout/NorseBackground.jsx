@@ -6,17 +6,21 @@ import React from "react";
  * intensity: "subtle" | "normal" — controls opacity.
  */
 export default function NorseBackground({ isLight = false, intensity = "normal" }) {
-  const baseOp = intensity === "subtle" ? 0.045 : 0.085;
-  const color = isLight ? "#4f46e5" : "#818cf8";
-  const color2 = isLight ? "#7c3aed" : "#a78bfa";
+  // Dark theme: cores mais vibrantes e opacidades maiores para aparecer no fundo escuro
+  const baseOp = isLight
+    ? (intensity === "subtle" ? 0.045 : 0.085)
+    : (intensity === "subtle" ? 0.18 : 0.28);
+
+  const color  = isLight ? "#4f46e5" : "#a5b4fc";   // indigo-400 no dark
+  const color2 = isLight ? "#7c3aed" : "#c4b5fd";   // violet-300 no dark
 
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden select-none" aria-hidden="true">
 
       {/* Dot / grid pattern */}
       <div className="absolute inset-0" style={{
-        opacity: isLight ? 0.22 : 0.1,
-        backgroundImage: `radial-gradient(circle, ${color}55 1px, transparent 1px)`,
+        opacity: isLight ? 0.22 : 0.13,
+        backgroundImage: `radial-gradient(circle, ${color}88 1px, transparent 1px)`,
         backgroundSize: "38px 38px",
       }} />
 
@@ -118,7 +122,7 @@ export default function NorseBackground({ isLight = false, intensity = "normal" 
       </svg>
 
       {/* Vegvisir — center top */}
-      <svg className="absolute top-6 left-1/2 -translate-x-1/2" width="110" height="110" viewBox="-55 -55 110 110" style={{ opacity: baseOp * 0.9 }}>
+      <svg className="absolute top-6 left-1/2 -translate-x-1/2" width="110" height="110" viewBox="-55 -55 110 110" style={{ opacity: baseOp * 0.85 }}>
         <circle cx="0" cy="0" r="48" stroke={color} strokeWidth="0.8" fill="none"/>
         <circle cx="0" cy="0" r="7" stroke={color} strokeWidth="1.2" fill="none"/>
         {[0,45,90,135,180,225,270,315].map((angle, i) => {
@@ -138,7 +142,7 @@ export default function NorseBackground({ isLight = false, intensity = "normal" 
       </svg>
 
       {/* Valknut — center bottom */}
-      <svg className="absolute bottom-8 left-1/2 -translate-x-1/2" width="80" height="72" viewBox="-40 -36 80 72" style={{ opacity: baseOp * 0.9 }}>
+      <svg className="absolute bottom-8 left-1/2 -translate-x-1/2" width="80" height="72" viewBox="-40 -36 80 72" style={{ opacity: baseOp * 0.85 }}>
         <path d="M0 -34 L-14 -8 L14 -8 Z" stroke={color} strokeWidth="1.3" fill="none"/>
         <path d="M-16 -8 L-30 18 L-2 18 Z" stroke={color} strokeWidth="1.3" fill="none"/>
         <path d="M16 -8 L2 18 L30 18 Z" stroke={color} strokeWidth="1.3" fill="none"/>
