@@ -199,6 +199,7 @@ export default function ModelosPropostaAdmin() {
   const [extraindo, setExtraindo] = useState(false);
   const [tagInput, setTagInput] = useState("");
   const [visualizacao, setVisualizacao] = useState("lista"); // "lista" | "areas"
+  const [templateModelo, setTemplateModelo] = useState(null);
   const qc = useQueryClient();
 
   const { data: modelos = [] } = useQuery({
