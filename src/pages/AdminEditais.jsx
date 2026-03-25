@@ -369,6 +369,7 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
             )}
           </div>
         </div>
+      </main>
 
       {/* Documentos & IA Dialog */}
       <Dialog open={!!docsEdital} onOpenChange={() => setDocsEdital(null)}>
