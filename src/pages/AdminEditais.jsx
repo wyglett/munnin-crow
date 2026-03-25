@@ -22,6 +22,8 @@ import NotificacoesAdminPanel from "../components/notificacoes/NotificacoesAdmin
 import AbsorverConhecimentoModal from "../components/admin/AbsorverConhecimentoModal";
 import ModelosUnificadoAdmin from "../components/admin/ModelosUnificadoAdmin";
 import UsuariosAdmin from "../components/admin/UsuariosAdmin";
+import DashboardAdmin from "../components/admin/DashboardAdmin";
+import LogsAdmin from "../components/admin/LogsAdmin";
 
 const ESTADO_LABELS = {
   ES: "Espírito Santo — FAPES", RJ: "Rio de Janeiro — FAPERJ",
