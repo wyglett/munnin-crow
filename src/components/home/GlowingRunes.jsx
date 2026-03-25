@@ -93,17 +93,17 @@ export default function GlowingRunes({ isLight = false, intensity = "normal" }) 
           style={{
             cursor: "pointer",
             filter: hoveredRune === "left-1"
-              ? `drop-shadow(0 0 12px #4ecdc4) drop-shadow(0 0 24px #4ecdc480)`
+              ? `drop-shadow(0 0 8px #4ecdc4) drop-shadow(0 0 16px #4ecdc4) drop-shadow(0 0 24px #4ecdc4)`
               : "none",
-            transition: "filter 0.3s ease"
+            transition: "filter 0.2s ease"
           }}
         >
           {hoveredRune === "left-1" && (
-            <circle cx="0" cy="0" r="22" fill="none" stroke="#4ecdc4" strokeWidth="1" opacity="0.3" />
+            <circle cx="0" cy="0" r="22" fill="none" stroke="#4ecdc4" strokeWidth="1" opacity="0.4" />
           )}
-          <line x1="0" y1="14" x2="0" y2="-14" stroke={color2} strokeWidth="1.8" />
-          <line x1="0" y1="-2" x2="-9" y2="-14" stroke={color2} strokeWidth="1.8" />
-          <line x1="0" y1="-2" x2="9" y2="-14" stroke={color2} strokeWidth="1.8" />
+          <line x1="0" y1="14" x2="0" y2="-14" stroke={hoveredRune === "left-1" ? "#4ecdc4" : color2} strokeWidth={hoveredRune === "left-1" ? "2.2" : "1.8"} />
+          <line x1="0" y1="-2" x2="-9" y2="-14" stroke={hoveredRune === "left-1" ? "#4ecdc4" : color2} strokeWidth={hoveredRune === "left-1" ? "2.2" : "1.8"} />
+          <line x1="0" y1="-2" x2="9" y2="-14" stroke={hoveredRune === "left-1" ? "#4ecdc4" : color2} strokeWidth={hoveredRune === "left-1" ? "2.2" : "1.8"} />
         </g>
 
         {/* Othala */}
