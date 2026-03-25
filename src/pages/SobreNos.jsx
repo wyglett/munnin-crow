@@ -83,13 +83,13 @@ export default function SobreNos() {
       {/* Animated background orbs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <motion.div
-          className="absolute w-96 h-96 rounded-full bg-indigo-600/10 blur-3xl"
+          className={`absolute w-96 h-96 rounded-full ${orbA} blur-3xl`}
           animate={{ x: [0, 60, 0], y: [0, -40, 0] }}
           transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
           style={{ top: "10%", left: "5%" }}
         />
         <motion.div
-          className="absolute w-80 h-80 rounded-full bg-purple-600/10 blur-3xl"
+          className={`absolute w-80 h-80 rounded-full ${orbB} blur-3xl`}
           animate={{ x: [0, -50, 0], y: [0, 60, 0] }}
           transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
           style={{ bottom: "20%", right: "10%" }}
