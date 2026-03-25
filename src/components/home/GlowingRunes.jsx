@@ -155,17 +155,17 @@ export default function GlowingRunes({ isLight = false, intensity = "normal" }) 
           style={{
             cursor: "pointer",
             filter: hoveredRune === "left-4"
-              ? `drop-shadow(0 0 12px #7b68ee) drop-shadow(0 0 24px #7b68ee80)`
+              ? `drop-shadow(0 0 8px #7b68ee) drop-shadow(0 0 16px #7b68ee) drop-shadow(0 0 24px #7b68ee)`
               : "none",
-            transition: "filter 0.3s ease"
+            transition: "filter 0.2s ease"
           }}
         >
           {hoveredRune === "left-4" && (
-            <circle cx="0" cy="0" r="22" fill="none" stroke="#7b68ee" strokeWidth="1" opacity="0.3" />
+            <circle cx="0" cy="0" r="22" fill="none" stroke="#7b68ee" strokeWidth="1" opacity="0.4" />
           )}
-          <line x1="-7" y1="-13" x2="-7" y2="13" stroke={color} strokeWidth="1.8" />
-          <line x1="7" y1="-13" x2="7" y2="13" stroke={color} strokeWidth="1.8" />
-          <line x1="-7" y1="0" x2="7" y2="0" stroke={color} strokeWidth="1.8" />
+          <line x1="-7" y1="-13" x2="-7" y2="13" stroke={hoveredRune === "left-4" ? "#7b68ee" : color} strokeWidth={hoveredRune === "left-4" ? "2.2" : "1.8"} />
+          <line x1="7" y1="-13" x2="7" y2="13" stroke={hoveredRune === "left-4" ? "#7b68ee" : color} strokeWidth={hoveredRune === "left-4" ? "2.2" : "1.8"} />
+          <line x1="-7" y1="0" x2="7" y2="0" stroke={hoveredRune === "left-4" ? "#7b68ee" : color} strokeWidth={hoveredRune === "left-4" ? "2.2" : "1.8"} />
         </g>
 
         {/* Sowulo */}
