@@ -11,6 +11,7 @@ import { motion, useMotionValue, useTransform, AnimatePresence } from "framer-mo
 import NotificacoesPanel from "@/components/notificacoes/NotificacoesPanel";
 import PontosButton from "@/components/gamification/PontosButton";
 import { getAppearance } from "@/hooks/useAppearance";
+import NorseBackground from "@/components/layout/NorseBackground";
 
 // Block definitions
 const getBlocks = (role, user, isAdmin) => {

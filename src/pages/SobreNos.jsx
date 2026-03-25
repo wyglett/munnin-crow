@@ -1,6 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, useInView, useAnimation } from "framer-motion";
 import { Target, Shield, Mail, Github, Twitter, Star, Zap, BookOpen, Users } from "lucide-react";
+import { getAppearance } from "@/hooks/useAppearance";
+import NorseBackground from "@/components/layout/NorseBackground";
 
 const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/user_699eeda5be72b683e3bedcf3/7507bc7bf_e6e55591-30ba-4237-91e5-2d46775150cf.png";
 
