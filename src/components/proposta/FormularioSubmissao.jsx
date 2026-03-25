@@ -103,46 +103,6 @@ export default function FormularioSubmissao({ proposta, edital, onSave }) {
     setLockDialog(null);
   };
 
-  const abrirChat = (campoId) => {
-    setChatCampoId(campoId);
-    const campo = campos.find(c => c.id === campoId);
-    setChatHistory([{
-      role: "assistant",
-      content: `Vou te ajudar com: **"${campo?.pergunta}"**\n\nO que você já tem sobre isso?`
-    }]);
-    setChatOpen(true);
-  };
-
-  const enviarChat = async () => {
-    if (!chatMsg.trim()) return;
-    const campo = campos.find(c => c.id === chatCampoId);
-    const userMsg = chatMsg;
-    setChatMsg("");
-    const newHistory = [...chatHistory, { role: "user", content: userMsg }];
-    setChatHistory(newHistory);
-    setChatLoading(true);
-
-    const r = await base44.integrations.Core.InvokeLLM({
-      prompt: `Especialista em propostas de fomento. Edital: ${edital.titulo} | Órgão: ${edital.orgao || ""}
-Campo: ${campo?.secao} > ${campo?.pergunta}
-Resposta atual: ${campo?.resposta || "(vazio)"}
-Histórico: ${newHistory.map(m => `${m.role}: ${m.content}`).join("\n")}
-
-Seja objetivo e direto. Se tiver sugestão de texto pronto, inclua ao final: [TEXTO]: <o texto sugerido sem aspas>`
-    });
-
-    setChatHistory([...newHistory, { role: "assistant", content: r }]);
-
-    if (r.includes("[TEXTO]:")) {
-      const sugestao = limparAspas(r.split("[TEXTO]:")[1].trim());
-      if (sugestao) {
-        const max = maxChars(campo?.tipo_resposta);
-        setCampos(prev => prev.map(c => c.id === chatCampoId ? { ...c, resposta: sugestao.slice(0, max) } : c));
-      }
-    }
-    setChatLoading(false);
-  };
-
   const downloadRespostas = () => {
     const linhas = [];
     const secoes_ = [...new Set(campos.map(c => c.secao))];
