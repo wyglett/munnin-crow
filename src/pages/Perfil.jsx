@@ -117,7 +117,7 @@ export default function Perfil() {
         </div>
 
         {/* Aparência */}
-        <Card>
+        <Card className="mb-4">
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
               <Palette className="w-4 h-4 text-indigo-500" />
@@ -128,6 +128,63 @@ export default function Perfil() {
             <AparenciaConfig />
           </CardContent>
         </Card>
+
+        {/* Recibos / NFs — apenas empreendedores */}
+        {user.tipo_usuario !== "consultor" && user.role !== "consultor" && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <Receipt className="w-4 h-4 text-indigo-500" />
+                Recibos e Notas Fiscais
+                {recibos.length > 0 && <Badge className="ml-auto bg-indigo-100 text-indigo-700 font-semibold">{recibos.length}</Badge>}
+              </CardTitle>
+              <p className="text-xs text-gray-400">Documentos enviados pelos consultores que trabalham com você</p>
+            </CardHeader>
+            <CardContent>
+              {recibos.length === 0 ? (
+                <div className="text-center py-8 text-gray-400">
+                  <Receipt className="w-10 h-10 mx-auto mb-2 opacity-30" />
+                  <p className="text-sm">Nenhum recibo disponível ainda</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {recibos.map(r => {
+                    const s = STATUS_RECIBO[r.status] || STATUS_RECIBO.enviado;
+                    const Icon = s.icon;
+                    return (
+                      <div key={r.id} className="flex items-center gap-3 p-3 rounded-lg border border-gray-100 hover:border-indigo-200 hover:bg-indigo-50/50 transition-colors">
+                        <div className="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center flex-shrink-0">
+                          <Receipt className="w-4 h-4 text-indigo-500" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                            <p className="font-medium text-gray-900 text-sm truncate">{r.descricao_servico}</p>
+                            <Badge className={`text-xs ${s.color}`}><Icon className="w-3 h-3 mr-1" />{s.label}</Badge>
+                            <Badge variant="outline" className="text-xs">{TIPO_LABELS[r.tipo]}</Badge>
+                          </div>
+                          <p className="text-xs text-indigo-600">Consultor: {r.consultor_nome || r.consultor_email}</p>
+                          {r.data_emissao && <p className="text-xs text-gray-400">Emissão: {r.data_emissao}</p>}
+                        </div>
+                        <div className="text-right flex-shrink-0">
+                          <p className="font-bold text-gray-900 text-sm mb-1">{fmt(r.valor)}</p>
+                          {r.arquivo_url ? (
+                            <a href={r.arquivo_url} target="_blank" rel="noopener noreferrer">
+                              <Button size="sm" variant="outline" className="text-xs h-7 border-indigo-200 text-indigo-600 hover:bg-indigo-50">
+                                <Eye className="w-3 h-3 mr-1" /> Ver
+                              </Button>
+                            </a>
+                          ) : (
+                            <p className="text-xs text-gray-400">Pendente</p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
