@@ -256,6 +256,8 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
             {/* Content Sections */}
             <div className="space-y-6">
 
+            {activeTab === "dashboard" && <DashboardAdmin />}
+
             {activeTab === "editais" && (
               <div className="space-y-5">
                 <div className="flex flex-wrap gap-2">
