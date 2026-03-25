@@ -330,7 +330,7 @@ export default function V2HomePage({ user, isAdmin, effectiveRole }) {
 
   return (
     <div
-      className="min-h-screen relative overflow-hidden"
+      className="v2-home min-h-screen relative overflow-hidden"
       style={{ background: "linear-gradient(160deg, #0a0e1a 0%, #0f172a 40%, #150d2e 100%)" }}
     >
       {/* Background orbs */}
