@@ -12,7 +12,13 @@ const defaults = { tema: "edgy", layout: "default" };
 function load() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? { ...defaults, ...JSON.parse(raw) } : { ...defaults };
+    if (raw) return { ...defaults, ...JSON.parse(raw) };
+    
+    // Use default appearance set by admin if available
+    const defaultApp = localStorage.getItem("default_appearance");
+    if (defaultApp) return { ...defaults, ...JSON.parse(defaultApp) };
+    
+    return { ...defaults };
   } catch { return { ...defaults }; }
 }
 
