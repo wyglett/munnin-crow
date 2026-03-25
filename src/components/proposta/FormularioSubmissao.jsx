@@ -205,9 +205,9 @@ Retorne o documento completo em texto puro, bem estruturado com títulos de seç
   }
 
   return (
-    <div className={`flex gap-4 ${chatOpen ? "items-start" : ""}`}>
+    <div className="w-full">
       {/* Form */}
-      <div className={`min-w-0 space-y-6 ${chatOpen ? "flex-1 overflow-hidden" : "w-full"}`}>
+      <div className="min-w-0 space-y-6 w-full">
         {/* Header */}
         <div className="flex items-center gap-3 flex-wrap">
           <div className="text-sm text-gray-500">{concluidos}/{campos.length} campos concluídos</div>
