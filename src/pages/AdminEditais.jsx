@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Download, Loader2, Plus, Pencil, Trash2, FolderOpen, UserPlus, Users, BookOpen, ChevronDown, ChevronRight, Info, TrendingUp, Brain, Zap, LayoutGrid, LayoutList, Moon, Sun } from "lucide-react";
+import { Download, Loader2, Plus, Pencil, Trash2, FolderOpen, UserPlus, Users, BookOpen, ChevronDown, ChevronRight, Info, TrendingUp, Brain, Zap, LayoutGrid, LayoutList, Moon, Sun, FileText, BarChart3, Bell } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import EditalDocumentosAdmin from "../components/admin/EditalDocumentosAdmin";
@@ -20,6 +20,8 @@ import ModelosRelatorioAdmin from "../components/admin/ModelosRelatorioAdmin";
 import ModelosPropostaAdmin from "../components/admin/ModelosPropostaAdmin";
 import NotificacoesAdminPanel from "../components/notificacoes/NotificacoesAdminPanel";
 import AbsorverConhecimentoModal from "../components/admin/AbsorverConhecimentoModal";
+import ModelosUnificadoAdmin from "../components/admin/ModelosUnificadoAdmin";
+import UsuariosAdmin from "../components/admin/UsuariosAdmin";
 
 const ESTADO_LABELS = {
   ES: "Espírito Santo — FAPES", RJ: "Rio de Janeiro — FAPERJ",
