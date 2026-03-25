@@ -193,21 +193,24 @@ function NavBlock({ block, index }) {
 
   const rotateX = useTransform(mouseY, [0, 1], [6, -6]);
   const rotateY = useTransform(mouseX, [0, 1], [-6, 6]);
-  const glowX = useTransform(mouseX, [0, 1], ["0%", "100%"]);
-  const glowY = useTransform(mouseY, [0, 1], ["0%", "100%"]);
 
   const [hovered, setHovered] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
 
   const handleMouseMove = (e) => {
     const rect = ref.current?.getBoundingClientRect();
     if (!rect) return;
-    mouseX.set((e.clientX - rect.left) / rect.width);
-    mouseY.set((e.clientY - rect.top) / rect.height);
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setMousePos({ x, y });
+    mouseX.set(x / 100);
+    mouseY.set(y / 100);
   };
 
   const handleMouseLeave = () => {
     mouseX.set(0.5);
     mouseY.set(0.5);
+    setMousePos({ x: 50, y: 50 });
     setHovered(false);
   };
 
@@ -232,26 +235,26 @@ function NavBlock({ block, index }) {
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
           className="relative rounded-2xl overflow-hidden cursor-pointer h-36 md:h-40"
         >
-          {/* Base gradient */}
+          {/* Base gradient — shifts based on mouse position */}
           <div
-            className="absolute inset-0 transition-all duration-500"
+            className="absolute inset-0 transition-all duration-200"
             style={{
               background: hovered
-                ? `radial-gradient(ellipse at ${glowX.get()} ${glowY.get()}, ${c1}ee, ${c2}cc, ${c3}aa)`
-                : `linear-gradient(135deg, ${c1}bb, ${c2}99, ${c3}88)`,
+                ? `radial-gradient(ellipse at ${mousePos.x}% ${mousePos.y}%, ${c1}ff 0%, ${c2}dd 40%, ${c3}bb 100%)`
+                : `linear-gradient(135deg, ${c1}cc, ${c2}aa, ${c3}99)`,
             }}
           />
 
-          {/* Animated glow on hover */}
+          {/* Accent glow that follows cursor */}
           <AnimatePresence>
             {hovered && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 pointer-events-none"
+                className="absolute inset-0 pointer-events-none transition-all duration-100"
                 style={{
-                  background: `radial-gradient(circle at ${glowX.get()} ${glowY.get()}, ${block.accent}55 0%, transparent 60%)`,
+                  background: `radial-gradient(circle at ${mousePos.x}% ${mousePos.y}%, ${block.accent}66 0%, transparent 55%)`,
                 }}
               />
             )}
