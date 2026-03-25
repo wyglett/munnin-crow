@@ -65,25 +65,25 @@ export default function GlowingRunes({ isLight = false, intensity = "normal" }) 
         style={{ opacity: baseOp }}
       >
         {/* Tyr */}
-        <g
-          transform="translate(18,40)"
-          onMouseEnter={() => setHoveredRune("left-0")}
-          onMouseLeave={() => setHoveredRune(null)}
-          style={{
-            cursor: "pointer",
-            filter: hoveredRune === "left-0"
-              ? `drop-shadow(0 0 12px #ff6b6b) drop-shadow(0 0 24px #ff6b6b80)`
-              : "none",
-            transition: "filter 0.3s ease"
-          }}
-        >
-          {hoveredRune === "left-0" && (
-            <circle cx="0" cy="0" r="22" fill="none" stroke="#ff6b6b" strokeWidth="1" opacity="0.3" />
-          )}
-          <line x1="0" y1="14" x2="0" y2="-12" stroke={color} strokeWidth="1.8" />
-          <line x1="-9" y1="-2" x2="9" y2="-12" stroke={color} strokeWidth="1.8" />
-          <line x1="9" y1="-2" x2="-9" y2="-12" stroke={color} strokeWidth="1.8" />
-        </g>
+         <g
+           transform="translate(18,40)"
+           onMouseEnter={() => setHoveredRune("left-0")}
+           onMouseLeave={() => setHoveredRune(null)}
+           style={{
+             cursor: "pointer",
+             filter: hoveredRune === "left-0"
+               ? `drop-shadow(0 0 8px #ff6b6b) drop-shadow(0 0 16px #ff6b6b) drop-shadow(0 0 24px #ff6b6b)`
+               : "none",
+             transition: "filter 0.2s ease"
+           }}
+         >
+           {hoveredRune === "left-0" && (
+             <circle cx="0" cy="0" r="22" fill="none" stroke="#ff6b6b" strokeWidth="1" opacity="0.4" />
+           )}
+           <line x1="0" y1="14" x2="0" y2="-12" stroke={hoveredRune === "left-0" ? "#ff6b6b" : color} strokeWidth={hoveredRune === "left-0" ? "2.2" : "1.8"} />
+           <line x1="-9" y1="-2" x2="9" y2="-12" stroke={hoveredRune === "left-0" ? "#ff6b6b" : color} strokeWidth={hoveredRune === "left-0" ? "2.2" : "1.8"} />
+           <line x1="9" y1="-2" x2="-9" y2="-12" stroke={hoveredRune === "left-0" ? "#ff6b6b" : color} strokeWidth={hoveredRune === "left-0" ? "2.2" : "1.8"} />
+         </g>
 
         {/* Algiz */}
         <g
