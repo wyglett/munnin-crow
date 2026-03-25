@@ -297,7 +297,7 @@ export default function Home() {
         {/* Step 1: Select State */}
         {(showMap || selectedState) && !selectedState && (
           <div>
-            <h2 className="text-xl font-bold text-white mb-6">Selecione seu estado no mapa</h2>
+            <h2 className={`text-xl font-bold mb-6 ${textMain}`}>Selecione seu estado no mapa</h2>
             <BrazilMap selectedState={selectedState} onSelectState={handleSelectState} />
           </div>
         )}
