@@ -309,7 +309,7 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
           <div className="max-w-6xl mx-auto">
             {/* Header */}
             <div className="mb-8">
-              <h1 className="text-3xl font-bold text-slate-900 mb-2">
+              <h1 className="text-3xl font-bold text-slate-100 mb-2">
                 {MENU_ITEMS.find(m => m.id === activeTab)?.label}
               </h1>
               <div className="h-0.5 w-16 bg-gradient-to-r from-indigo-500 to-indigo-400 rounded-full" />
