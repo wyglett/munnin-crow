@@ -1,19 +1,21 @@
 import React, { useState } from "react";
-import { Settings, FileText, BarChart3, Bell, BookOpen, Users, Zap } from "lucide-react";
-import ModelosDocumentoAdmin from "@/components/admin/ModelosDocumentoAdmin";
+import { Settings, FileText, BarChart3, Bell, Users, Zap } from "lucide-react";
+import ModelosUnificadoAdmin from "@/components/admin/ModelosUnificadoAdmin";
 import AdminRevenueTabV2 from "@/components/admin/AdminRevenueTabV2";
 import NotificarUsuariosAdminV2 from "@/components/admin/NotificarUsuariosAdminV2";
 import ConversaAdminIAV2 from "@/components/admin/ConversaAdminIAV2";
+import UsuariosAdmin from "@/components/admin/UsuariosAdmin";
 
 const MENU_ITEMS = [
-  { id: "documentos", icon: FileText, label: "Modelos de Documentos", color: "bg-blue-100 text-blue-600" },
-  { id: "financeiro", icon: BarChart3, label: "Financeiro & Receitas", color: "bg-green-100 text-green-600" },
-  { id: "notificacoes", icon: Bell, label: "Notificações", color: "bg-yellow-100 text-yellow-600" },
-  { id: "ia-feedback", icon: Zap, label: "IA & Feedback", color: "bg-purple-100 text-purple-600" },
+  { id: "modelos", icon: FileText, label: "Modelos" },
+  { id: "usuarios", icon: Users, label: "Usuários" },
+  { id: "financeiro", icon: BarChart3, label: "Financeiro & Receitas" },
+  { id: "notificacoes", icon: Bell, label: "Notificações" },
+  { id: "ia-feedback", icon: Zap, label: "IA & Feedback" },
 ];
 
 export default function AdminV2() {
-  const [activeTab, setActiveTab] = useState("documentos");
+  const [activeTab, setActiveTab] = useState("modelos");
 
   return (
     <div className="flex h-screen bg-slate-50">
@@ -75,7 +77,8 @@ export default function AdminV2() {
 
             {/* Content Sections */}
             <div className="bg-white rounded-lg border border-slate-200 p-6">
-              {activeTab === "documentos" && <ModelosDocumentoAdmin />}
+              {activeTab === "modelos" && <ModelosUnificadoAdmin />}
+              {activeTab === "usuarios" && <UsuariosAdmin />}
               {activeTab === "financeiro" && <AdminRevenueTabV2 />}
               {activeTab === "notificacoes" && <NotificarUsuariosAdminV2 />}
               {activeTab === "ia-feedback" && <ConversaAdminIAV2 />}
