@@ -363,7 +363,7 @@ export default function ModelosRelatorioAdmin() {
         </DialogContent>
       </Dialog>
 
-      <ModeloTemplateEditor
+      <ModeloTemplateEditorRelatorio
         open={!!templateModelo}
         onClose={() => setTemplateModelo(null)}
         modelo={templateModelo}
