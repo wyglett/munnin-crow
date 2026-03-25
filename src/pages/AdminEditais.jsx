@@ -24,6 +24,7 @@ import ModelosUnificadoAdmin from "../components/admin/ModelosUnificadoAdmin";
 import UsuariosAdmin from "../components/admin/UsuariosAdmin";
 import DashboardAdmin from "../components/admin/DashboardAdmin";
 import LogsAdmin from "../components/admin/LogsAdmin";
+import NorseBackground from "../components/layout/NorseBackground";
 
 const ESTADO_LABELS = {
   ES: "Espírito Santo — FAPES", RJ: "Rio de Janeiro — FAPERJ",
