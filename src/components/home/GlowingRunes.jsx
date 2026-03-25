@@ -176,15 +176,15 @@ export default function GlowingRunes({ isLight = false, intensity = "normal" }) 
           style={{
             cursor: "pointer",
             filter: hoveredRune === "left-5"
-              ? `drop-shadow(0 0 12px #f39c12) drop-shadow(0 0 24px #f39c1280)`
+              ? `drop-shadow(0 0 8px #f39c12) drop-shadow(0 0 16px #f39c12) drop-shadow(0 0 24px #f39c12)`
               : "none",
-            transition: "filter 0.3s ease"
+            transition: "filter 0.2s ease"
           }}
         >
           {hoveredRune === "left-5" && (
-            <circle cx="0" cy="0" r="22" fill="none" stroke="#f39c12" strokeWidth="1" opacity="0.3" />
+            <circle cx="0" cy="0" r="22" fill="none" stroke="#f39c12" strokeWidth="1" opacity="0.4" />
           )}
-          <path d="M7 -13 L-7 -4 L7 4 L-7 13" stroke={color2} strokeWidth="1.8" fill="none" />
+          <path d="M7 -13 L-7 -4 L7 4 L-7 13" stroke={hoveredRune === "left-5" ? "#f39c12" : color2} strokeWidth={hoveredRune === "left-5" ? "2.2" : "1.8"} fill="none" />
         </g>
       </svg>
 
