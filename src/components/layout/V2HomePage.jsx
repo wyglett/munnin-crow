@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { motion, useMotionValue, useTransform, AnimatePresence } from "framer-motion";
 import NotificacoesPanel from "@/components/notificacoes/NotificacoesPanel";
+import { getAppearance } from "@/hooks/useAppearance";
 
 // Block definitions — each has its own gradient identity
 const getBlocks = (role, user, isAdmin) => {
