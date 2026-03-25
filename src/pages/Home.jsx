@@ -302,7 +302,15 @@ export default function Home() {
         {(showMap || selectedState) && !selectedState && (
           <div>
             <h2 className={`text-xl font-bold mb-6 ${textMain}`}>Selecione seu estado no mapa</h2>
-            <BrazilMap selectedState={selectedState} onSelectState={handleSelectState} />
+            <BrazilMap
+              selectedState={selectedState}
+              onSelectState={handleSelectState}
+              editaisAbertos={editais.filter(e => {
+                if (e.status === "encerrado") return false;
+                if (e.data_encerramento && moment(e.data_encerramento).isBefore(moment(), "day")) return false;
+                return true;
+              })}
+            />
           </div>
         )}
 
