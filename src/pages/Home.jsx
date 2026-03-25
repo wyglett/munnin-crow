@@ -284,10 +284,10 @@ export default function Home() {
               <MapPin className="w-3.5 h-3.5" /> Estado
             </button>
             <ChevronRight className="w-3 h-3 text-white/20" />
-            <span className="text-white font-medium">{STATE_NAMES[selectedState]}</span>
+            <span className={`font-medium ${textMain}`}>{STATE_NAMES[selectedState]}</span>
             {selectedCategory && (
               <>
-                <ChevronRight className="w-3 h-3 text-white/20" />
+                <ChevronRight className={`w-3 h-3 ${isLight ? "text-slate-300" : "text-white/20"}`} />
                 <span className="text-indigo-400 font-medium">{CATEGORY_LABELS[selectedCategory]}</span>
               </>
             )}
