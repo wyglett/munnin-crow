@@ -11,6 +11,9 @@ import moment from "moment";
 
 export default function ModelosUnificadoAdmin() {
   const [tipoFiltro, setTipoFiltro] = useState("proposta");
+  const [modelOpen, setModelOpen] = useState(false);
+  const [modelForm, setModelForm] = useState({ nome: "", orgao: "", file_tipo: "pdf" });
+  const [creatingModel, setCreatingModel] = useState(false);
   const queryClient = useQueryClient();
 
   const { data: modelos = [] } = useQuery({
