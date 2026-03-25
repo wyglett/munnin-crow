@@ -135,16 +135,16 @@ export default function GlowingRunes({ isLight = false, intensity = "normal" }) 
           style={{
             cursor: "pointer",
             filter: hoveredRune === "left-3"
-              ? `drop-shadow(0 0 12px #ffa502) drop-shadow(0 0 24px #ffa50280)`
+              ? `drop-shadow(0 0 8px #ffa502) drop-shadow(0 0 16px #ffa502) drop-shadow(0 0 24px #ffa502)`
               : "none",
-            transition: "filter 0.3s ease"
+            transition: "filter 0.2s ease"
           }}
         >
           {hoveredRune === "left-3" && (
-            <circle cx="0" cy="0" r="22" fill="none" stroke="#ffa502" strokeWidth="1" opacity="0.3" />
+            <circle cx="0" cy="0" r="22" fill="none" stroke="#ffa502" strokeWidth="1" opacity="0.4" />
           )}
-          <path d="M0 13 L11 0 L0 -13 L-11 0 Z" stroke={color2} strokeWidth="1.8" fill="none" />
-          <line x1="-11" y1="0" x2="11" y2="0" stroke={color2} strokeWidth="1.3" />
+          <path d="M0 13 L11 0 L0 -13 L-11 0 Z" stroke={hoveredRune === "left-3" ? "#ffa502" : color2} strokeWidth={hoveredRune === "left-3" ? "2.2" : "1.8"} fill="none" />
+          <line x1="-11" y1="0" x2="11" y2="0" stroke={hoveredRune === "left-3" ? "#ffa502" : color2} strokeWidth={hoveredRune === "left-3" ? "1.8" : "1.3"} />
         </g>
 
         {/* Ehwaz */}
