@@ -85,38 +85,7 @@ export default function AppearanceFloatingPanel({ isLight, onThemeChange, onLayo
               </div>
             </div>
 
-            {/* Layout Selection */}
-            <div>
-              <p className={`text-xs font-semibold uppercase tracking-wide mb-2 ${
-                isLight ? "text-slate-500" : "text-slate-400"
-              }`}>
-                Layout
-              </p>
-              <div className="flex gap-2">
-                <button
-                   onClick={() => onLayoutChange("v2")}
-                   className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg border transition-all ${
-                     currentLayout === "v2"
-                       ? `border-indigo-500 ${isLight ? "bg-indigo-50" : "bg-indigo-600/20"} text-indigo-600`
-                       : `border-slate-300 ${isLight ? "bg-white hover:bg-slate-50" : "bg-slate-700 hover:bg-slate-600"}`
-                   }`}
-                 >
-                   <LayoutGrid className="w-4 h-4" />
-                   <span className="text-xs font-medium">Padrão</span>
-                 </button>
-                 <button
-                   onClick={() => onLayoutChange("edgy")}
-                   className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg border transition-all ${
-                     currentLayout === "edgy"
-                       ? `border-indigo-500 ${isLight ? "bg-indigo-50" : "bg-indigo-600/20"} text-indigo-600`
-                       : `border-slate-300 ${isLight ? "bg-white hover:bg-slate-50" : "bg-slate-700 hover:bg-slate-600"}`
-                   }`}
-                 >
-                   <LayoutList className="w-4 h-4" />
-                   <span className="text-xs font-medium">Edgy</span>
-                 </button>
-              </div>
-            </div>
+
 
             {/* Info */}
             <p className={`text-xs ${isLight ? "text-slate-500" : "text-slate-400"} italic`}>
