@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { ArrowLeft, FileText, Upload, Sparkles, Loader2, ExternalLink, Users, CheckCircle, XCircle, Send, Trophy, Activity } from "lucide-react";
+import IAChatBalloon from "@/components/ai/IAChatBalloon";
 import FormularioSubmissao from "../components/proposta/FormularioSubmissao";
 import SigfapesFormulario from "../components/proposta/SigfapesFormulario";
 import ReactMarkdown from "react-markdown";
@@ -135,8 +136,18 @@ Faça uma análise crítica da proposta, aponte pontos fortes, lacunas e dê sug
 
   const status = STATUS_MAP[proposta.status] || STATUS_MAP.rascunho;
 
+  // Coleta URLs de arquivos do edital para contexto da IA
+  const editalFileUrls = React.useMemo(() => {
+    if (!edital) return [];
+    const urls = [];
+    const ok = (u) => u && /\.(pdf|png|jpg|jpeg)(\?|$)/i.test(u);
+    edital.documentos_modelo?.forEach(d => { if (ok(d.url)) urls.push(d.url); });
+    edital.etapas?.forEach(et => et.documentos?.forEach(d => { if (ok(d.url)) urls.push(d.url); }));
+    return urls;
+  }, [edital]);
+
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
+    <div className="min-h-screen bg-slate-50 p-6 relative">
       <div className="max-w-5xl mx-auto">
         <Link to={createPageUrl("MinhasPropostas")}>
           <Button variant="ghost" className="mb-4 -ml-2"><ArrowLeft className="w-4 h-4 mr-2" /> Voltar para Minhas Propostas</Button>
@@ -321,6 +332,15 @@ Faça uma análise crítica da proposta, aponte pontos fortes, lacunas e dê sug
           )}
         </Tabs>
       </div>
+
+      <IAChatBalloon
+        contextTitle={`Proposta: ${proposta.titulo}`}
+        contextText={`Proposta: "${proposta.titulo}"\nEdital: "${proposta.edital_titulo}" (${proposta.edital_orgao || ""})\nStatus: ${proposta.status}\nCampos preenchidos: ${proposta.campos_formulario?.filter(c => c.resposta)?.length || 0}/${proposta.campos_formulario?.length || 0}\n${proposta.analise_ia ? `\nAnálise IA anterior:\n${proposta.analise_ia.substring(0,500)}` : ""}`}
+        editalFileUrls={editalFileUrls}
+        editalId={proposta.edital_id}
+        editalTitulo={proposta.edital_titulo}
+        editalOrgao={proposta.edital_orgao}
+      />
 
       {/* Dialog pós-submissão */}
       <Dialog open={postSubmitDialog} onOpenChange={setPostSubmitDialog}>
