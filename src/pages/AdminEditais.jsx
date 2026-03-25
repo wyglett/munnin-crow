@@ -404,7 +404,7 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label className="mb-3 block text-slate-700">Tema:</Label>
+                  <Label className="mb-3 block text-slate-300">Tema:</Label>
                   <div className="grid grid-cols-2 gap-2">
                     <Button
                       variant={defaultAppearance.tema === "dark" ? "default" : "outline"}
