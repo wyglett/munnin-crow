@@ -370,7 +370,17 @@ export default function ModelosPropostaAdmin() {
               </div>
               <div>
                 <Label>Órgão *</Label>
-                <Input value={form.orgao} onChange={e => setForm(f => ({ ...f, orgao: e.target.value }))} placeholder="FAPES, FAPERJ..." className="mt-1" />
+                <Select value={form.orgao || "FAPES"} onValueChange={v => setForm(f => ({ ...f, orgao: v }))}>
+                  <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="FAPES">FAPES</SelectItem>
+                    <SelectItem value="FAPERJ">FAPERJ</SelectItem>
+                    <SelectItem value="FAPESP">FAPESP</SelectItem>
+                    <SelectItem value="FAPEMIG">FAPEMIG</SelectItem>
+                    <SelectItem value="CNPq">CNPq</SelectItem>
+                    <SelectItem value="Outro">Outro</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <Label>Tipo de Proposta</Label>
