@@ -318,11 +318,14 @@ function V2Layout({ user, isAdmin, effectiveRole, viewAsRole, setViewAsRole, cur
       )}
 
       {/* Page content — V2 home shows its own full-screen experience */}
-      <main className={`flex-1 overflow-y-auto ${mainBg}`}>
-        {currentPageName === "Home"
-          ? <V2HomePage user={user} isAdmin={isAdmin} effectiveRole={effectiveRole} />
-          : children
-        }
+      <main className={`flex-1 overflow-y-auto relative ${mainBg}`}>
+        {currentPageName !== "Home" && <NorseBackground isLight={isLight} intensity="subtle" />}
+        <div className="relative z-10">
+          {currentPageName === "Home"
+            ? <V2HomePage user={user} isAdmin={isAdmin} effectiveRole={effectiveRole} />
+            : children
+          }
+        </div>
       </main>
     </div>
   );
