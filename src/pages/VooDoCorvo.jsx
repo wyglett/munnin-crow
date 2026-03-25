@@ -156,6 +156,12 @@ function Ranking({ todosTrilhas, roleFilter }) {
 
 // ─── Componente principal ─────────────────────────────────────────────────────
 export default function VooDoCorvo() {
+  const [isLight, setIsLight] = useState(() => getAppearance().tema === "light");
+  useEffect(() => {
+    const iv = setInterval(() => setIsLight(getAppearance().tema === "light"), 300);
+    return () => clearInterval(iv);
+  }, []);
+
   const [user, setUser] = useState(null);
   const [abaRanking, setAbaRanking] = useState("empreendedor");
   const [saving, setSaving] = useState(false);
