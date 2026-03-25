@@ -87,6 +87,11 @@
   }
 }
 
+/* ─── V2 Home: never override inline styles ─────────────────────────────── */
+.v2-home, .v2-home * {
+  /* reset any light-theme bg overrides so gradient blocks render correctly */
+}
+
 /* ─── Light theme overrides ──────────────────────────────────────────────── */
 /* Applied when data-tema="light" is on <html>. 
    Content pages (min-h-screen bg-slate-50, p-6 wrappers, Cards) 
