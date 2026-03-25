@@ -349,6 +349,11 @@ export default function ModelosRelatorioAdmin() {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancelar</Button>
+            {editando && (
+              <Button variant="outline" className="border-indigo-300 text-indigo-700 hover:bg-indigo-50" onClick={() => { setDialogOpen(false); setTemplateModelo({ ...editando, ...form }); }}>
+                <LayoutTemplate className="w-4 h-4 mr-2" /> Montar Template
+              </Button>
+            )}
             <Button onClick={() => salvar.mutate(form)} disabled={salvar.isPending || !form.nome || !form.orgao} className="bg-indigo-600 hover:bg-indigo-700">
               {salvar.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
               {editando ? "Salvar" : "Criar Modelo"}
