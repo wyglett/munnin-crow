@@ -269,6 +269,7 @@ function V2Layout({ user, isAdmin, effectiveRole, viewAsRole, setViewAsRole, cur
 
           {/* Right: notifications + avatar */}
           <div className="flex items-center gap-2 ml-auto flex-shrink-0">
+            <PontosButton user={user} />
             <NotificacoesPanel user={user} />
             {user && (
               <Link to={createPageUrl("Perfil")} className="flex items-center gap-2">
