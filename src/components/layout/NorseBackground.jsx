@@ -6,21 +6,21 @@ import React from "react";
  * intensity: "subtle" | "normal" — controls opacity.
  */
 export default function NorseBackground({ isLight = false, intensity = "normal" }) {
-  // Dark theme: cores mais vibrantes e opacidades maiores para aparecer no fundo escuro
+  // Dark: cores neon vibrantes e opacidade forte; Light: cores escuras e mais opacas
   const baseOp = isLight
-    ? (intensity === "subtle" ? 0.045 : 0.085)
-    : (intensity === "subtle" ? 0.18 : 0.28);
+    ? (intensity === "subtle" ? 0.18 : 0.28)
+    : (intensity === "subtle" ? 0.45 : 0.65);
 
-  const color  = isLight ? "#4f46e5" : "#a5b4fc";   // indigo-400 no dark
-  const color2 = isLight ? "#7c3aed" : "#c4b5fd";   // violet-300 no dark
+  const color  = isLight ? "#3730a3" : "#818cf8";   // indigo-800 no light, indigo-400 neon no dark
+  const color2 = isLight ? "#6d28d9" : "#e879f9";   // violet-700 no light, fuchsia neon no dark
 
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden select-none" aria-hidden="true">
 
       {/* Dot / grid pattern */}
       <div className="absolute inset-0" style={{
-        opacity: isLight ? 0.22 : 0.13,
-        backgroundImage: `radial-gradient(circle, ${color}88 1px, transparent 1px)`,
+        opacity: isLight ? 0.35 : 0.22,
+        backgroundImage: `radial-gradient(circle, ${color}99 1px, transparent 1px)`,
         backgroundSize: "38px 38px",
       }} />
 
