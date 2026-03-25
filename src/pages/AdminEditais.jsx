@@ -17,6 +17,7 @@ import EditalDocumentosAdmin from "../components/admin/EditalDocumentosAdmin";
 import InformativosTab from "../components/admin/InformativosTab";
 import ReceitaUsoTab from "../components/admin/ReceitasUsoTab";
 import ModelosRelatorioAdmin from "../components/admin/ModelosRelatorioAdmin";
+import ModelosPropostaAdmin from "../components/admin/ModelosPropostaAdmin";
 import NotificarUsuariosAdmin from "../components/admin/NotificarUsuariosAdmin";
 import AbsorverConhecimentoModal from "../components/admin/AbsorverConhecimentoModal";
 
