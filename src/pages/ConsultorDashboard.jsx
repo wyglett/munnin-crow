@@ -93,6 +93,7 @@ export default function ConsultorDashboard() {
             <TabsTrigger value="atribuidas">Minhas Requisições ({minhasAtribuidas.length})</TabsTrigger>
             <TabsTrigger value="gerais">Requisições Gerais ({gerais.length})</TabsTrigger>
             <TabsTrigger value="cobrancas">Recibos / NF</TabsTrigger>
+            <TabsTrigger value="notificacoes"><Bell className="w-3.5 h-3.5 mr-1 inline" />Notificações</TabsTrigger>
           </TabsList>
 
           <TabsContent value="atribuidas" className="mt-6">
