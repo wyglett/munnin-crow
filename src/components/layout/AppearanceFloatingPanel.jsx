@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, LayoutGrid, LayoutList, X, ChevronUp } from "lucide-react";
+import { Moon, Sun, X, ChevronUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function AppearanceFloatingPanel({ isLight, onThemeChange, onLayoutChange, currentLayout }) {
