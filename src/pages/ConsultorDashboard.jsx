@@ -155,6 +155,9 @@ export default function ConsultorDashboard() {
           <TabsContent value="cobrancas" className="mt-6">
             <CobrancasTab user={user} />
           </TabsContent>
+          <TabsContent value="notificacoes" className="mt-6">
+            <NotificacoesConsultorPanel user={user} />
+          </TabsContent>
         </Tabs>
       </div>
 
