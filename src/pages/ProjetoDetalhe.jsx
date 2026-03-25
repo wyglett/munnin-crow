@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import {
-  ArrowLeft, FolderOpen, Info, Loader2, Users, CheckCircle2
+  ArrowLeft, FolderOpen, Info, Loader2, Users, CheckCircle2, DollarSign
 } from "lucide-react";
 import IAChatBalloon from "@/components/ai/IAChatBalloon";
 import NorseBackground from "@/components/layout/NorseBackground";
