@@ -221,7 +221,7 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
           </TabsContent>
 
           <TabsContent value="notificacoes">
-            <NotificarUsuariosAdmin />
+            <NotificacoesAdminPanel />
           </TabsContent>
 
           <TabsContent value="receitas">
