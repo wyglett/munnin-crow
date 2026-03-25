@@ -297,7 +297,13 @@ function CampoRelatorio({ campo, onChange }) {
             : campo.tipo_resposta === "data" ? <Input type="date" value={campo.resposta || ""} onChange={e => onChange({ ...campo, resposta: e.target.value })} />
             : campo.tipo_resposta === "texto_curto" ? <Input value={campo.resposta || ""} onChange={e => onChange({ ...campo, resposta: e.target.value })} placeholder="Resposta curta..." />
             : <Textarea value={campo.resposta || ""} onChange={e => onChange({ ...campo, resposta: e.target.value })} placeholder="Descreva detalhadamente..." className="min-h-[100px]" />}
-          <div className="flex justify-end">
+          <div className="flex items-center justify-between mt-1">
+            <AIChatField
+              pergunta={campo.pergunta}
+              contexto={`Seção: ${campo.secao}`}
+              respostaAtual={campo.resposta}
+              onApprove={(txt) => onChange({ ...campo, resposta: txt })}
+            />
             <Button type="button" size="sm" onClick={() => { onChange({ ...campo, concluido: true }); setAberto(false); }} className="bg-green-600 hover:bg-green-700">
               <CheckCircle2 className="w-4 h-4 mr-1" /> Concluir campo
             </Button>
