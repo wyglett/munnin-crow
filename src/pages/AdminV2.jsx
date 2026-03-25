@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Settings, FileText, BarChart3, Bell, BookOpen, Users, Zap } from "lucide-react";
 import ModelosDocumentoAdmin from "@/components/admin/ModelosDocumentoAdmin";
-import AdminRevenueTab from "@/components/admin/AdminRevenueTab";
-import NotificarUsuariosAdmin from "@/components/admin/NotificarUsuariosAdmin";
-import ConversaAdminIA from "@/components/admin/ConversaAdminIA";
+import AdminRevenueTabV2 from "@/components/admin/AdminRevenueTabV2";
+import NotificarUsuariosAdminV2 from "@/components/admin/NotificarUsuariosAdminV2";
+import ConversaAdminIAV2 from "@/components/admin/ConversaAdminIAV2";
 
 const MENU_ITEMS = [
   { id: "documentos", icon: FileText, label: "Modelos de Documentos", color: "bg-blue-100 text-blue-600" },
@@ -76,9 +76,9 @@ export default function AdminV2() {
             {/* Content Sections */}
             <div className="bg-white rounded-lg border border-slate-200 p-6">
               {activeTab === "documentos" && <ModelosDocumentoAdmin />}
-              {activeTab === "financeiro" && <AdminRevenueTab />}
-              {activeTab === "notificacoes" && <NotificarUsuariosAdmin />}
-              {activeTab === "ia-feedback" && <ConversaAdminIA />}
+              {activeTab === "financeiro" && <AdminRevenueTabV2 />}
+              {activeTab === "notificacoes" && <NotificarUsuariosAdminV2 />}
+              {activeTab === "ia-feedback" && <ConversaAdminIAV2 />}
             </div>
           </div>
         </div>
