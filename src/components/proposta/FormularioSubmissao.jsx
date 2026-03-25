@@ -306,45 +306,6 @@ Retorne o documento completo em texto puro, bem estruturado com títulos de seç
         ))}
       </div>
 
-      {/* AI Chat Panel */}
-      {chatOpen && (
-        <div className="w-80 flex-shrink-0 bg-slate-900 rounded-xl flex flex-col h-[600px]">
-          <div className="flex items-center justify-between p-3 border-b border-white/10">
-            <div>
-              <p className="text-white text-xs font-semibold flex items-center gap-1"><Sparkles className="w-3 h-3 text-indigo-400" /> Assistente IA</p>
-              {chatCampo && <p className="text-white/50 text-[10px] truncate max-w-[200px]">{chatCampo.secao}</p>}
-            </div>
-            <button onClick={() => setChatOpen(false)} className="text-white/40 hover:text-white"><X className="w-4 h-4" /></button>
-          </div>
-          <div className="flex-1 overflow-y-auto p-3 space-y-2">
-            {chatHistory.map((m, i) => (
-              <div key={i} className={`text-xs p-2.5 rounded-lg ${m.role === "user" ? "bg-indigo-600 text-white ml-4" : "bg-white/10 text-white/90 mr-4"}`}>
-                {m.content.replace(/\[TEXTO\]:[\s\S]*/g, "").trim()}
-                {m.content.includes("[TEXTO]:") && (
-                  <div className="mt-2 p-2 bg-green-500/20 rounded border border-green-500/30 text-green-300 text-[10px]">
-                    ✓ Texto aplicado ao campo
-                  </div>
-                )}
-              </div>
-            ))}
-            {chatLoading && <div className="bg-white/10 text-white/50 text-xs p-2.5 rounded-lg mr-4"><Loader2 className="w-3 h-3 animate-spin inline mr-1" />Pensando...</div>}
-            <div ref={chatEndRef} />
-          </div>
-          <div className="p-3 border-t border-white/10 flex gap-2">
-            <input
-              value={chatMsg}
-              onChange={e => setChatMsg(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && !e.shiftKey && enviarChat()}
-              placeholder="Digite sua mensagem..."
-              className="flex-1 bg-white/10 text-white placeholder-white/30 text-xs rounded-lg px-3 py-2 outline-none border border-white/10 focus:border-indigo-500"
-            />
-            <Button size="icon" onClick={enviarChat} disabled={chatLoading} className="bg-indigo-600 hover:bg-indigo-700 h-8 w-8">
-              <Send className="w-3.5 h-3.5" />
-            </Button>
-          </div>
-        </div>
-      )}
-
       {/* Lock dialog */}
       <AlertDialog open={!!lockDialog} onOpenChange={() => setLockDialog(null)}>
         <AlertDialogContent>
