@@ -86,3 +86,52 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ─── Light theme overrides ──────────────────────────────────────────────── */
+/* Applied when data-tema="light" is on <html>. 
+   Content pages (min-h-screen bg-slate-50, p-6 wrappers, Cards) 
+   automatically look clean. We add a body-level bg and boost card contrast. */
+
+html[data-tema="light"] body {
+  background: #f1f5f9;
+}
+
+html[data-tema="light"] .card,
+html[data-tema="light"] [class*="rounded"][class*="border"] {
+  background: #ffffff;
+}
+
+/* Headings and primary text in light content areas */
+html[data-tema="light"] .text-gray-900 { color: #0f172a !important; }
+html[data-tema="light"] .text-gray-800 { color: #1e293b !important; }
+html[data-tema="light"] .text-gray-700 { color: #334155 !important; }
+html[data-tema="light"] .text-gray-600 { color: #475569 !important; }
+html[data-tema="light"] .text-gray-500 { color: #64748b !important; }
+html[data-tema="light"] .text-gray-400 { color: #94a3b8 !important; }
+
+/* Content page backgrounds */
+html[data-tema="light"] .bg-slate-50  { background-color: #f8fafc !important; }
+html[data-tema="light"] .bg-slate-100 { background-color: #f1f5f9 !important; }
+html[data-tema="light"] .bg-white     { background-color: #ffffff !important; }
+
+/* Make cards pop on light bg */
+html[data-tema="light"] .shadow-sm {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05) !important;
+}
+html[data-tema="light"] .shadow {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10), 0 1px 3px rgba(0,0,0,0.06) !important;
+}
+
+/* Input fields look clean */
+html[data-tema="light"] input,
+html[data-tema="light"] textarea,
+html[data-tema="light"] select {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+html[data-tema="light"] input::placeholder,
+html[data-tema="light"] textarea::placeholder {
+  color: #94a3b8;
+}
