@@ -399,7 +399,7 @@ export default function VooDoCorvo() {
                 </button>
               ))}
             </div>
-            <Ranking todosTrilhas={todosTrilhas} roleFilter={abaRanking} />
+            <Ranking todosTrilhas={todosTrilhas} roleFilter={abaRanking} isLight={isLight} />
           </div>
         )}
       </div>
