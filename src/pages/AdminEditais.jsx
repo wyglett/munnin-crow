@@ -303,10 +303,13 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
                 const isCurrentUserAdmin = currentUser?.role === "admin";
                 const canChangeRole = isCurrentUserAdmin && !isCurrentUser;
                 return (
-                  <div key={u.id} className="p-4 bg-white rounded-lg border flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-gray-900">{u.full_name || u.email} {isCurrentUser && <span className="text-xs text-indigo-600">(Você)</span>}</p>
-                      <p className="text-sm text-gray-500">{u.email}</p>
+                  <div key={u.id} className="p-4 bg-white rounded-lg border flex items-center justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-gray-900 truncate">{u.full_name || u.email} {isCurrentUser && <span className="text-xs text-indigo-600">(Você)</span>}</p>
+                      <p className="text-sm text-gray-500 truncate">{u.email}</p>
+                      {u.tipo_usuario && u.tipo_usuario !== u.role && (
+                        <p className="text-xs text-amber-600 mt-0.5">tipo_usuario: {u.tipo_usuario} → role será sincronizado</p>
+                      )}
                     </div>
                     <div className="relative">
                       <Select 
