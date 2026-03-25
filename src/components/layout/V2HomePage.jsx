@@ -25,13 +25,13 @@ const getBlocks = (role, user, isAdmin) => {
   ];
 
   const consultorBlocks = [
-    { name: "ConsultorDashboard", label: "Tutorias",       sub: "Suas solicitações ativas",      icon: MessageSquare, grad: ["#4f46e5","#7c3aed","#312e81"], accent: "#a78bfa", pastel: ["#ede9fe","#ddd6fe","#c4b5fd"], bgImage: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=200&h=200&fit=crop" },
-    { name: "PropostasConsultor", label: "Propostas",      sub: "Propostas de consultoria",      icon: FileText,      grad: ["#0ea5e9","#0284c7","#0c4a6e"], accent: "#38bdf8", pastel: ["#e0f2fe","#bae6fd","#7dd3fc"], bgImage: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=200&h=200&fit=crop" },
-    { name: "Acompanhamento",     label: "Acompanhamento", sub: "Projetos que você apoia",       icon: Activity,      grad: ["#10b981","#059669","#064e3b"], accent: "#6ee7b7", pastel: ["#d1fae5","#a7f3d0","#6ee7b7"], bgImage: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=200&h=200&fit=crop" },
-    { name: "ConsultorGestao",    label: "Gestão & Recibos",sub: "Controle financeiro",          icon: Receipt,       grad: ["#f59e0b","#d97706","#78350f"], accent: "#fcd34d", pastel: ["#fef3c7","#fde68a","#fcd34d"], bgImage: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=200&h=200&fit=crop" },
-    { name: "Comunidade",         label: "Comunidade",     sub: "Rede de consultores",           icon: MessageSquare, grad: ["#ec4899","#db2777","#831843"], accent: "#f9a8d4", pastel: ["#fce7f3","#fbcfe8","#f9a8d4"], bgImage: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=200&h=200&fit=crop" },
-    { name: "Orientacoes",        label: "Orientações",    sub: "Materiais e guias",             icon: BookOpen,      grad: ["#14b8a6","#0d9488","#134e4a"], accent: "#5eead4", pastel: ["#ccfbf1","#99f6e4","#5eead4"], bgImage: "https://images.unsplash.com/photo-1507842696857-3e20d5e71a19?w=200&h=200&fit=crop" },
-    { name: "Planos",             label: "Planos",         sub: "Conheça os planos",             icon: CreditCard,    grad: ["#f97316","#ea580c","#7c2d12"], accent: "#fdba74", pastel: ["#ffedd5","#fed7aa","#fdba74"], bgImage: "https://images.unsplash.com/photo-1453928582348-e6612031fced?w=200&h=200&fit=crop" },
+    { name: "ConsultorDashboard", label: "Tutorias",       sub: "Suas solicitações ativas",      icon: MessageSquare, grad: ["#4f46e5","#7c3aed","#312e81"], accent: "#a78bfa", pastel: ["#ede9fe","#ddd6fe","#c4b5fd"] },
+    { name: "PropostasConsultor", label: "Propostas",      sub: "Propostas de consultoria",      icon: FileText,      grad: ["#0ea5e9","#0284c7","#0c4a6e"], accent: "#38bdf8", pastel: ["#e0f2fe","#bae6fd","#7dd3fc"] },
+    { name: "Acompanhamento",     label: "Acompanhamento", sub: "Projetos que você apoia",       icon: Activity,      grad: ["#10b981","#059669","#064e3b"], accent: "#6ee7b7", pastel: ["#d1fae5","#a7f3d0","#6ee7b7"] },
+    { name: "ConsultorGestao",    label: "Gestão & Recibos",sub: "Controle financeiro",          icon: Receipt,       grad: ["#f59e0b","#d97706","#78350f"], accent: "#fcd34d", pastel: ["#fef3c7","#fde68a","#fcd34d"] },
+    { name: "Comunidade",         label: "Comunidade",     sub: "Rede de consultores",           icon: MessageSquare, grad: ["#ec4899","#db2777","#831843"], accent: "#f9a8d4", pastel: ["#fce7f3","#fbcfe8","#f9a8d4"] },
+    { name: "Orientacoes",        label: "Orientações",    sub: "Materiais e guias",             icon: BookOpen,      grad: ["#14b8a6","#0d9488","#134e4a"], accent: "#5eead4", pastel: ["#ccfbf1","#99f6e4","#5eead4"] },
+    { name: "Planos",             label: "Planos",         sub: "Conheça os planos",             icon: CreditCard,    grad: ["#f97316","#ea580c","#7c2d12"], accent: "#fdba74", pastel: ["#ffedd5","#fed7aa","#fdba74"] },
   ];
 
   let blocks = role === "consultor" ? consultorBlocks : empreendedorBlocks;
