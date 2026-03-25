@@ -253,7 +253,7 @@ function V2Layout({ user, isAdmin, effectiveRole, viewAsRole, setViewAsRole, cur
           {/* Logo compact */}
           <Link to={createPageUrl("Home")} className="flex-shrink-0 mr-2">
             <img src={LOGO_URL} alt="Munnin Crow" className="h-8 w-auto object-contain"
-              style={{ filter: isLight ? "none" : "drop-shadow(0 0 3px rgba(255,255,255,0.7))" }} />
+              style={{ filter: isLight ? "none" : "drop-shadow(0 0 2px rgba(255,255,255,1)) drop-shadow(0 0 10px rgba(165,180,252,0.9)) drop-shadow(0 0 24px rgba(99,102,241,0.5))" }} />
           </Link>
 
           {/* Nav tabs (desktop) */}
