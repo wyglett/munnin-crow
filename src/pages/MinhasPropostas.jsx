@@ -88,7 +88,7 @@ export default function MinhasPropostas() {
                       </div>
                       {p.edital_titulo && <p className="text-sm text-indigo-600 mt-0.5">Edital: {p.edital_titulo}</p>}
                       {p.campos_formulario?.length > 0 && (
-                        <p className="text-xs text-gray-400 mt-0.5">
+                        <p className={`text-xs mt-0.5 ${isLight ? "text-gray-400" : "text-slate-500"}`}>
                           {p.campos_formulario.filter(c => c.concluido).length}/{p.campos_formulario.length} campos concluídos
                         </p>
                       )}
