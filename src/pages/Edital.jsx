@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
@@ -16,6 +16,12 @@ export default function Edital() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
   const [showForm, setShowForm] = useState(false);
+
+  useEffect(() => {
+    document.title = "Detalhes do Edital | Munnin Crow";
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc) desc.setAttribute('content', "Visualize detalhes completos do edital, documentos modelo e crie propostas com suporte de IA.");
+  }, []);
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
   const [creatingId, setCreatingId] = useState(null);
