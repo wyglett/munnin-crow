@@ -8,6 +8,7 @@ import BrazilMap from "../components/home/BrazilMap";
 import CategoryCards from "../components/home/CategoryCards";
 import EditalCard from "../components/home/EditalCard";
 import EditalDetailModal from "../components/home/EditalDetailModal";
+import EditalQAPanel from "../components/home/EditalQAPanel";
 import PreLoginModal from "../components/onboarding/PreLoginModal";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -337,6 +338,15 @@ export default function Home() {
           <EditaisLista editais={categoryEditais} category={selectedCategory} onBack={goBack} onSelect={setSelectedEdital} isLight={isLight} />
         )}
       </div>
+
+      {(selectedCategory || selectedEdital) && (
+        <EditalQAPanel
+          editais={editais}
+          selectedCategory={selectedCategory}
+          selectedEdital={selectedEdital}
+          isLight={isLight}
+        />
+      )}
 
       <EditalDetailModal
         edital={selectedEdital}
