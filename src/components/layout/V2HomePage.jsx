@@ -19,10 +19,8 @@ const getBlocks = (role, user, isAdmin) => {
     { name: "BuscarEditais",   label: "Editais",           sub: "Descubra oportunidades de fomento",  icon: Home,         grad: ["#4f46e5","#7c3aed","#312e81"], accent: "#a78bfa", pastel: ["#ede9fe","#ddd6fe","#c4b5fd"] },
     { name: "MinhasPropostas", label: "Minhas Propostas",  sub: "Gerencie suas submissões",            icon: FileText,     grad: ["#0ea5e9","#0284c7","#0c4a6e"], accent: "#38bdf8", pastel: ["#e0f2fe","#bae6fd","#7dd3fc"] },
     { name: "Acompanhamento",  label: "Acompanhamento",    sub: "Monitore projetos contratados",       icon: Activity,     grad: ["#10b981","#059669","#064e3b"], accent: "#6ee7b7", pastel: ["#d1fae5","#a7f3d0","#6ee7b7"] },
-    { name: "TiraDuvidas",     label: "Tira-dúvidas IA",   sub: "Converse com a inteligência artificial", icon: Bot,       grad: ["#f59e0b","#d97706","#78350f"], accent: "#fcd34d", pastel: ["#fef3c7","#fde68a","#fcd34d"] },
     { name: "Comunidade",      label: "Comunidade",        sub: "Conecte-se com empreendedores",       icon: MessageSquare,grad: ["#ec4899","#db2777","#831843"], accent: "#f9a8d4", pastel: ["#fce7f3","#fbcfe8","#f9a8d4"] },
     { name: "Orientacoes",     label: "Orientações",       sub: "Guias e materiais de apoio",          icon: BookOpen,     grad: ["#14b8a6","#0d9488","#134e4a"], accent: "#5eead4", pastel: ["#ccfbf1","#99f6e4","#5eead4"] },
-    { name: "MeusRecibos",     label: "Recibos / NFs",     sub: "Controle seus documentos fiscais",    icon: Receipt,      grad: ["#64748b","#475569","#1e293b"], accent: "#94a3b8", pastel: ["#f1f5f9","#e2e8f0","#cbd5e1"] },
     { name: "Planos",          label: "Planos",            sub: "Conheça os planos disponíveis",       icon: CreditCard,   grad: ["#f97316","#ea580c","#7c2d12"], accent: "#fdba74", pastel: ["#ffedd5","#fed7aa","#fdba74"] },
   ];
 
