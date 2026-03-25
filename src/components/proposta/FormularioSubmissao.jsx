@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { CheckCircle, Lock, Unlock, Sparkles, Loader2, MessageSquare, X, Send, Download, FileText, FilePlus } from "lucide-react";
+import { CheckCircle, Lock, Unlock, Loader2, MessageSquare, Download, FileText, FilePlus } from "lucide-react";
 import { marcarAtividade } from "@/components/gamification/gamificacao";
+import AIChatField from "@/components/ai/AIChatField";
+import GerarPropostaCompleta from "@/components/ai/GerarPropostaCompleta";
 
 // Remove aspas do texto gerado por IA
 const limparAspas = (texto) => texto?.replace(/["""''`]/g, "") || "";
