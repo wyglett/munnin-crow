@@ -20,14 +20,8 @@ export default function FormularioSubmissao({ proposta, edital, onSave }) {
   const [gerando, setGerando] = useState(false);
   const [gerandoPDF, setGerandoPDF] = useState(false);
   const [lockDialog, setLockDialog] = useState(null);
-  const [chatOpen, setChatOpen] = useState(false);
-  const [chatCampoId, setChatCampoId] = useState(null);
-  const [chatMsg, setChatMsg] = useState("");
-  const [chatHistory, setChatHistory] = useState([]);
-  const [chatLoading, setChatLoading] = useState(false);
   const [expandedId, setExpandedId] = useState(null);
   const [hoveredId, setHoveredId] = useState(null);
-  const chatEndRef = useRef(null);
 
   useEffect(() => {
     const t = setTimeout(() => { onSave({ campos_formulario: campos }); }, 1000);
