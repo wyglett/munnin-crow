@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Loader2, Download, Presentation, Camera, CheckCircle2 } from "lucide-react";
+import { Loader2, Download, Presentation, Camera, CheckCircle2, RefreshCw, Database } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 
@@ -494,8 +494,45 @@ function DivulgacaoInvestidores() {
 
 // ─── Lógica da Plataforma ─────────────────────────────────────────────────────
 
+// ─── Descrição do banco de dados ─────────────────────────────────────────────
+
+const DB_DESCRICAO = [
+  { entidade: "Edital", cor: "#6366f1", descricao: "Representa as oportunidades de fomento publicadas por órgãos como FAPES, FAPERJ, FAPESP e FAPEMIG. Contém dados de identificação, datas, links, documentos anexos e a base de conhecimento treinada pela IA para o Tira-Dúvidas.", relacionamentos: ["Proposta (1:N — um edital pode ter várias propostas)", "MensagemChat (1:N — mensagens do fórum vinculadas ao edital)", "Orientacao (1:N — materiais educativos associados)"] },
+  { entidade: "Proposta", cor: "#8b5cf6", descricao: "Candidatura de um empreendedor a um edital. Armazena campos do formulário descritivo (preenchidos com apoio de IA), campos do site de submissão (Sigfapes), status do processo, pontuação estimada pela IA e vínculo com consultor.", relacionamentos: ["Edital (N:1 — toda proposta pertence a um edital)", "User (N:1 — criada por um empreendedor)"] },
+  { entidade: "AcompanhamentoProjeto", cor: "#0ea5e9", descricao: "Projeto aprovado e em execução. Centraliza orçamento aprovado por linha, dados financeiros, vínculos com Google Drive, consultor responsável, campos do relatório de prestação de contas e integração com Google Docs.", relacionamentos: ["GastoProjeto (1:N — gastos registrados no projeto)", "SolicitacaoTutoria (via consultor_email)", "User (N:1 — criado pelo empreendedor)"] },
+  { entidade: "GastoProjeto", cor: "#f59e0b", descricao: "Registro financeiro de cada despesa realizada no projeto. Inclui categoria (material, terceiros, diárias, etc.), valor, fornecedor, data, comprovantes (URLs), status de revisão e flag de exportação ao Google Drive.", relacionamentos: ["AcompanhamentoProjeto (N:1 — gasto pertence a um projeto)"] },
+  { entidade: "SolicitacaoTutoria", cor: "#10b981", descricao: "Solicitação de apoio de um consultor por um empreendedor. Pode ser aberta (qualquer consultor oferece) ou direta (convite por e-mail). Contém array de propostas com valores, contraporpostas e status da negociação.", relacionamentos: ["User — empreendedor (N:1)", "User — consultor (N:1)"] },
+  { entidade: "MensagemChat", cor: "#f43f5e", descricao: "Mensagem do fórum da comunidade, organizada por edital. Suporta respostas encadeadas via reply_to_id. Identifica o autor e registra data/hora.", relacionamentos: ["Edital (N:1 — mensagem vinculada a um edital específico)"] },
+  { entidade: "Orientacao", cor: "#64748b", descricao: "Material educativo disponibilizado pelos consultores ou admins. Pode ser um vídeo (YouTube), apresentação (Canva), PDF ou documento. Possui controle de acesso: livre para todos ou restrito a clientes específicos.", relacionamentos: ["Edital (N:1 — opcional, pode ser associada a um edital)"] },
+  { entidade: "ModeloProposta", cor: "#dc2626", descricao: "Template de proposta por órgão de fomento, com campos mapeados e extraídos de PDFs via IA. Usado para estruturar formulários de propostas com instruções e tipos de resposta por campo.", relacionamentos: [] },
+  { entidade: "ModeloRelatorio", cor: "#16a34a", descricao: "Template de relatório de prestação de contas por órgão, com campos extraídos via IA e blocos de layout para exportação estruturada.", relacionamentos: [] },
+  { entidade: "NotificacaoPlataforma", cor: "#0284c7", descricao: "Notificações internas enviadas pelo admin para usuários específicos ou todos. Inclui tipo (novo recurso, correção, aviso), status de leitura e referência à entidade afetada.", relacionamentos: ["User (N:1 — destinatário específico ou broadcast)"] },
+  { entidade: "LogAcao", cor: "#7c3aed", descricao: "Auditoria de ações realizadas na plataforma (criar/editar/deletar editais, alterar roles, etc.). Registra usuário, tipo de ação, entidade afetada, dados antes/depois, tempo de execução e status.", relacionamentos: [] },
+  { entidade: "PreferenciaNotificacaoEdital", cor: "#ea580c", descricao: "Preferências do usuário para alertas de novos editais por WhatsApp/SMS. Define categorias de interesse, estados e telefone para envio.", relacionamentos: ["User (1:1 — por usuário)"] },
+  { entidade: "AgendamentoConsultoria", cor: "#0891b2", descricao: "Agendamento de reuniões entre consultores e empreendedores. Vinculado opcionalmente ao Google Calendar. Registra status, tipo de reunião, link de Meet e observações.", relacionamentos: ["User — consultor (N:1)", "User — cliente (N:1)"] },
+  { entidade: "User (built-in)", cor: "#334155", descricao: "Entidade nativa da plataforma. Armazena dados do usuário autenticado: nome, email, role (admin/empreendedor/consultor) e atributos de perfil como tipo_usuario, perfil_concluido, acesso_liberado e avatar.", relacionamentos: ["Todas as entidades com criador ou email referenciado"] },
+];
+
 function LogicaPlataforma() {
   const [gerando, setGerando] = useState(false);
+  const [sincronizando, setSincronizando] = useState(false);
+  const [sincMsg, setSincMsg] = useState(null);
+
+  const sincronizar = async () => {
+    setSincronizando(true);
+    setSincMsg(null);
+    // Gera nova análise via IA com base no estado atual da plataforma
+    const entidadesStr = DB_DESCRICAO.map(e => `- ${e.entidade}: ${e.descricao}`).join("\n");
+    const rfStr = RF.map(r => `${r.id} [${r.categoria}]: ${r.descricao}`).join("\n");
+    const rnfStr = RNF.map(r => `${r.id} [${r.categoria}]: ${r.descricao}`).join("\n");
+
+    await base44.integrations.Core.InvokeLLM({
+      prompt: `Você é um arquiteto de software. Com base nas seguintes informações da plataforma Munnin Crow, verifique se a lógica, MER, RFs e RNFs estão consistentes e atualizados. Liste apenas se encontrar inconsistências ou sugestões de atualização críticas (máx 5 itens). Se tudo estiver consistente, responda apenas "OK — Lógica da plataforma está consistente com o estado atual."\n\nENTIDADES:\n${entidadesStr}\n\nRFs:\n${rfStr}\n\nRNFs:\n${rnfStr}`
+    }).then(r => {
+      setSincMsg(typeof r === "string" ? r : "Sincronização concluída.");
+    });
+    setSincronizando(false);
+  };
 
   const gerarDocumento = () => {
     setGerando(true);
@@ -579,6 +616,15 @@ function LogicaPlataforma() {
     </tr>`).join("")}</tbody>
   </table>
 </div>
+
+<div class="section">
+  <h2>Banco de Dados — Entidades e Funcionamento</h2>
+  ${DB_DESCRICAO.map(e => `<div style="border-left:4px solid ${e.cor};background:white;border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:14px;">
+    <div style="font-size:15px;font-weight:800;color:${e.cor};margin-bottom:6px;">${e.entidade}</div>
+    <p style="font-size:12px;color:#334155;line-height:1.7;margin-bottom:8px;">${e.descricao}</p>
+    ${e.relacionamentos.length > 0 ? `<div style="display:flex;flex-wrap:wrap;gap:6px;">${e.relacionamentos.map(r => `<span style="font-size:10px;background:#f1f5f9;color:#475569;padding:2px 10px;border-radius:20px;border:1px solid #e2e8f0;">${r}</span>`).join("")}</div>` : ""}
+  </div>`).join("")}
+</div>
 </body></html>`;
 
       const blob = new Blob([html], { type: "text/html;charset=utf-8" });
@@ -599,12 +645,23 @@ function LogicaPlataforma() {
       <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
         <h2 className="text-lg font-bold text-slate-900 mb-1">Lógica da Plataforma</h2>
         <p className="text-sm text-slate-600 mb-4">
-          Gera documento com diagrama visual do Modelo Relacional de Entidades (MER), Requisitos Funcionais e Não Funcionais.
+          Gera documento com diagrama visual do MER, Requisitos Funcionais e Não Funcionais. Use "Sincronizar" para atualizar a lógica com base no estado atual da plataforma.
         </p>
-        <Button onClick={gerarDocumento} disabled={gerando} className="bg-slate-800 hover:bg-slate-900">
-          {gerando ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Gerando...</> : <><Download className="w-4 h-4 mr-2" />Gerar Documento de Lógica</>}
-        </Button>
-        <p className="text-xs text-slate-400 mt-2">Abre no navegador e pode ser salvo como PDF (Ctrl+P → Salvar como PDF).</p>
+        <div className="flex gap-3 flex-wrap">
+          <Button onClick={gerarDocumento} disabled={gerando} className="bg-slate-800 hover:bg-slate-900">
+            {gerando ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Gerando...</> : <><Download className="w-4 h-4 mr-2" />Gerar Documento</>}
+          </Button>
+          <Button onClick={sincronizar} disabled={sincronizando} variant="outline" className="border-indigo-300 text-indigo-700 hover:bg-indigo-50">
+            {sincronizando ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Sincronizando...</> : <><RefreshCw className="w-4 h-4 mr-2" />Sincronizar Lógica</>}
+          </Button>
+        </div>
+        {sincMsg && (
+          <div className={`mt-3 p-3 rounded-lg text-sm border ${sincMsg.startsWith("OK") ? "bg-green-50 border-green-200 text-green-800" : "bg-amber-50 border-amber-200 text-amber-800"}`}>
+            <p className="font-semibold mb-1">{sincMsg.startsWith("OK") ? "✓ Sincronização concluída" : "⚠ Sugestões de atualização"}</p>
+            <p className="text-xs whitespace-pre-wrap">{sincMsg}</p>
+          </div>
+        )}
+        <p className="text-xs text-slate-400 mt-2">O documento pode ser salvo como PDF (Ctrl+P → Salvar como PDF).</p>
       </div>
 
       {/* Diagrama visual interativo */}
@@ -648,6 +705,33 @@ function LogicaPlataforma() {
               </div>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* Banco de Dados */}
+      <div>
+        <div className="flex items-center gap-2 mb-3">
+          <Database className="w-4 h-4 text-slate-600" />
+          <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Banco de Dados — {DB_DESCRICAO.length} Entidades</p>
+        </div>
+        <div className="space-y-3">
+          {DB_DESCRICAO.map(e => (
+            <div key={e.entidade} className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+              <div className="flex items-center gap-3 px-4 py-2.5" style={{ borderLeft: `4px solid ${e.cor}` }}>
+                <span className="text-sm font-bold" style={{ color: e.cor }}>{e.entidade}</span>
+              </div>
+              <div className="px-4 py-3 border-t border-slate-100">
+                <p className="text-xs text-slate-600 leading-relaxed mb-2">{e.descricao}</p>
+                {e.relacionamentos.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {e.relacionamentos.map((r, i) => (
+                      <span key={i} className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full border border-slate-200">{r}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

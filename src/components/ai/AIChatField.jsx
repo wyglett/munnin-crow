@@ -36,8 +36,8 @@ export default function AIChatField({ pergunta, contexto, instrucao_ia, resposta
     setHistory([{
       role: "assistant",
       content: respostaAtual?.trim()
-        ? `Vou te ajudar a melhorar a resposta para **"${pergunta}"**.\n\nAtualmente você tem:\n> ${respostaAtual.slice(0, 200)}${respostaAtual.length > 200 ? "..." : ""}\n\nO que gostaria de mudar ou melhorar?`
-        : `Vou te ajudar a redigir a resposta para **"${pergunta}"**.\n\nMe conte o que você tem sobre isso — pode ser em linguagem simples, eu adapto.`
+        ? `Vou melhorar a resposta para **"${pergunta}"**.\n\nTexto atual:\n> ${respostaAtual.slice(0, 200)}${respostaAtual.length > 200 ? "..." : ""}\n\nSe quiser, diga o que precisa ajustar — ou envie uma mensagem em branco e gero uma versão otimizada direto.`
+        : `Pronto para redigir **"${pergunta}"**.\n\nDescreva brevemente o projeto ou contexto (pode ser informal) e gero o texto técnico completo. Se preferir, posso gerar uma versão inicial agora mesmo — só me diga "gera".`
     }]);
     setProposta(null);
     setInput("");
@@ -55,17 +55,27 @@ export default function AIChatField({ pergunta, contexto, instrucao_ia, resposta
     const historyText = newHistory.map(m => `${m.role === "user" ? "Usuário" : "IA"}: ${m.content}`).join("\n");
 
     const r = await base44.integrations.Core.InvokeLLM({
-      prompt: `Você é um especialista em elaboração de propostas e relatórios para editais de fomento científico e tecnológico.
+      prompt: `Você é um especialista sênior em elaboração de propostas para editais de fomento científico, tecnológico e de inovação (FAPES, FAPERJ, FAPESP, FAPEMIG, FINEP, CNPq, etc.).
 
-CAMPO: ${pergunta}
-${contexto ? `CONTEXTO: ${contexto}` : ""}
-${instrucao_ia ? `INSTRUÇÃO ESPECIAL: ${instrucao_ia}` : ""}
-${respostaAtual ? `TEXTO ATUAL DO CAMPO: ${respostaAtual}` : ""}
+CAMPO A PREENCHER: ${pergunta}
+${contexto ? `CONTEXTO DO PROJETO/EDITAL: ${contexto}` : ""}
+${instrucao_ia ? `INSTRUÇÃO ESPECÍFICA DO CAMPO: ${instrucao_ia}` : ""}
+${respostaAtual ? `TEXTO ATUAL (a ser melhorado): ${respostaAtual}` : ""}
 
 HISTÓRICO DA CONVERSA:
 ${historyText}
 
-Responda de forma objetiva. Quando tiver um texto pronto para sugerir, inclua-o ao final precedido exatamente por "PROPOSTA_TEXTO:" em uma nova linha (sem aspas, sem markdown no texto proposto — apenas texto limpo e formal). Se ainda precisar de mais informações do usuário, faça perguntas pontuais sem gerar o texto final ainda.`
+DIRETRIZES DE COMPORTAMENTO:
+1. FAÇA O MÍNIMO DE PERGUNTAS POSSÍVEL — preferencialmente nenhuma. Use inferência inteligente com base no contexto disponível.
+2. Se o usuário forneceu qualquer informação (mesmo vaga ou informal), transforme-a em texto técnico profissional imediatamente.
+3. Se o usuário disse "gera", "pode gerar", "vai" ou similar — gere o texto agora, sem perguntas.
+4. Use linguagem técnica, formal e orientada a critérios de avaliação de editais. Evite floreios.
+5. Maximize a pontuação do candidato: seja específico, demonstre viabilidade, metodologia e impacto.
+6. Respeite limites de caracteres ou linhas indicados no campo, se houver.
+7. Quando gerar o texto, adicione-o após "PROPOSTA_TEXTO:" em nova linha (sem markdown, sem aspas — apenas texto limpo).
+8. Só faça perguntas se for absolutamente impossível gerar sem a informação. Máximo 1 pergunta por vez.
+
+Responda agora.`
     });
 
     const text = typeof r === "string" ? r : JSON.stringify(r);
@@ -95,11 +105,16 @@ Responda de forma objetiva. Quando tiver um texto pronto para sugerir, inclua-o 
     setLoading(true);
     const historyText = history.map(m => `${m.role === "user" ? "Usuário" : "IA"}: ${m.content}`).join("\n");
     const r = await base44.integrations.Core.InvokeLLM({
-      prompt: `Você é um especialista em elaboração de propostas para editais de fomento. Gere uma versão alternativa (diferente da anterior) para o campo "${pergunta}". ${contexto ? `Contexto: ${contexto}` : ""} ${instrucao_ia ? instrucao_ia : ""}
+      prompt: `Você é um especialista em elaboração de propostas para editais de fomento científico e tecnológico.
+
+Gere uma versão alternativa (diferente da anterior, mas igualmente técnica e robusta) para o campo "${pergunta}".
+${contexto ? `Contexto: ${contexto}` : ""}
+${instrucao_ia ? `Instrução do campo: ${instrucao_ia}` : ""}
 
 Histórico: ${historyText}
 
-Retorne apenas o texto alternativo após "PROPOSTA_TEXTO:" sem aspas nem markdown.`
+Use abordagem ou ênfase diferente da versão anterior. Mantenha linguagem técnica, formal e orientada a avaliadores do edital.
+Retorne apenas o texto após "PROPOSTA_TEXTO:" sem aspas nem markdown.`
     });
     const text = typeof r === "string" ? r : "";
     if (text.includes("PROPOSTA_TEXTO:")) {

@@ -25,8 +25,6 @@ function formatPhone(v) {
 }
 
 export default function OnboardingModal({ user, open, onComplete }) {
-  if (user?.role === "admin" || (user?.tipo_usuario && user?.perfil_concluido)) return null;
-
   const prefilledRole = user?.tipo_usuario || "";
   const [step, setStep] = useState(prefilledRole ? 2 : 1);
   const [role, setRole] = useState(prefilledRole);
@@ -112,6 +110,8 @@ export default function OnboardingModal({ user, open, onComplete }) {
       onComplete(role);
     }
   };
+
+  if (user?.role === "admin" || (user?.tipo_usuario && user?.perfil_concluido)) return null;
 
   const headerSubtitle = done
     ? "Solicitação enviada com sucesso!"

@@ -328,7 +328,7 @@ Retorne apenas editais com status aberto/vigente. Não invente dados — use ape
                     {importando ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
                     {importando ? "Importando..." : "Importar Editais"}
                   </Button>
-                  <Button onClick={openNew} variant="outline" className="border-slate-300 hover:bg-slate-100 text-slate-700"><Plus className="w-4 h-4 mr-2" /> Novo</Button>
+                  <Button onClick={openNew} variant="outline" className="border-white/20 hover:bg-white/10 text-slate-200 hover:text-white"><Plus className="w-4 h-4 mr-2" /> Novo</Button>
                 </div>
 
                 <div className="space-y-2.5">
