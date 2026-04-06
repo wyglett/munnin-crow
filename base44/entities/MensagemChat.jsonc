@@ -1,0 +1,54 @@
+{
+  "name": "MensagemChat",
+  "type": "object",
+  "properties": {
+    "edital_id": {
+      "type": "string"
+    },
+    "edital_titulo": {
+      "type": "string"
+    },
+    "conteudo": {
+      "type": "string",
+      "description": "Conte\u00fado da mensagem. Armazenado criptografado em repouso (AES-256). Nunca expor em texto puro em logs ou responses de listagem n\u00e3o autorizada."
+    },
+    "conteudo_preview": {
+      "type": "string",
+      "description": "Pr\u00e9via truncada (primeiros 80 chars) para notifica\u00e7\u00f5es \u2014 n\u00e3o cont\u00e9m o conte\u00fado completo"
+    },
+    "autor_nome": {
+      "type": "string"
+    },
+    "autor_email": {
+      "type": "string"
+    },
+    "reply_to_id": {
+      "type": "string"
+    },
+    "reply_preview": {
+      "type": "string"
+    },
+    "reply_autor_nome": {
+      "type": "string"
+    },
+    "editada": {
+      "type": "boolean",
+      "default": false,
+      "description": "Indica se a mensagem foi editada ap\u00f3s o envio original"
+    },
+    "editada_em": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp da \u00faltima edi\u00e7\u00e3o"
+    },
+    "visivel": {
+      "type": "boolean",
+      "default": true,
+      "description": "Se false, a mensagem foi removida/moderada \u2014 o conte\u00fado n\u00e3o \u00e9 exibido"
+    }
+  },
+  "required": [
+    "conteudo",
+    "edital_id"
+  ]
+}

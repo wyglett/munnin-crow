@@ -1,0 +1,100 @@
+{
+  "name": "GastoProjeto",
+  "type": "object",
+  "properties": {
+    "acompanhamento_id": {
+      "type": "string",
+      "description": "FK obrigat\u00f3ria para AcompanhamentoProjeto \u2014 todo gasto deve pertencer a um projeto"
+    },
+    "descricao": {
+      "type": "string"
+    },
+    "categoria": {
+      "type": "string",
+      "enum": [
+        "material_permanente",
+        "material_consumo",
+        "terceiros",
+        "diarias",
+        "passagens",
+        "contrapartida",
+        "doaci"
+      ],
+      "default": "terceiros"
+    },
+    "subcategoria_id": {
+      "type": "string"
+    },
+    "valor": {
+      "type": "number"
+    },
+    "quantidade": {
+      "type": "number",
+      "default": 1,
+      "description": "Quantidade do item adquirido"
+    },
+    "data": {
+      "type": "string",
+      "format": "date"
+    },
+    "fornecedor": {
+      "type": "string"
+    },
+    "anexos": {
+      "type": "array",
+      "description": "Lista de anexos (PDF, NF, comprovantes)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "adicionado_por": {
+      "type": "string",
+      "enum": [
+        "empreendedor",
+        "consultor"
+      ],
+      "default": "empreendedor"
+    },
+    "observacao": {
+      "type": "string"
+    },
+    "status_revisao": {
+      "type": "string",
+      "enum": [
+        "normal",
+        "pendente_revisao",
+        "aprovado"
+      ],
+      "default": "normal"
+    },
+    "drive_exportado": {
+      "type": "boolean",
+      "default": false
+    },
+    "drive_item_folder_id": {
+      "type": "string"
+    },
+    "drive_resumo_id": {
+      "type": "string"
+    },
+    "drive_exportado_em": {
+      "type": "string"
+    },
+    "drive_hash": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "acompanhamento_id",
+    "descricao",
+    "valor"
+  ]
+}

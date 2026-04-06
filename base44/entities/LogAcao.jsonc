@@ -1,0 +1,96 @@
+{
+  "name": "LogAcao",
+  "type": "object",
+  "properties": {
+    "usuario_email": {
+      "type": "string",
+      "description": "Email do usu\u00e1rio que realizou a a\u00e7\u00e3o"
+    },
+    "usuario_nome": {
+      "type": "string",
+      "description": "Nome do usu\u00e1rio"
+    },
+    "tipo_acao": {
+      "type": "string",
+      "enum": [
+        "edital_criado",
+        "edital_deletado",
+        "edital_atualizado",
+        "usuario_criado",
+        "usuario_deletado",
+        "usuario_role_alterado",
+        "notificacao_disparada",
+        "modelo_criado",
+        "modelo_deletado",
+        "modelo_atualizado"
+      ],
+      "description": "Tipo de a\u00e7\u00e3o realizada"
+    },
+    "entidade_tipo": {
+      "type": "string",
+      "description": "Tipo de entidade afetada (Edital, User, Notificacao, etc)"
+    },
+    "entidade_id": {
+      "type": "string",
+      "description": "ID da entidade afetada"
+    },
+    "entidade_nome": {
+      "type": "string",
+      "description": "Nome/t\u00edtulo da entidade"
+    },
+    "descricao": {
+      "type": "string",
+      "description": "Descri\u00e7\u00e3o detalhada da a\u00e7\u00e3o"
+    },
+    "dados_antes": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Dados anteriores (para updates)"
+    },
+    "dados_depois": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Dados novos (para updates)"
+    },
+    "ip_origem": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "sucesso",
+        "erro"
+      ],
+      "default": "sucesso"
+    },
+    "tempo_execucao_ms": {
+      "type": "number",
+      "description": "Tempo em milissegundos"
+    },
+    "data_hora_acao": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e hora exata em que a a\u00e7\u00e3o foi executada (preenchida automaticamente no momento do registro)"
+    },
+    "data_hora_criacao": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e hora em que o log foi gravado no banco (pode diferir de data_hora_acao em casos de retry/delay)"
+    },
+    "sessao_id": {
+      "type": "string",
+      "description": "Identificador da sess\u00e3o do usu\u00e1rio \u2014 permite agrupar a\u00e7\u00f5es de uma mesma sess\u00e3o"
+    },
+    "contexto": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Metadados adicionais de contexto: user-agent, rota, componente de origem"
+    }
+  },
+  "required": [
+    "usuario_email",
+    "tipo_acao",
+    "entidade_tipo",
+    "data_hora_acao"
+  ]
+}

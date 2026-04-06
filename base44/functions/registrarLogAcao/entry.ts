@@ -20,6 +20,8 @@ Deno.serve(async (req) => {
       dados_depois,
       status = "sucesso",
       tempo_execucao_ms,
+      sessao_id,
+      contexto,
     } = body;
 
     // Validação básica
@@ -30,7 +32,9 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Registrar log
+    const agora = new Date().toISOString();
+
+    // Registrar log com campos temporais automáticos
     const log = await base44.asServiceRole.entities.LogAcao.create({
       usuario_email: user.email,
       usuario_nome: user.full_name,
@@ -44,6 +48,10 @@ Deno.serve(async (req) => {
       status,
       tempo_execucao_ms,
       ip_origem: req.headers.get("x-forwarded-for") || "desconhecido",
+      data_hora_acao: agora,
+      data_hora_criacao: agora,
+      sessao_id: sessao_id || null,
+      contexto: contexto || null,
     });
 
     return Response.json({ success: true, log });

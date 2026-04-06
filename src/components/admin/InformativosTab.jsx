@@ -152,7 +152,7 @@ const RF = [
   { id: "RF04", categoria: "Propostas", descricao: "Criar e gerenciar propostas para editais com preenchimento assistido por IA campo a campo, baseado no conteúdo do edital." },
   { id: "RF05", categoria: "Propostas", descricao: "Analisar a proposta com IA e gerar pontuação estimada de aderência e sugestões de melhoria por campo." },
   { id: "RF06", categoria: "Propostas", descricao: "Gerenciar formulários do site de submissão (ex: Sigfapes) com campos extraídos automaticamente pela IA do PDF de perguntas do site." },
-  { id: "RF07", categoria: "Tira-Dúvidas", descricao: "Responder perguntas dos usuários sobre editais via IA treinada com os documentos oficiais de cada edital, sem alucinações." },
+  { id: "RF07", categoria: "Tira-Dúvidas", descricao: "Responder perguntas dos usuários sobre editais via IA treinada com os documentos oficiais de cada edital, com validação contínua de qualidade: monitoramento de precisão, coerência e aderência ao contexto, mecanismos anti-alucinação e critérios de confiabilidade para dados sensíveis." },
   { id: "RF08", categoria: "Acompanhamento", descricao: "Criar e gerenciar projetos aprovados com dados financeiros, orçamento por linha, consultoria e integração com Google Drive." },
   { id: "RF09", categoria: "Acompanhamento", descricao: "Registrar gastos por categoria com upload de comprovantes, controle de saldo por linha de orçamento e exportação ao Google Drive." },
   { id: "RF10", categoria: "Acompanhamento", descricao: "Gerar formulário de relatório de prestação de contas a partir do PDF modelo do edital via IA, com extração automática de todos os campos." },
@@ -165,6 +165,8 @@ const RF = [
   { id: "RF17", categoria: "Administração", descricao: "Administrador convidar usuários por e-mail, gerenciar perfis cadastrados e alterar papéis (empreendedor, consultor, admin)." },
   { id: "RF18", categoria: "Administração", descricao: "Configurar documentos e base de conhecimento da IA por edital, incluindo extração automática de campos e treinamento via chat." },
   { id: "RF19", categoria: "Drive", descricao: "Criar estrutura automática de pastas no Google Drive por projeto e categoria de gasto, e exportar comprovantes com resumo em Google Docs." },
+  { id: "RF20", categoria: "Notificações", descricao: "Garantir compatibilidade entre preferências do usuário (PreferenciaNotificacaoEdital) e notificações geradas: ao publicar novo edital, verificar categorias/estados de interesse e disparar alertas apenas aos usuários com preferências compatíveis." },
+  { id: "RF21", categoria: "Auditoria", descricao: "Registrar automaticamente data_hora_acao e data_hora_criacao em todos os LogAcao, com sessao_id para agrupar ações da mesma sessão e contexto de origem (rota, componente)." },
 ];
 
 const RNF = [
@@ -182,6 +184,12 @@ const RNF = [
   { id: "RNF12", categoria: "Integração", descricao: "Integração com LLM para geração de textos, extração de dados de PDFs e respostas contextualizadas, com suporte a arquivos e busca na internet." },
   { id: "RNF13", categoria: "Manutenibilidade", descricao: "Arquitetura componentizada com separação clara de responsabilidades: páginas, componentes, entidades JSON e funções backend independentes." },
   { id: "RNF14", categoria: "Acessibilidade", descricao: "Componentes Radix UI com suporte a navegação por teclado e atributos ARIA nativos para leitores de tela." },
+  { id: "RNF15", categoria: "Segurança", descricao: "Mensagens do fórum (MensagemChat.conteudo) armazenadas com criptografia em repouso (AES-256). Nunca expostas em texto puro em logs de auditoria, payloads de notificação ou endpoints não autenticados." },
+  { id: "RNF16", categoria: "Privacidade", descricao: "Dados pessoais sensíveis (CPF, telefone, data de nascimento) coletados no onboarding jamais são retornados em listagens coletivas. Acesso restrito ao próprio usuário e ao admin via escopos de role." },
+  { id: "RNF17", categoria: "IA", descricao: "Validação contínua das respostas da IA: monitoramento de coerência, precisão e aderência ao contexto do edital. Uso de FeedbackIAEdital para coletar avaliações e retroalimentar a qualidade. Respostas com baixo score marcadas para revisão humana." },
+  { id: "RNF18", categoria: "Notificações", descricao: "Notificações disparadas somente quando há compatibilidade verificada entre o edital publicado e as preferências do usuário (categoria, estado, valor mínimo). Zero notificações irrelevantes por design." },
+  { id: "RNF19", categoria: "Auditoria", descricao: "Todos os LogAcao incluem data_hora_acao (momento da execução) e data_hora_criacao (momento de gravação), com tolerância a diferenças em casos de retry. Logs são imutáveis após criação." },
+  { id: "RNF20", categoria: "Integridade", descricao: "GastoProjeto.acompanhamento_id é campo obrigatório com integridade referencial: nenhum gasto pode existir sem projeto associado. Operações de leitura de gastos sempre filtram pelo acompanhamento_id para isolar dados entre projetos." },
 ];
 
 const CORES_CAT = {
@@ -190,6 +198,7 @@ const CORES_CAT = {
   Orientações: "#64748b", Administração: "#dc2626", Drive: "#16a34a",
   Segurança: "#dc2626", Desempenho: "#f59e0b", Usabilidade: "#6366f1",
   Confiabilidade: "#10b981", Integração: "#0ea5e9", Manutenibilidade: "#8b5cf6", Acessibilidade: "#64748b",
+  Privacidade: "#be185d", IA: "#7c3aed", Notificações: "#0891b2", Auditoria: "#92400e", Integridade: "#166534",
 };
 
 // ─── SVG do MER para exportação HTML ─────────────────────────────────────────
@@ -502,13 +511,13 @@ const DB_DESCRICAO = [
   { entidade: "AcompanhamentoProjeto", cor: "#0ea5e9", descricao: "Projeto aprovado e em execução. Centraliza orçamento aprovado por linha, dados financeiros, vínculos com Google Drive, consultor responsável, campos do relatório de prestação de contas e integração com Google Docs.", relacionamentos: ["GastoProjeto (1:N — gastos registrados no projeto)", "SolicitacaoTutoria (via consultor_email)", "User (N:1 — criado pelo empreendedor)"] },
   { entidade: "GastoProjeto", cor: "#f59e0b", descricao: "Registro financeiro de cada despesa realizada no projeto. Inclui categoria (material, terceiros, diárias, etc.), valor, fornecedor, data, comprovantes (URLs), status de revisão e flag de exportação ao Google Drive.", relacionamentos: ["AcompanhamentoProjeto (N:1 — gasto pertence a um projeto)"] },
   { entidade: "SolicitacaoTutoria", cor: "#10b981", descricao: "Solicitação de apoio de um consultor por um empreendedor. Pode ser aberta (qualquer consultor oferece) ou direta (convite por e-mail). Contém array de propostas com valores, contraporpostas e status da negociação.", relacionamentos: ["User — empreendedor (N:1)", "User — consultor (N:1)"] },
-  { entidade: "MensagemChat", cor: "#f43f5e", descricao: "Mensagem do fórum da comunidade, organizada por edital. Suporta respostas encadeadas via reply_to_id. Identifica o autor e registra data/hora.", relacionamentos: ["Edital (N:1 — mensagem vinculada a um edital específico)"] },
+  { entidade: "MensagemChat", cor: "#f43f5e", descricao: "Mensagem do fórum da comunidade, organizada por edital. Conteúdo armazenado com criptografia em repouso (AES-256) — nunca exposto em texto puro em logs. Suporta respostas encadeadas, edição e moderação (campo visivel). Identifica autor e preserva histórico de edições.", relacionamentos: ["Edital (N:1 — mensagem vinculada a um edital específico)"] },
   { entidade: "Orientacao", cor: "#64748b", descricao: "Material educativo disponibilizado pelos consultores ou admins. Pode ser um vídeo (YouTube), apresentação (Canva), PDF ou documento. Possui controle de acesso: livre para todos ou restrito a clientes específicos.", relacionamentos: ["Edital (N:1 — opcional, pode ser associada a um edital)"] },
   { entidade: "ModeloProposta", cor: "#dc2626", descricao: "Template de proposta por órgão de fomento, com campos mapeados e extraídos de PDFs via IA. Usado para estruturar formulários de propostas com instruções e tipos de resposta por campo.", relacionamentos: [] },
   { entidade: "ModeloRelatorio", cor: "#16a34a", descricao: "Template de relatório de prestação de contas por órgão, com campos extraídos via IA e blocos de layout para exportação estruturada.", relacionamentos: [] },
   { entidade: "NotificacaoPlataforma", cor: "#0284c7", descricao: "Notificações internas enviadas pelo admin para usuários específicos ou todos. Inclui tipo (novo recurso, correção, aviso), status de leitura e referência à entidade afetada.", relacionamentos: ["User (N:1 — destinatário específico ou broadcast)"] },
-  { entidade: "LogAcao", cor: "#7c3aed", descricao: "Auditoria de ações realizadas na plataforma (criar/editar/deletar editais, alterar roles, etc.). Registra usuário, tipo de ação, entidade afetada, dados antes/depois, tempo de execução e status.", relacionamentos: [] },
-  { entidade: "PreferenciaNotificacaoEdital", cor: "#ea580c", descricao: "Preferências do usuário para alertas de novos editais por WhatsApp/SMS. Define categorias de interesse, estados e telefone para envio.", relacionamentos: ["User (1:1 — por usuário)"] },
+  { entidade: "LogAcao", cor: "#7c3aed", descricao: "Auditoria imutável de ações realizadas na plataforma. Registra data_hora_acao (execução), data_hora_criacao (gravação), sessao_id para agrupamento, contexto de origem, dados antes/depois e tempo de execução. Campos temporais preenchidos automaticamente.", relacionamentos: [] },
+  { entidade: "PreferenciaNotificacaoEdital", cor: "#ea580c", descricao: "Preferências do usuário para alertas de novos editais. Define categorias de interesse, estados e canais (WhatsApp/SMS). Vinculada formalmente ao ciclo de publicação de editais: ao criar um Edital, o sistema verifica automaticamente quais usuários têm preferências compatíveis (categoria + estado) e gera NotificacaoEditalUsuario apenas para os elegíveis.", relacionamentos: ["User (1:1 — por usuário)", "Edital (verificação N:N no disparo de notificações)"] },
   { entidade: "AgendamentoConsultoria", cor: "#0891b2", descricao: "Agendamento de reuniões entre consultores e empreendedores. Vinculado opcionalmente ao Google Calendar. Registra status, tipo de reunião, link de Meet e observações.", relacionamentos: ["User — consultor (N:1)", "User — cliente (N:1)"] },
   { entidade: "User (built-in)", cor: "#334155", descricao: "Entidade nativa da plataforma. Armazena dados do usuário autenticado: nome, email, role (admin/empreendedor/consultor) e atributos de perfil como tipo_usuario, perfil_concluido, acesso_liberado e avatar.", relacionamentos: ["Todas as entidades com criador ou email referenciado"] },
 ];
