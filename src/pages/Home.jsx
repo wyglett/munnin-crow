@@ -322,7 +322,7 @@ export default function Home() {
         {selectedState && !selectedCategory && (
           <div>
             <div className="flex items-center gap-3 mb-6">
-              <button onClick={goBack} className="text-white/40 hover:text-white transition-colors">
+              <button onClick={goBack} className={`transition-colors ${isLight ? "text-slate-400 hover:text-slate-700" : "text-white/40 hover:text-white"}`}>
                 <ArrowLeft className="w-5 h-5" />
               </button>
               <div>
