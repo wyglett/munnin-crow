@@ -1,0 +1,37 @@
+{
+  "name": "Verificar Editais Compat\u00edveis com Alertas",
+  "description": "Quando um novo edital \u00e9 criado, verifica quais usu\u00e1rios t\u00eam alertas compat\u00edveis e envia notifica\u00e7\u00f5es.\"",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create"
+      ],
+      "entity_name": "Edital"
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "verificar_editais_compat_veis_com_alertas",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_function": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "verificarEditaisComativeis",
+            "args": {}
+          },
+          "then": "end"
+        }
+      }
+    ]
+  },
+  "x-base44-migrated-from-automation": {
+    "legacy_payload_function": "verificarEditaisComativeis"
+  }
+}

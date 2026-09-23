@@ -1,0 +1,37 @@
+{
+  "name": "Absorver Feedback IA para Treino",
+  "description": "Processa feedback \u00fatil dos usu\u00e1rios para treinar e melhorar a IA do edital.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create"
+      ],
+      "entity_name": "FeedbackIAEdital"
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "absorver_feedback_ia_para_treino",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_function": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "absorverFeedbackIAEdital",
+            "args": {}
+          },
+          "then": "end"
+        }
+      }
+    ]
+  },
+  "x-base44-migrated-from-automation": {
+    "legacy_payload_function": "absorverFeedbackIAEdital"
+  }
+}

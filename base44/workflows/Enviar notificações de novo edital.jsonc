@@ -1,0 +1,37 @@
+{
+  "name": "Enviar notifica\u00e7\u00f5es de novo edital",
+  "description": "Dispara notifica\u00e7\u00f5es por WhatsApp e SMS quando um novo edital \u00e9 publicado\"",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create"
+      ],
+      "entity_name": "Edital"
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "enviar_notifica_es_de_novo_edital",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_function": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "enviarNotificacoesEditalNovo",
+            "args": {}
+          },
+          "then": "end"
+        }
+      }
+    ]
+  },
+  "x-base44-migrated-from-automation": {
+    "legacy_payload_function": "enviarNotificacoesEditalNovo"
+  }
+}
